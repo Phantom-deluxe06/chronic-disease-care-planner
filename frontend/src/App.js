@@ -10,6 +10,9 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import DiabetesDashboard from './pages/DiabetesDashboard';
 import HypertensionDashboard from './pages/HypertensionDashboard';
+import HealthLogs from './pages/HealthLogs';
+import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 import './App.css';
 
 // Protected Route wrapper
@@ -49,25 +52,20 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Placeholder routes for future pages */}
+        {/* Health Management Pages */}
         <Route path="/logs" element={
           <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        } />
-        <Route path="/care-plan" element={
-          <ProtectedRoute>
-            <Home />
+            <HealthLogs />
           </ProtectedRoute>
         } />
         <Route path="/reports" element={
           <ProtectedRoute>
-            <Home />
+            <Reports />
           </ProtectedRoute>
         } />
         <Route path="/settings" element={
           <ProtectedRoute>
-            <Home />
+            <Settings />
           </ProtectedRoute>
         } />
 

@@ -60,18 +60,14 @@ const Home = () => {
                         <span className="nav-icon">🏠</span>
                         <span>Overview</span>
                     </Link>
-                    {hasDiabetes && (
-                        <Link to="/dashboard/diabetes" className="nav-link">
-                            <span className="nav-icon">🩸</span>
-                            <span>Diabetes</span>
-                        </Link>
-                    )}
-                    {hasHypertension && (
-                        <Link to="/dashboard/hypertension" className="nav-link">
-                            <span className="nav-icon">💓</span>
-                            <span>Hypertension</span>
-                        </Link>
-                    )}
+                    <Link to="/dashboard/diabetes" className="nav-link">
+                        <span className="nav-icon">🩸</span>
+                        <span>Diabetes</span>
+                    </Link>
+                    <Link to="/dashboard/hypertension" className="nav-link">
+                        <span className="nav-icon">💓</span>
+                        <span>Hypertension</span>
+                    </Link>
                     <Link to="/logs" className="nav-link">
                         <span className="nav-icon">📊</span>
                         <span>Health Logs</span>
@@ -120,37 +116,34 @@ const Home = () => {
                     <p className="section-subtitle">Select a condition to view detailed care plan and tracking</p>
 
                     <div className="dashboard-cards">
-                        {hasDiabetes && (
-                            <Link to="/dashboard/diabetes" className="dashboard-card diabetes-card">
-                                <div className="card-icon">🩸</div>
-                                <div className="card-content">
-                                    <h3>Diabetes Care</h3>
-                                    <p>Track blood sugar, manage diet, and follow your care plan</p>
-                                    <ul className="card-features">
-                                        <li>📊 Blood sugar tracking</li>
-                                        <li>💊 Medication reminders</li>
-                                        <li>🥗 Diet recommendations</li>
-                                    </ul>
-                                </div>
-                                <span className="card-arrow">→</span>
-                            </Link>
-                        )}
+                        <Link to="/dashboard/diabetes" className="dashboard-card diabetes-card">
+                            <div className="card-icon">🩸</div>
+                            <div className="card-content">
+                                <h3>Diabetes Care</h3>
+                                <p>Track blood sugar, manage diet, and follow your care plan</p>
+                                <ul className="card-features">
+                                    <li>📊 Blood sugar tracking</li>
+                                    <li>💊 Medication reminders</li>
+                                    <li>🥗 AI Diet analysis</li>
+                                    <li>💧 Water intake</li>
+                                </ul>
+                            </div>
+                            <span className="card-arrow">→</span>
+                        </Link>
 
-                        {hasHypertension && (
-                            <Link to="/dashboard/hypertension" className="dashboard-card hypertension-card">
-                                <div className="card-icon">💓</div>
-                                <div className="card-content">
-                                    <h3>Hypertension Care</h3>
-                                    <p>Monitor BP, track heart rate, and manage your health</p>
-                                    <ul className="card-features">
-                                        <li>📊 Blood pressure readings</li>
-                                        <li>❤️ Heart rate monitoring</li>
-                                        <li>🧂 Low-sodium diet tips</li>
-                                    </ul>
-                                </div>
-                                <span className="card-arrow">→</span>
-                            </Link>
-                        )}
+                        <Link to="/dashboard/hypertension" className="dashboard-card hypertension-card">
+                            <div className="card-icon">💓</div>
+                            <div className="card-content">
+                                <h3>Hypertension Care</h3>
+                                <p>Monitor BP, track heart rate, and manage your health</p>
+                                <ul className="card-features">
+                                    <li>📊 Blood pressure readings</li>
+                                    <li>❤️ Heart rate monitoring</li>
+                                    <li>🧂 Low-sodium diet tips</li>
+                                </ul>
+                            </div>
+                            <span className="card-arrow">→</span>
+                        </Link>
                     </div>
                 </section>
 
