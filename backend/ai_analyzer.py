@@ -1,13 +1,249 @@
 """
 AI Analyzer Module for Chronic Disease Care Planner
 Provides AI-assisted food analysis, meal suitability assessment, and weekly health summaries
+Now integrated with Gemini AI for real-time nutritional analysis
 """
 
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
 import database
+import os
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+# ==================== GEMINI AI CONFIGURATION ====================
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+gemini_model = None
+
+def initialize_gemini():
+    """Initialize Gemini AI model"""
+    global gemini_model
+    if not GEMINI_API_KEY:
+        logger.warning("GEMINI_API_KEY not set. AI features will use fallback static data.")
+        return None
+    
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_API_KEY)
+        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        logger.info("Gemini AI initialized successfully")
+        return gemini_model
+    except Exception as e:
+        logger.error(f"Failed to initialize Gemini AI: {e}")
+        return None
+
+# Initialize on module load
+initialize_gemini()
+
+
+def analyze_food_with_gemini(food_description: str, quantity: str, condition: str = "diabetes") -> Optional[Dict[str, Any]]:
+    """
+    Use Gemini AI to analyze food for nutritional content.
+    Returns structured JSON with nutrition info, health recommendations, and portion advice.
+    """
+    global gemini_model
+    
+    if not gemini_model:
+        # Try to reinitialize
+        initialize_gemini()
+        if not gemini_model:
+            return None
+    
+    if condition == "diabetes":
+        prompt = f"""Analyze the following food for a person with Type 2 Diabetes.
+
+Food: {food_description}
+Portion Size: {quantity}
+
+IMPORTANT: 
+- If the food description contains a number (e.g., "2 idly", "3 rotis"), calculate nutrition for that EXACT quantity, not per piece.
+- If portion size says "2 servings" or "large", also multiply accordingly.
+- Example: "2 idly" should show ~160 calories (80 each), not 80.
+
+Return a JSON object with this exact structure (no markdown, just raw JSON):
+{{
+    "nutrition": {{
+        "calories": <total number for the quantity specified>,
+        "carbohydrates_g": <total grams>,
+        "sugar_g": <total grams>,
+        "fiber_g": <total grams>,
+        "protein_g": <total grams>,
+        "glycemic_index": <number 0-100, this doesn't scale>
+    }},
+    "glucose_spike_risk": {{
+        "level": "<low/medium/high>",
+        "factors": ["<reason1>", "<reason2>"]
+    }},
+    "health_recommendation": "<Is this safe for diabetics? Brief advice>",
+    "portion_advice": "<How much should they eat?>",
+    "meal_suitability": {{
+        "suitable": <true/false>,
+        "rating": "<Good/Acceptable/Caution>",
+        "positives": ["<positive1>", "<positive2>"],
+        "improvements": ["<suggestion1>", "<suggestion2>"]
+    }}
+}}
+
+Be accurate with nutritional estimates. Consider Indian foods if mentioned."""
+
+    else:  # hypertension
+        prompt = f"""Analyze the following food for a person with Hypertension (High Blood Pressure) following the DASH diet.
+
+Food: {food_description}
+Portion Size: {quantity}
+
+IMPORTANT: 
+- If the food description contains a number (e.g., "2 idly", "3 rotis"), calculate nutrition for that EXACT quantity, not per piece.
+- If portion size says "2 servings" or "large", also multiply accordingly.
+- Example: "2 idly" should show double the sodium/calories of 1 idly.
+
+Return a JSON object with this exact structure (no markdown, just raw JSON):
+{{
+    "nutrition": {{
+        "calories": <total number for the quantity specified>,
+        "sodium_mg": <total mg - this is critical for hypertension>,
+        "potassium_mg": <total mg>,
+        "saturated_fat_g": <total grams>,
+        "fiber_g": <total grams>,
+        "protein_g": <total grams>
+    }},
+    "dash_compliant": <true/false>,
+    "dash_score": "<Excellent/Good/Moderate/Poor>",
+    "health_recommendation": "<Is this safe for blood pressure? Brief advice>",
+    "portion_advice": "<How much should they eat?>",
+    "positives": ["<positive1>", "<positive2>"],
+    "improvements": ["<suggestion1>", "<suggestion2>"]
+}}
+
+Focus heavily on sodium content. DASH diet limits sodium to <2300mg/day. Consider Indian foods if mentioned."""
+
+    try:
+        response = gemini_model.generate_content(prompt)
+        response_text = response.text.strip()
+        
+        # Clean up response - remove markdown code blocks if present
+        if response_text.startswith("```"):
+            lines = response_text.split("\n")
+            response_text = "\n".join(lines[1:-1])
+        if response_text.startswith("json"):
+            response_text = response_text[4:].strip()
+        
+        result = json.loads(response_text)
+        result["ai_generated"] = True
+        result["disclaimer"] = "⚠️ AI nutritional estimates are approximate. This is not medical advice. Consult your healthcare provider for personalized dietary guidance."
+        
+        return result
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse Gemini response as JSON: {e}")
+        logger.debug(f"Raw response: {response_text if 'response_text' in dir() else 'N/A'}")
+        return None
+    except Exception as e:
+        logger.error(f"Gemini API error: {e}")
+        return None
+
+
+def analyze_food_ai(food_description: str, quantity: str = "1 serving") -> Dict[str, Any]:
+    """
+    AI-powered food analysis for diabetes with fallback to static database.
+    """
+    # Try AI first
+    ai_result = analyze_food_with_gemini(food_description, quantity, "diabetes")
+    
+    if ai_result:
+        ai_result["food_description"] = food_description
+        ai_result["quantity"] = quantity
+        return ai_result
+    
+    # Fallback to static analysis
+    logger.info("Falling back to static food analysis")
+    return analyze_food(food_description, quantity)
+
+
+def analyze_food_hypertension_ai(food_description: str, quantity: str = "1 serving") -> Dict[str, Any]:
+    """
+    AI-powered food analysis for hypertension with focus on sodium and DASH diet.
+    """
+    # Try AI first
+    ai_result = analyze_food_with_gemini(food_description, quantity, "hypertension")
+    
+    if ai_result:
+        ai_result["food_description"] = food_description
+        ai_result["quantity"] = quantity
+        ai_result["daily_sodium"] = ai_result.get("nutrition", {}).get("sodium_mg", 0)  # Running total would need DB
+        return ai_result
+    
+    # Fallback to static sodium estimation
+    logger.info("Falling back to static hypertension food analysis")
+    return analyze_food_hypertension_static(food_description, quantity)
+
+
+def analyze_food_hypertension_static(food_description: str, quantity: str = "1 serving") -> Dict[str, Any]:
+    """Static fallback for hypertension food analysis"""
+    # Use existing food analysis and add sodium estimates
+    base_analysis = analyze_food(food_description, quantity)
+    
+    # Estimate sodium based on food type (simplified)
+    food_lower = food_description.lower()
+    sodium_estimate = 200  # Default per serving
+    
+    high_sodium_foods = ["pickle", "papad", "chips", "fries", "pizza", "burger", "samosa", "pakora", "chaat", "namkeen", "processed", "canned", "instant"]
+    medium_sodium_foods = ["bread", "cheese", "roti", "paratha", "puri", "biryani"]
+    low_sodium_foods = ["salad", "fruit", "vegetables", "dal", "rice", "oats", "milk", "curd", "yogurt"]
+    
+    for food in high_sodium_foods:
+        if food in food_lower:
+            sodium_estimate = 600
+            break
+    for food in medium_sodium_foods:
+        if food in food_lower:
+            sodium_estimate = 350
+            break
+    for food in low_sodium_foods:
+        if food in food_lower:
+            sodium_estimate = 100
+            break
+    
+    # Adjust for quantity
+    multiplier = 1.0
+    qty_lower = quantity.lower()
+    if "2" in qty_lower or "large" in qty_lower:
+        multiplier = 1.5
+    elif "small" in qty_lower or "half" in qty_lower:
+        multiplier = 0.6
+    
+    sodium_mg = int(sodium_estimate * multiplier)
+    potassium_mg = int(base_analysis["nutrition"]["fiber_g"] * 50 + base_analysis["nutrition"]["protein_g"] * 20)
+    
+    dash_compliant = sodium_mg < 400
+    
+    return {
+        "food_description": food_description,
+        "quantity": quantity,
+        "nutrition": {
+            "calories": base_analysis["nutrition"]["calories"],
+            "sodium_mg": sodium_mg,
+            "potassium_mg": potassium_mg,
+            "saturated_fat_g": round(base_analysis["nutrition"]["calories"] * 0.02, 1),
+            "fiber_g": base_analysis["nutrition"]["fiber_g"],
+            "protein_g": base_analysis["nutrition"]["protein_g"]
+        },
+        "dash_compliant": dash_compliant,
+        "dash_score": "Good" if dash_compliant else "Moderate" if sodium_mg < 600 else "Poor",
+        "health_recommendation": "Low sodium option, good for blood pressure" if dash_compliant else "Consider reducing portion or choosing lower-sodium alternatives",
+        "portion_advice": "Standard portion is fine" if dash_compliant else "Smaller portions recommended",
+        "positives": ["Contains fiber" if base_analysis["nutrition"]["fiber_g"] > 2 else "Moderate calories"],
+        "improvements": [] if dash_compliant else ["Look for low-sodium alternatives", "Add more potassium-rich vegetables"],
+        "daily_sodium": sodium_mg,
+        "disclaimer": "⚠️ Sodium estimates are approximate. This is not medical advice. Consult your healthcare provider.",
+        "ai_generated": False
+    }
+
 
 # ==================== FOOD DATABASE (Mock AI) ====================
+
 # This simulates AI food analysis. In production, integrate with USDA FoodData or similar API.
 
 FOOD_DATABASE = {

@@ -398,7 +398,7 @@ const HypertensionDashboard = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="dashboard-main">
+            <main className="dashboard-main home-main">
                 <header className="dashboard-header">
                     <div className="header-title">
                         <span className="disease-icon">💓</span>

@@ -687,8 +687,9 @@ def get_water_today(current_user: dict = Depends(get_current_user)):
 
 @app.post("/food/analyze")
 def analyze_food(request: FoodAnalysisRequest, current_user: dict = Depends(get_current_user)):
-    """Analyze food for nutritional content and diabetes suitability"""
-    analysis = ai_analyzer.analyze_food(request.food_description, request.quantity)
+    """Analyze food for nutritional content and diabetes suitability using AI"""
+    # Use AI-powered analysis
+    analysis = ai_analyzer.analyze_food_ai(request.food_description, request.quantity)
     
     # Also save as food log
     log_id = database.save_daily_log(
@@ -706,7 +707,30 @@ def analyze_food(request: FoodAnalysisRequest, current_user: dict = Depends(get_
     }
 
 
+@app.post("/food/analyze-hypertension")
+def analyze_food_hypertension(request: FoodAnalysisRequest, current_user: dict = Depends(get_current_user)):
+    """Analyze food for sodium content and DASH diet compliance using AI"""
+    # Use AI-powered hypertension-focused analysis
+    analysis = ai_analyzer.analyze_food_hypertension_ai(request.food_description, request.quantity)
+    
+    # Also save as food log
+    log_id = database.save_daily_log(
+        user_id=current_user["id"],
+        log_type="food",
+        value=analysis["nutrition"]["calories"],
+        unit="kcal",
+        reading_context=request.meal_type,
+        notes=f"[BP] {request.food_description} | {request.quantity} | Sodium: {analysis['nutrition'].get('sodium_mg', 0)}mg"
+    )
+    
+    return {
+        "log_id": log_id,
+        **analysis
+    }
+
+
 # ==================== MEDICATION ENDPOINTS ====================
+
 
 @app.post("/medications")
 def create_medication(med: MedicationCreate, current_user: dict = Depends(get_current_user)):

@@ -5442,6 +5442,299 @@ body {
   color: #22c55e;
 }
 
+/* ==================== DASHBOARD FORM INPUTS (Dark Theme) ==================== */
+/* Global form input styling for all dashboard pages */
+.disease-dashboard input,
+.disease-dashboard textarea,
+.disease-dashboard select,
+.home-dashboard input,
+.home-dashboard textarea,
+.home-dashboard select,
+.exercise-form input,
+.exercise-form textarea,
+.exercise-form select,
+.tab-content input,
+.tab-content textarea,
+.tab-content select {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.disease-dashboard input:focus,
+.disease-dashboard textarea:focus,
+.disease-dashboard select:focus,
+.home-dashboard input:focus,
+.home-dashboard textarea:focus,
+.home-dashboard select:focus,
+.exercise-form input:focus,
+.exercise-form textarea:focus,
+.exercise-form select:focus,
+.tab-content input:focus,
+.tab-content textarea:focus,
+.tab-content select:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.disease-dashboard input::placeholder,
+.disease-dashboard textarea::placeholder,
+.home-dashboard input::placeholder,
+.home-dashboard textarea::placeholder,
+.exercise-form input::placeholder,
+.exercise-form textarea::placeholder,
+.tab-content input::placeholder,
+.tab-content textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.disease-dashboard select option,
+.home-dashboard select option,
+.exercise-form select option,
+.tab-content select option {
+  background: #0d2818;
+  color: white;
+}
+
+/* Form labels in dark theme */
+.disease-dashboard .form-group label,
+.home-dashboard .form-group label,
+.exercise-form .form-group label,
+.tab-content .form-group label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Form row styling in dashboard */
+.disease-dashboard .form-row,
+.home-dashboard .form-row,
+.exercise-form .form-row,
+.tab-content .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+/* Save button styling */
+.save-btn {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--spacing-md);
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==================== HEALTH MONITOR ==================== */
+.health-monitor {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+}
+
+.monitor-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.monitor-header h3 {
+  color: white;
+  font-size: 1.1rem;
+}
+
+.hba1c-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.hba1c-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.hba1c-header h4 {
+  color: white;
+  font-size: 1rem;
+}
+
+.add-hba1c-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary-600);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.hba1c-form {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.hba1c-feedback {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  color: var(--gray-200);
+}
+
+.hba1c-feedback button {
+  background: none;
+  border: none;
+  color: var(--gray-400);
+  cursor: pointer;
+}
+
+.hba1c-reminder {
+  padding: var(--spacing-md);
+  background: rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--gray-200);
+  margin-bottom: var(--spacing-md);
+}
+
+.last-hba1c {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.hba1c-value {
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+}
+
+.hba1c-value .value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.hba1c-value .date {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+.hba1c-target {
+  color: var(--gray-300);
+}
+
+.hba1c-target .target-label {
+  color: var(--gray-500);
+  margin-right: var(--spacing-xs);
+}
+
+.hba1c-target .target-value {
+  font-weight: 600;
+}
+
+.hba1c-history {
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+}
+
+.hba1c-history h5 {
+  color: white;
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.history-list {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.history-item {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+.history-value {
+  font-weight: 600;
+  margin-right: var(--spacing-xs);
+}
+
+.history-date {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+.testing-reminders {
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+}
+
+.testing-reminders h4 {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.test-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.test-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.test-list li:last-child {
+  border-bottom: none;
+}
+
+.test-name {
+  color: var(--gray-200);
+}
+
+.test-frequency {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+}
+
 /* ==================== REPORTS PAGE ==================== */
 .reports-section {
   margin-bottom: var(--spacing-xl);
