@@ -97,6 +97,8 @@ class GlucoseLog(BaseModel):
 class BPLog(BaseModel):
     systolic: float  # mmHg
     diastolic: float  # mmHg
+    pulse: Optional[int] = None  # bpm
+    reading_context: Optional[str] = None  # morning, afternoon, evening, after_meal
     notes: Optional[str] = None
 
 

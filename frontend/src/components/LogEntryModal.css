@@ -26,7 +26,7 @@
 }
 
 .modal-content {
-    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    background: linear-gradient(145deg, #0a1f0a, #0d2818);
     border-radius: 20px;
     width: 90%;
     max-width: 480px;
@@ -180,7 +180,7 @@
 }
 
 .form-group select option {
-    background: #1a1a2e;
+    background: #0d2818;
     color: #fff;
 }
 
@@ -247,34 +247,34 @@
     text-align: center;
 }
 
-/* Diabetes theme overrides */
+/* Diabetes theme overrides - Green Theme */
 .diabetes-theme .modal-content {
-    background: linear-gradient(145deg, #1a1510, #2a1f15);
+    background: linear-gradient(145deg, #0a1f0a, #0d2818);
 }
 
 .diabetes-theme .btn-submit {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #10b981, #059669);
 }
 
 .diabetes-theme .form-group input:focus,
 .diabetes-theme .form-group select:focus,
 .diabetes-theme .form-group textarea:focus {
-    border-color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
 }
 
-/* Hypertension theme overrides */
+/* Hypertension theme overrides - Green Theme */
 .hypertension-theme .modal-content {
-    background: linear-gradient(145deg, #1a1020, #251530);
+    background: linear-gradient(145deg, #0a1f0a, #0d2818);
 }
 
 .hypertension-theme .btn-submit {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(135deg, #10b981, #059669);
 }
 
 .hypertension-theme .form-group input:focus,
 .hypertension-theme .form-group select:focus,
 .hypertension-theme .form-group textarea:focus {
-    border-color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.1);
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
 }
