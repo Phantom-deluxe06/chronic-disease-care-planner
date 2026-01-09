@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import './LogEntryModal.css';
+import { apiUrl } from '../config/api';
 
 const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
     const [loading, setLoading] = useState(false);
@@ -107,7 +108,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000${endpoint}`, {
+            const response = await fetch(apiUrl(endpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

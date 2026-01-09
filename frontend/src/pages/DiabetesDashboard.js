@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiUrl } from '../config/api';
 import LogEntryModal from '../components/LogEntryModal';
 import WaterTracker from '../components/WaterTracker';
 import FoodAnalysisModal from '../components/FoodAnalysisModal';
@@ -35,7 +36,7 @@ const DiabetesDashboard = () => {
 
     const fetchGlucoseLogs = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/logs/glucose?days=1', {
+            const response = await fetch(apiUrl('/logs/glucose?days=1'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -63,7 +64,7 @@ const DiabetesDashboard = () => {
 
     const fetchCarePlan = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/care-plan', {
+            const response = await fetch(apiUrl('/care-plan'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -88,7 +89,7 @@ const DiabetesDashboard = () => {
 
     const fetchTrends = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/trends/glucose', {
+            const response = await fetch(apiUrl('/trends/glucose'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {

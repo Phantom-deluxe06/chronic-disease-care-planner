@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import './LogEntryModal.css';
+import { apiUrl } from '../config/api';
 
 const HypertensionFoodModal = ({ isOpen, onClose, onSuccess, token }) => {
     const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ const HypertensionFoodModal = ({ isOpen, onClose, onSuccess, token }) => {
         setAnalysis(null);
 
         try {
-            const response = await fetch('http://localhost:8000/food/analyze-hypertension', {
+            const response = await fetch(apiUrl('/food/analyze-hypertension'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
