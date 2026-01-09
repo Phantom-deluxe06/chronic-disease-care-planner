@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const MedicationManager = ({ token }) => {
     const [medications, setMedications] = useState([]);
@@ -21,7 +22,7 @@ const MedicationManager = ({ token }) => {
 
     const fetchMedications = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/medications', {
+            const response = await fetch(apiUrl('/medications'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -43,7 +44,7 @@ const MedicationManager = ({ token }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/medications', {
+            const response = await fetch(apiUrl('/medications'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ const MedicationManager = ({ token }) => {
 
     const logIntake = async (medicationId, scheduledTime, taken = true) => {
         try {
-            await fetch('http://localhost:8000/medications/log', {
+            await fetch(apiUrl('/medications/log'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

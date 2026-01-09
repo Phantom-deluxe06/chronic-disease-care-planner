@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const ExerciseTracker = ({ token }) => {
     const [exercises, setExercises] = useState([]);
@@ -35,7 +36,7 @@ const ExerciseTracker = ({ token }) => {
 
     const fetchExercises = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/logs/activity?days=7', {
+            const response = await fetch(apiUrl('/logs/activity?days=7'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -65,7 +66,7 @@ const ExerciseTracker = ({ token }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/logs/activity', {
+            const response = await fetch(apiUrl('/logs/activity'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

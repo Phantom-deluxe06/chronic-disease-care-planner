@@ -12,6 +12,7 @@ import MedicationManager from '../components/MedicationManager';
 import ExerciseTracker from '../components/ExerciseTracker';
 import StressTracker from '../components/StressTracker';
 import WeeklySummaryBP from '../components/WeeklySummaryBP';
+import { apiUrl } from '../config/api';
 
 const HypertensionDashboard = () => {
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ const HypertensionDashboard = () => {
 
     const fetchBPLogs = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/logs/bp?days=1', {
+            const response = await fetch(apiUrl('/logs/bp?days=1'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -64,7 +65,7 @@ const HypertensionDashboard = () => {
 
     const fetchCarePlan = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/care-plan?condition=hypertension', {
+            const response = await fetch(apiUrl('/care-plan?condition=hypertension'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {

@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const WeeklySummary = ({ token }) => {
     const [summary, setSummary] = useState(null);
@@ -12,7 +13,7 @@ const WeeklySummary = ({ token }) => {
     const fetchSummary = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/weekly-summary', {
+            const response = await fetch(apiUrl('/weekly-summary'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {

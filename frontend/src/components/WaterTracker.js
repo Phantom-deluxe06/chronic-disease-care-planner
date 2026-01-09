@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const WaterTracker = ({ token }) => {
     const [waterData, setWaterData] = useState({
@@ -17,7 +18,7 @@ const WaterTracker = ({ token }) => {
 
     const fetchWaterData = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/water/today', {
+            const response = await fetch(apiUrl('/water/today'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -38,7 +39,7 @@ const WaterTracker = ({ token }) => {
     const logWater = async (amount_ml = 250) => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/logs/water', {
+            const response = await fetch(apiUrl('/logs/water'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

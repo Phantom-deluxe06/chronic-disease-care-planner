@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const StressTracker = ({ token }) => {
     const [stressLevel, setStressLevel] = useState(null);
@@ -30,7 +31,7 @@ const StressTracker = ({ token }) => {
 
     const fetchTodayCheckin = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/stress/today', {
+            const response = await fetch(apiUrl('/stress/today'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -57,7 +58,7 @@ const StressTracker = ({ token }) => {
     const logStress = async (level) => {
         setLoading(true);
         try {
-            await fetch('http://localhost:8000/stress/log', {
+            await fetch(apiUrl('/stress/log'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

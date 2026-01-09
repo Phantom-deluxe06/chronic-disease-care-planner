@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const HealthMonitor = ({ token }) => {
     const [hba1cData, setHba1cData] = useState(null);
@@ -20,7 +21,7 @@ const HealthMonitor = ({ token }) => {
 
     const fetchHba1cData = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/hba1c', {
+            const response = await fetch(apiUrl('/hba1c'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -42,7 +43,7 @@ const HealthMonitor = ({ token }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/hba1c', {
+            const response = await fetch(apiUrl('/hba1c'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

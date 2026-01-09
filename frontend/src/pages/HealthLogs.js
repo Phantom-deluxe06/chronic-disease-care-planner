@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiUrl } from '../config/api';
 
 const HealthLogs = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const HealthLogs = () => {
 
     const fetchLogs = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/logs?days=30', {
+            const response = await fetch(apiUrl('/logs?days=30'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {

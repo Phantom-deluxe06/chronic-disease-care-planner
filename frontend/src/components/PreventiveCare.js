@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const PreventiveCare = ({ token }) => {
     const [reminders, setReminders] = useState(null);
@@ -13,7 +14,7 @@ const PreventiveCare = ({ token }) => {
 
     const fetchReminders = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/reminders', {
+            const response = await fetch(apiUrl('/reminders'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -27,7 +28,7 @@ const PreventiveCare = ({ token }) => {
 
     const fetchTravelChecklist = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/travel-checklist', {
+            const response = await fetch(apiUrl('/travel-checklist'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {

@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { apiUrl } from '../config/api';
 import './LogEntryModal.css';
 
 const BPEntryModal = ({ isOpen, onClose, onSuccess, token }) => {
@@ -98,7 +99,7 @@ const BPEntryModal = ({ isOpen, onClose, onSuccess, token }) => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/logs/bp', {
+            const response = await fetch(apiUrl('/logs/bp'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

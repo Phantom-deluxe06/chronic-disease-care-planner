@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../config/api';
 
 const WeeklySummaryBP = ({ token }) => {
     const [summary, setSummary] = useState(null);
@@ -12,7 +13,7 @@ const WeeklySummaryBP = ({ token }) => {
 
     const fetchSummary = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/summary/hypertension', {
+            const response = await fetch(apiUrl('/summary/hypertension'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -35,7 +36,7 @@ const WeeklySummaryBP = ({ token }) => {
     const generateNewSummary = async () => {
         setGenerating(true);
         try {
-            const response = await fetch('http://localhost:8000/summary/hypertension/generate', {
+            const response = await fetch(apiUrl('/summary/hypertension/generate'), {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
