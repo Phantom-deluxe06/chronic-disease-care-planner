@@ -14,6 +14,7 @@ import WeeklySummary from '../components/WeeklySummary';
 import HealthMonitor from '../components/HealthMonitor';
 import PreventiveCare from '../components/PreventiveCare';
 import ExerciseTracker from '../components/ExerciseTracker';
+import MobileNav from '../components/MobileNav';
 
 const DiabetesDashboard = () => {
     const navigate = useNavigate();
@@ -320,6 +321,9 @@ const DiabetesDashboard = () => {
 
     return (
         <div className="disease-dashboard diabetes-theme">
+            {/* Mobile Navigation */}
+            <MobileNav user={user} onLogout={handleLogout} />
+
             {/* Sidebar */}
             <aside className="dashboard-sidebar">
                 <div className="sidebar-brand">

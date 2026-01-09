@@ -13,6 +13,7 @@ import ExerciseTracker from '../components/ExerciseTracker';
 import StressTracker from '../components/StressTracker';
 import WeeklySummaryBP from '../components/WeeklySummaryBP';
 import { apiUrl } from '../config/api';
+import MobileNav from '../components/MobileNav';
 
 const HypertensionDashboard = () => {
     const navigate = useNavigate();
@@ -352,6 +353,9 @@ const HypertensionDashboard = () => {
 
     return (
         <div className="disease-dashboard hypertension-theme">
+            {/* Mobile Navigation */}
+            <MobileNav user={user} onLogout={handleLogout} />
+
             {/* Sidebar */}
             <aside className="dashboard-sidebar">
                 <div className="sidebar-brand">

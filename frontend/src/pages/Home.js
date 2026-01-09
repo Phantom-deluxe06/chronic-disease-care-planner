@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import MobileNav from '../components/MobileNav';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -48,6 +49,9 @@ const Home = () => {
 
     return (
         <div className="home-dashboard">
+            {/* Mobile Navigation */}
+            <MobileNav user={user} onLogout={handleLogout} />
+
             {/* Sidebar */}
             <aside className="dashboard-sidebar">
                 <div className="sidebar-brand">
