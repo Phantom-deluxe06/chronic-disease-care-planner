@@ -14,6 +14,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 # ==================== GEMINI AI CONFIGURATION ====================
+# Load environment variables from .env file if present
+from dotenv import load_dotenv
+load_dotenv()
+
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 gemini_model = None
 
@@ -27,7 +31,7 @@ def initialize_gemini():
     try:
         import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
-        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        gemini_model = genai.GenerativeModel('gemini-2.0-flash-lite')
         logger.info("Gemini AI initialized successfully")
         return gemini_model
     except Exception as e:
