@@ -8,17 +8,18 @@
 // For a real device on the same network, use your computer's local IP address
 
 const getApiBaseUrl = () => {
+    // Check if running in production (Vercel)
+    const isProduction = window.location.hostname !== 'localhost';
+
     // Check if running in Capacitor/native app
     const isNative = window.Capacitor !== undefined;
 
-    if (isNative) {
-        // For Android emulator: 10.0.2.2 points to host machine's localhost
-        // For real device: Replace with your computer's IP (e.g., 192.168.1.x)
-        // For production: Replace with your deployed backend URL
-        return 'http://10.12.2.110:8000';
+    if (isProduction || isNative) {
+        // Production: Use deployed Render backend
+        return 'https://healthbuddy-backend-fdum.onrender.com';
     }
 
-    // Web development
+    // Local development
     return 'http://localhost:8000';
 };
 

@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import DiseaseModal from '../components/DiseaseModal';
+import { apiUrl } from '../config/api';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -118,7 +119,7 @@ const Signup = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/signup', {
+            const response = await fetch(apiUrl('/signup'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
