@@ -50,7 +50,7 @@ const MobileNav = ({ user, onLogout }) => {
                     <span className="hamburger-line"></span>
                 </button>
                 <div className="mobile-brand">
-                    <span className="brand-icon">💚</span>
+                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
                     <span className="brand-text">HealthBuddy</span>
                 </div>
                 <div className="mobile-header-spacer"></div>
@@ -66,7 +66,7 @@ const MobileNav = ({ user, onLogout }) => {
             <nav className={`mobile-nav-drawer ${isOpen ? 'open' : ''}`}>
                 <div className="drawer-header">
                     <div className="drawer-brand">
-                        <span className="brand-icon">💚</span>
+                        <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
                         <span className="brand-text">HealthBuddy</span>
                     </div>
                     <button

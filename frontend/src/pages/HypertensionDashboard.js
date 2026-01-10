@@ -359,7 +359,7 @@ const HypertensionDashboard = () => {
             {/* Sidebar */}
             <aside className="dashboard-sidebar">
                 <div className="sidebar-brand">
-                    <span className="brand-icon">💚</span>
+                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
                     <span className="brand-text">HealthBuddy</span>
                 </div>
 

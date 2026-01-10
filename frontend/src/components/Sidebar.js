@@ -27,8 +27,8 @@ const Sidebar = ({ user }) => {
         <aside className="sidebar">
             <div className="sidebar-header">
                 <div className="sidebar-logo">
-                    <span className="logo-icon">💚</span>
-                    <span className="logo-text">CarePlanner</span>
+                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
+                    <span className="logo-text">HealthBuddy</span>
                 </div>
             </div>
 
