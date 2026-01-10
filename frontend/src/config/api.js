@@ -8,18 +8,23 @@
 // For a real device on the same network, use your computer's local IP address
 
 const getApiBaseUrl = () => {
+    // Multiple checks to detect if running in Capacitor/native app
+    const isCapacitor = window.Capacitor !== undefined;
+    const isNativeApp = navigator.userAgent.includes('CapacitorApp') ||
+        document.URL.startsWith('capacitor://') ||
+        document.URL.startsWith('ionic://') ||
+        document.URL.startsWith('file://');
+
     // Check if running in production (Vercel)
-    const isProduction = window.location.hostname !== 'localhost';
+    const isProduction = window.location.hostname !== 'localhost' &&
+        window.location.hostname !== '127.0.0.1';
 
-    // Check if running in Capacitor/native app
-    const isNative = window.Capacitor !== undefined;
-
-    if (isProduction || isNative) {
-        // Production: Use deployed Render backend
+    // Always use deployed backend for native apps and production
+    if (isCapacitor || isNativeApp || isProduction) {
         return 'https://healthbuddy-backend-fdum.onrender.com';
     }
 
-    // Local development
+    // Local development only
     return 'http://localhost:8000';
 };
 
