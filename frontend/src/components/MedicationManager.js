@@ -4,12 +4,15 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { FiUpload, FiPlus, FiX, FiTrash2 } from 'react-icons/fi';
 import { apiUrl } from '../config/api';
+import PrescriptionUploadModal from './PrescriptionUploadModal';
 
 const MedicationManager = ({ token }) => {
     const [medications, setMedications] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
 
     // New medication form
     const [newMed, setNewMed] = useState({
@@ -70,6 +73,31 @@ const MedicationManager = ({ token }) => {
         }
     };
 
+    const handlePrescriptionDetected = async (detectedMeds) => {
+        // Add each detected medication
+        for (const med of detectedMeds) {
+            try {
+                await fetch(apiUrl('/medications'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name: med.name,
+                        dosage: med.dosage || '',
+                        frequency: med.frequency || 'daily',
+                        times_of_day: med.times_of_day || ['08:00'],
+                        notes: med.instructions || ''
+                    })
+                });
+            } catch (err) {
+                console.error('Failed to add medication:', err);
+            }
+        }
+        fetchMedications();
+    };
+
     const logIntake = async (medicationId, scheduledTime, taken = true) => {
         try {
             await fetch(apiUrl('/medications/log'), {
@@ -87,6 +115,25 @@ const MedicationManager = ({ token }) => {
             fetchMedications();
         } catch (err) {
             console.error('Failed to log medication intake:', err);
+        }
+    };
+
+    const deleteMedication = async (medicationId) => {
+        if (!window.confirm('Are you sure you want to delete this medication?')) {
+            return;
+        }
+        try {
+            const response = await fetch(apiUrl(`/medications/${medicationId}`), {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                fetchMedications();
+            }
+        } catch (err) {
+            console.error('Failed to delete medication:', err);
         }
     };
 
@@ -114,12 +161,20 @@ const MedicationManager = ({ token }) => {
         <div className="medication-manager">
             <div className="med-header">
                 <h3>💊 Medications</h3>
-                <button
-                    className="add-med-btn"
-                    onClick={() => setShowAddForm(!showAddForm)}
-                >
-                    {showAddForm ? '✕ Cancel' : '+ Add Medication'}
-                </button>
+                <div className="med-header-buttons">
+                    <button
+                        className="upload-prescription-btn"
+                        onClick={() => setShowPrescriptionModal(true)}
+                    >
+                        <FiUpload /> Upload Prescription
+                    </button>
+                    <button
+                        className="add-med-btn"
+                        onClick={() => setShowAddForm(!showAddForm)}
+                    >
+                        {showAddForm ? <><FiX /> Cancel</> : <><FiPlus /> Add Medication</>}
+                    </button>
+                </div>
             </div>
 
             <div className="med-warning">
@@ -238,12 +293,28 @@ const MedicationManager = ({ token }) => {
                                     </div>
                                 ))}
                             </div>
+                            <button
+                                className="med-delete-btn"
+                                onClick={() => deleteMedication(med.id)}
+                                title="Delete medication"
+                            >
+                                <FiTrash2 />
+                            </button>
                         </div>
                     ))
                 )}
             </div>
+
+            {/* Prescription Upload Modal */}
+            <PrescriptionUploadModal
+                isOpen={showPrescriptionModal}
+                onClose={() => setShowPrescriptionModal(false)}
+                onMedicationsDetected={handlePrescriptionDetected}
+                token={token}
+            />
         </div>
     );
 };
 
 export default MedicationManager;
+

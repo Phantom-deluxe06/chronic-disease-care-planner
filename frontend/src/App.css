@@ -4236,6 +4236,10 @@ body {
   max-width: 600px;
 }
 
+.food-analysis-modal .modal-header h2 {
+  color: white !important;
+}
+
 .meal-type-tabs {
   display: flex;
   gap: var(--spacing-sm);
@@ -4317,6 +4321,11 @@ body {
   align-items: center;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
+  color: white;
+}
+
+.risk-label {
+  color: white;
 }
 
 .risk-level {
@@ -5153,6 +5162,8 @@ body {
   /* Firefox */
   -ms-overflow-style: none;
   /* IE and Edge */
+  position: relative;
+  z-index: 10;
 }
 
 .dashboard-tabs::-webkit-scrollbar {
@@ -5186,6 +5197,8 @@ body {
   animation: fadeIn 0.3s ease;
   background: transparent;
   color: white;
+  position: relative;
+  z-index: 1;
 }
 
 /* Section Intro for tab content */
@@ -7400,4 +7413,1770 @@ body {
   object-fit: contain;
   border-radius: 6px;
   flex-shrink: 0;
+}
+
+/* ==================== AI CHATBOT ==================== */
+.chatbot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: var(--font-sans);
+}
+
+/* Floating Action Button */
+.chatbot-fab {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.chatbot-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(16, 185, 129, 0.5);
+}
+
+.chatbot-fab.active {
+  background: var(--gray-700);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.fab-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.chatbot-fab.active .fab-icon {
+  transform: rotate(90deg);
+}
+
+.fab-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-400);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+/* Chat Popup */
+.chatbot-popup {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 380px;
+  max-height: 550px;
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Chat Header */
+.chatbot-header {
+  background: var(--gradient-primary);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.chatbot-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-avatar {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.chatbot-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chatbot-status {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.chatbot-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chatbot-action-btn,
+.chatbot-close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.chatbot-action-btn:hover,
+.chatbot-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Messages Area */
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  background: var(--gray-50);
+}
+
+.chatbot-message {
+  display: flex;
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatbot-message.user {
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--primary-100);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.chatbot-message.assistant .message-bubble {
+  background: white;
+  color: var(--gray-800);
+  border: 1px solid var(--gray-200);
+  border-bottom-left-radius: 4px;
+}
+
+.chatbot-message.user .message-bubble {
+  background: var(--gradient-primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message-bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Loading Animation */
+.message-bubble.loading {
+  padding: 16px 20px;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: var(--gray-400);
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* Quick Suggestions */
+.chatbot-suggestions {
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: white;
+  border-top: 1px solid var(--gray-100);
+}
+
+.suggestion-chip {
+  padding: 6px 12px;
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-200);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.suggestion-chip:hover {
+  background: var(--primary-100);
+  border-color: var(--primary-300);
+}
+
+/* Input Form */
+.chatbot-input-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border-top: 1px solid var(--gray-200);
+}
+
+.chatbot-input-form input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: 24px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chatbot-input-form input:focus {
+  border-color: var(--primary-400);
+}
+
+.chatbot-input-form input::placeholder {
+  color: var(--gray-400);
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-btn svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+/* Disclaimer */
+.chatbot-disclaimer {
+  padding: 8px;
+  background: var(--gray-100);
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--gray-500);
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .chatbot-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .chatbot-fab {
+    width: 54px;
+    height: 54px;
+  }
+
+  .chatbot-popup {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  }
+
+  .chatbot-messages {
+    max-height: calc(80vh - 200px);
+  }
+}
+
+/* ==================== NUTRITION DASHBOARD ==================== */
+.nutrition-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.nutrition-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nutrition-card .card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.nutrition-card .card-header .card-icon {
+  font-size: 1.25rem;
+  color: var(--primary-400);
+}
+
+.nutrition-card .card-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+/* Calorie Summary */
+.calorie-chart-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.calorie-ring {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  min-width: 160px;
+  min-height: 160px;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.calorie-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.calorie-center .calorie-number {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.calorie-center .calorie-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.calorie-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.calorie-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+}
+
+.calorie-item .label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.calorie-item .value {
+  font-weight: 600;
+  color: white;
+}
+
+.calorie-item.consumed .value {
+  color: #ef4444;
+}
+
+.calorie-item.burned .value {
+  color: var(--primary-400);
+}
+
+.calorie-item.remaining .value {
+  color: var(--primary-400);
+  font-size: 1.1rem;
+}
+
+.calorie-progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.calorie-progress-bar .progress-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  text-align: center;
+  display: block;
+}
+
+/* Macros Card */
+.macros-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.macro-item .macro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.macro-item .macro-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.macro-item .macro-values {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.macro-bar {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.macro-bar .macro-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+/* Weekly Trend */
+.chart-container {
+  margin: 16px 0;
+}
+
+.trend-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.trend-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.trend-legend .legend-item .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.trend-legend .legend-item .dot.dashed {
+  border: 2px dashed;
+  background: transparent !important;
+}
+
+/* Meals Card */
+.meals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meal-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  transition: background 0.2s;
+}
+
+.meal-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.meal-item .meal-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-400);
+  font-size: 1.2rem;
+}
+
+.meal-item .meal-info {
+  flex: 1;
+}
+
+.meal-item .meal-name {
+  display: block;
+  font-weight: 600;
+  color: white;
+}
+
+.meal-item .meal-items {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.meal-item .meal-calories {
+  text-align: right;
+}
+
+.meal-item .calories-value {
+  display: block;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.meal-item .calories-unit {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ==================== WORKOUT ANALYTICS ==================== */
+.workout-analytics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.workout-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-100);
+}
+
+.workout-card .card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.workout-card .card-header .card-icon {
+  font-size: 1.25rem;
+  color: var(--primary-400);
+}
+
+.workout-card .card-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+/* Weekly Progress */
+.progress-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.progress-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.progress-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-ring .progress-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.progress-ring .progress-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.progress-ring .progress-unit {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.progress-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-item .detail-icon {
+  font-size: 1.2rem;
+  color: var(--primary-400);
+}
+
+.detail-item .detail-icon.streak {
+  color: var(--accent-orange);
+}
+
+.detail-item .detail-value {
+  display: block;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.detail-item .detail-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.weekly-bar {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.weekly-bar .bar-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+.bar-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  display: block;
+}
+
+/* Activity Heatmap */
+.heatmap-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.heatmap-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.heatmap-day .day-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.heatmap-day .day-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.heatmap-day .day-dot.active {
+  background: var(--primary-500);
+  color: white;
+}
+
+.heatmap-day .day-minutes {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.heatmap-summary {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+}
+
+/* Activity Breakdown */
+.breakdown-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.pie-container {
+  flex: 1;
+}
+
+.breakdown-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.breakdown-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breakdown-legend .legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.breakdown-legend .legend-name {
+  flex: 1;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.breakdown-legend .legend-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* Quick Log Form */
+.quick-log .log-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.activity-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.activity-type-btn:hover {
+  border-color: var(--activity-color, var(--primary-500));
+  color: white;
+}
+
+.activity-type-btn.active {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--primary-500);
+  color: var(--primary-400);
+}
+
+.activity-type-btn svg {
+  font-size: 1.5rem;
+}
+
+.quick-log .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.quick-log .form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+.quick-log .form-group input,
+.quick-log .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+
+.quick-log .form-group select option {
+  background: #1f2937;
+  color: white;
+}
+
+.quick-log .submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-log .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.quick-log .submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+  .nutrition-dashboard,
+  .workout-analytics {
+    grid-template-columns: 1fr;
+  }
+
+  .calorie-chart-container,
+  .progress-stats,
+  .breakdown-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .calorie-breakdown,
+  .progress-details,
+  .breakdown-legend {
+    width: 100%;
+  }
+
+  .activity-types {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==================== PRESCRIPTION & FOOD IMAGE MODALS ==================== */
+
+/* Food Action Buttons */
+.food-action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.scan-food-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+.scan-food-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+}
+
+/* Med Header Buttons */
+.med-header-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.upload-prescription-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-prescription-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Upload Dropzone */
+.upload-section {
+  padding: 20px;
+}
+
+.upload-dropzone {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.02);
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-dropzone:hover {
+  border-color: var(--primary-500);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-placeholder .upload-icon {
+  font-size: 48px;
+  color: var(--primary-400);
+}
+
+.upload-placeholder p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.upload-placeholder span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.upload-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: var(--radius-lg);
+}
+
+.upload-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.upload-loading .spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.upload-loading p {
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.upload-loading span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.upload-tips {
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+}
+
+.upload-tips h4 {
+  font-size: 0.9rem;
+  color: white;
+  margin: 0 0 12px 0;
+}
+
+.upload-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.upload-tips li {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 4px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.upload-tips li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--primary-400);
+}
+
+/* Detected Medications */
+.detected-medications {
+  padding: 20px;
+}
+
+.detection-success {
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.detection-success .success-icon {
+  font-size: 48px;
+  color: var(--primary-400);
+  margin-bottom: 12px;
+}
+
+.detection-success h3 {
+  font-size: 1.25rem;
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.detection-success p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.detected-med-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detected-med-card .med-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detected-med-card .med-name {
+  font-weight: 600;
+  color: white;
+  font-size: 1rem;
+}
+
+.detected-med-card .med-dosage {
+  color: var(--primary-400);
+  font-size: 0.9rem;
+}
+
+.detected-med-card .med-frequency {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.detected-med-card .med-instructions {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.detected-med-card .med-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.detected-med-card .med-actions button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.detected-med-card .med-actions button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.med-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.med-edit-form input,
+.med-edit-form select {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 0.9rem;
+}
+
+.med-edit-form .done-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: var(--primary-500);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Food Image Analysis Results */
+.food-image-modal {
+  max-width: 600px;
+}
+
+.food-preview-small {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.food-preview-small img {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 8px;
+}
+
+.food-preview-small p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.nutrition-summary-card,
+.detected-foods-card,
+.health-assessment-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.nutrition-summary-card h3,
+.detected-foods-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: white;
+  margin: 0 0 16px 0;
+}
+
+.nutrition-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.nutr-item {
+  text-align: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+}
+
+.nutr-item.calories {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.nutr-item .nutr-value {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.nutr-item .nutr-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.foods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+}
+
+.food-item .food-name {
+  font-weight: 600;
+  color: white;
+  flex: 1;
+}
+
+.food-item .food-portion {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 12px;
+}
+
+.food-item .food-cals {
+  font-weight: 600;
+  color: var(--primary-400);
+}
+
+.health-assessment-card.suitable {
+  border-left: 4px solid var(--primary-500);
+}
+
+.health-assessment-card.caution {
+  border-left: 4px solid #f59e0b;
+}
+
+.assessment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.assessment-header .rating {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.assessment-header .suitable-badge {
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+}
+
+.assessment-list {
+  margin-bottom: 12px;
+}
+
+.assessment-list h4 {
+  font-size: 0.9rem;
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.assessment-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.assessment-list li {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 4px 0;
+}
+
+.assessment-list.positives li {
+  color: #86efac;
+}
+
+.assessment-list.concerns li {
+  color: #fcd34d;
+}
+
+.assessment-list.recommendations li {
+  color: #93c5fd;
+}
+
+/* ==================== MEDICATION EDIT/DELETE ==================== */
+
+.medication-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.medication-card .med-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.med-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.med-action-btn.edit-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.med-action-btn.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.med-action-btn.delete-btn {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.med-action-btn.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.med-action-btn.done-btn {
+  background: var(--primary-500);
+  color: white;
+}
+
+.med-action-btn.done-btn:hover {
+  background: var(--primary-600);
+}
+
+/* Dashboard Tabs fix - no overlay */
+.dashboard-tabs {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  padding: 12px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Modal error styling - green theme */
+.modal-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg);
+  color: #86efac;
+  font-size: 0.9rem;
+  margin: 16px;
+  line-height: 1.5;
+}
+
+.modal-error svg {
+  flex-shrink: 0;
+  color: var(--primary-400);
+}
+
+/* Prescription Modal specific styles */
+.prescription-modal {
+  width: 90%;
+  max-width: 500px;
+}
+
+/* Food Image Modal specific styles */
+.food-image-modal {
+  width: 90%;
+  max-width: 550px;
+}
+
+/* Modal disclaimer styling */
+.modal-disclaimer {
+  padding: 12px 20px;
+  background: rgba(245, 158, 11, 0.1);
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+  font-size: 0.8rem;
+  text-align: center;
+  border-radius: 0 0 20px 20px;
+}
+
+/* Simple trash bin delete button for medications */
+.med-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #f87171;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.med-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+}
+
+.med-delete-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==================== AI HEALTH INSIGHTS ==================== */
+
+.ai-insights-section {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.ai-insights-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ai-insights-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.ai-insights-header h4 svg {
+  color: var(--primary-400);
+}
+
+.get-insights-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--primary-500);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.get-insights-btn:hover:not(:disabled) {
+  background: var(--primary-600);
+}
+
+.get-insights-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.get-insights-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+.ai-insights-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insight-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border-left: 3px solid var(--primary-400);
+}
+
+.insight-card h5 {
+  color: white;
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+}
+
+.insight-card .status-text {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.insight-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.insight-card li {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.insight-card li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary-400);
+}
+
+.insight-card.risk-card {
+  border-left-color: #f59e0b;
+}
+
+.insight-card.risk-card li::before {
+  color: #f59e0b;
+}
+
+.insight-card.recommendations-card {
+  border-left-color: #3b82f6;
+}
+
+.insight-card.recommendations-card li::before {
+  color: #3b82f6;
+}
+
+.insight-card.positive-card {
+  border-left-color: #22c55e;
+}
+
+.insight-card.positive-card li::before {
+  color: #22c55e;
+}
+
+.ai-insights-error {
+  padding: 16px;
+  background: rgba(245, 158, 11, 0.15);
+  border-radius: var(--radius-lg);
+  color: #fcd34d;
+  text-align: center;
+}
+
+.ai-insights-placeholder {
+  padding: 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ai-insights-placeholder p {
+  margin: 0;
+  font-size: 0.9rem;
 }

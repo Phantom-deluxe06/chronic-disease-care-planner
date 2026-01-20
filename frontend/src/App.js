@@ -13,15 +13,21 @@ import HypertensionDashboard from './pages/HypertensionDashboard';
 import HealthLogs from './pages/HealthLogs';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import ChatBot from './components/ChatBot';
 import './App.css';
 
-// Protected Route wrapper
+// Protected Route wrapper with ChatBot
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   if (!token) {
     return <Navigate to="/login" replace />;
   }
-  return children;
+  return (
+    <>
+      {children}
+      <ChatBot />
+    </>
+  );
 };
 
 function App() {

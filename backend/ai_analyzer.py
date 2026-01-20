@@ -24,18 +24,39 @@ gemini_model = None
 def initialize_gemini():
     """Initialize Gemini AI model"""
     global gemini_model
+    
+    # Debug: Log Python info
+    import sys
+    logger.info(f"Python executable: {sys.executable}")
+    logger.info(f"GEMINI_API_KEY present: {bool(GEMINI_API_KEY)}")
+    
     if not GEMINI_API_KEY:
         logger.warning("GEMINI_API_KEY not set. AI features will use fallback static data.")
         return None
     
     try:
+        # Try importing the package
+        logger.info("Attempting to import google.generativeai...")
         import google.generativeai as genai
+        logger.info("google.generativeai imported successfully")
+        
         genai.configure(api_key=GEMINI_API_KEY)
-        gemini_model = genai.GenerativeModel('gemini-2.0-flash-lite')
-        logger.info("Gemini AI initialized successfully")
+        gemini_model = genai.GenerativeModel('gemini-2.5-flash')
+        logger.info("Gemini AI initialized successfully with model gemini-2.5-flash")
         return gemini_model
+    except ImportError as ie:
+        logger.error(f"ImportError - google.generativeai not found: {ie}")
+        logger.error("Install with: pip install google-generativeai")
+        # Try to show what's installed
+        try:
+            import pkg_resources
+            installed = [f"{p.key}=={p.version}" for p in pkg_resources.working_set if 'google' in p.key.lower()]
+            logger.info(f"Installed google packages: {installed}")
+        except:
+            pass
+        return None
     except Exception as e:
-        logger.error(f"Failed to initialize Gemini AI: {e}")
+        logger.error(f"Failed to initialize Gemini AI: {type(e).__name__}: {e}")
         return None
 
 # Initialize on module load
@@ -778,3 +799,447 @@ def generate_improvement_suggestions(diet: Dict, exercise: Dict,
         suggestions.append("👍 You're doing well overall! Continue following your diabetes care plan.")
     
     return suggestions
+
+
+# ==================== HEALTH CHATBOT ====================
+
+def chat_with_health_buddy(
+    message: str,
+    user_context: Optional[Dict[str, Any]] = None,
+    conversation_history: Optional[List[Dict[str, str]]] = None
+) -> Dict[str, Any]:
+    """
+    AI-powered health chatbot using Gemini for chronic disease management.
+    Provides personalized health advice while maintaining safety disclaimers.
+    
+    Args:
+        message: User's message/question
+        user_context: Optional user health data (diseases, age, etc.)
+        conversation_history: Optional list of previous messages for context
+    
+    Returns:
+        Dict with response, suggestions, and metadata
+    """
+    global gemini_model
+    
+    if not gemini_model:
+        initialize_gemini()
+        if not gemini_model:
+            return {
+                "response": "I'm sorry, the AI service is currently unavailable. Please try again later.",
+                "success": False,
+                "error": "Gemini AI not initialized"
+            }
+    
+    # Build context from user data
+    context_info = ""
+    if user_context:
+        diseases = user_context.get("diseases", [])
+        age = user_context.get("age", "unknown")
+        name = user_context.get("name", "there")
+        
+        if diseases:
+            context_info = f"""
+User Context:
+- Name: {name}
+- Age: {age}
+- Health Conditions: {', '.join(diseases)}
+"""
+    
+    # Build conversation history context
+    history_context = ""
+    if conversation_history and len(conversation_history) > 0:
+        history_context = "\nPrevious conversation:\n"
+        for msg in conversation_history[-5:]:  # Last 5 messages for context
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            history_context += f"{role.upper()}: {content}\n"
+    
+    system_prompt = f"""You are Health Buddy, a friendly and knowledgeable AI health assistant for people managing chronic diseases like Type-2 Diabetes and Hypertension.
+
+{context_info}
+{history_context}
+
+GUIDELINES:
+1. Be warm, empathetic, and encouraging
+2. Provide evidence-based health information
+3. Always recommend consulting healthcare providers for medical decisions
+4. Never diagnose conditions or prescribe medications
+5. Focus on lifestyle, diet, exercise, and general wellness advice
+6. For diabetes: Focus on blood sugar management, carbs, glycemic index
+7. For hypertension: Focus on sodium, DASH diet, stress management, BP monitoring
+8. Keep responses concise (2-3 paragraphs max)
+9. Use emojis sparingly to be friendly 💚
+10. If asked about emergencies, advise to call emergency services immediately
+
+IMPORTANT: Always end with a brief safety reminder when giving health advice.
+
+User's message: {message}
+
+Respond naturally and helpfully:"""
+
+    try:
+        response = gemini_model.generate_content(system_prompt)
+        response_text = response.text.strip()
+        
+        # Generate quick reply suggestions based on context
+        suggestions = generate_chat_suggestions(message, user_context)
+        
+        return {
+            "response": response_text,
+            "success": True,
+            "suggestions": suggestions,
+            "disclaimer": "⚠️ I'm an AI assistant. This is not medical advice. Always consult your healthcare provider for medical decisions."
+        }
+        
+    except Exception as e:
+        logger.error(f"Chatbot error: {e}")
+        return {
+            "response": "I apologize, but I encountered an error processing your request. Please try again.",
+            "success": False,
+            "error": str(e)
+        }
+
+
+def generate_chat_suggestions(message: str, user_context: Optional[Dict[str, Any]] = None) -> List[str]:
+    """Generate quick reply suggestions based on the conversation context"""
+    suggestions = []
+    message_lower = message.lower()
+    
+    diseases = user_context.get("diseases", []) if user_context else []
+    
+    # Context-aware suggestions
+    if "food" in message_lower or "eat" in message_lower or "diet" in message_lower:
+        suggestions = [
+            "What's a healthy breakfast?",
+            "Can I eat fruits?",
+            "Show me low-sodium options"
+        ]
+    elif "sugar" in message_lower or "glucose" in message_lower:
+        suggestions = [
+            "How to lower blood sugar?",
+            "Best time to check glucose?",
+            "What affects blood sugar?"
+        ]
+    elif "blood pressure" in message_lower or "bp" in message_lower:
+        suggestions = [
+            "How to reduce BP naturally?",
+            "DASH diet tips",
+            "Stress management techniques"
+        ]
+    elif "exercise" in message_lower or "activity" in message_lower:
+        suggestions = [
+            "Best exercises for me?",
+            "How much should I walk?",
+            "Safe workout tips"
+        ]
+    elif "medication" in message_lower or "medicine" in message_lower:
+        suggestions = [
+            "Medication reminders",
+            "Side effects info",
+            "Talk to my doctor"
+        ]
+    else:
+        # Default suggestions based on user's conditions
+        if "diabetes" in diseases:
+            suggestions = [
+                "Blood sugar tips",
+                "Healthy meal ideas",
+                "Exercise recommendations"
+            ]
+        elif "hypertension" in diseases:
+            suggestions = [
+                "Lower my BP naturally",
+                "DASH diet explained",
+                "Stress relief tips"
+            ]
+        else:
+            suggestions = [
+                "Healthy lifestyle tips",
+                "Diet recommendations",
+                "Exercise guidance"
+            ]
+    
+    return suggestions[:3]  # Return max 3 suggestions
+
+
+def generate_health_insights(user_id: int, diseases: list, health_data: list, 
+                              glucose_logs: list, bp_logs: list, hba1c: dict) -> Dict[str, Any]:
+    """
+    Generate personalized AI health insights based on user's health data.
+    """
+    global gemini_model
+    
+    if not gemini_model:
+        return {
+            "overall_status": "Your health data looks stable. Continue monitoring regularly.",
+            "recommendations": [
+                "Log your blood sugar readings daily",
+                "Stay active with at least 30 minutes of exercise",
+                "Maintain a balanced diet low in processed sugars"
+            ],
+            "risk_areas": [],
+            "positive_trends": ["Regular health monitoring is a great habit!"]
+        }
+    
+    try:
+        # Build context from health data
+        context_parts = []
+        
+        if diseases:
+            context_parts.append(f"User has: {', '.join(diseases)}")
+        
+        if glucose_logs:
+            glucose_values = [log.get('value', 0) for log in glucose_logs[:10]]
+            if glucose_values:
+                avg_glucose = sum(glucose_values) / len(glucose_values)
+                context_parts.append(f"Average blood glucose (last 10 readings): {avg_glucose:.0f} mg/dL")
+        
+        if bp_logs:
+            bp_readings = [(log.get('value', 0), log.get('value_secondary', 0)) for log in bp_logs[:10]]
+            if bp_readings:
+                avg_sys = sum(bp[0] for bp in bp_readings) / len(bp_readings)
+                avg_dia = sum(bp[1] for bp in bp_readings) / len(bp_readings)
+                context_parts.append(f"Average blood pressure (last 10 readings): {avg_sys:.0f}/{avg_dia:.0f} mmHg")
+        
+        if hba1c:
+            context_parts.append(f"Last HbA1c: {hba1c.get('value', 'N/A')}%")
+        
+        health_context = "\n".join(context_parts) if context_parts else "No recent health data available."
+        
+        prompt = f"""Analyze this patient's health data and provide personalized insights.
+
+Patient Data:
+{health_context}
+
+Provide a JSON response with this exact structure (no markdown, just raw JSON):
+{{
+    "overall_status": "<1-2 sentence summary of overall health status>",
+    "risk_areas": ["<risk area 1>", "<risk area 2>"],
+    "recommendations": ["<specific recommendation 1>", "<specific recommendation 2>", "<specific recommendation 3>"],
+    "positive_trends": ["<positive trend 1>", "<positive trend 2>"]
+}}
+
+If some data is missing, provide general recommendations for someone with {', '.join(diseases) if diseases else 'chronic conditions'}.
+Keep recommendations practical and actionable. Maximum 3 items per array."""
+
+        response = gemini_model.generate_content(prompt)
+        response_text = response.text.strip()
+        
+        # Clean up response
+        if response_text.startswith("```json"):
+            response_text = response_text[7:]
+        if response_text.startswith("```"):
+            response_text = response_text[3:]
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+        
+        result = json.loads(response_text.strip())
+        return result
+        
+    except Exception as e:
+        error_str = str(e).lower()
+        logger.error(f"Health insights generation failed: {e}")
+        if "429" in str(e) or "quota" in error_str or "exceeded" in error_str:
+            return {"error": "AI service is busy. Please wait a moment and try again."}
+        return {
+            "overall_status": "Based on your logged data, continue monitoring your health metrics regularly.",
+            "recommendations": [
+                "Log your readings consistently for better tracking",
+                "Consult with your healthcare provider regularly",
+                "Maintain a healthy lifestyle with proper diet and exercise"
+            ],
+            "risk_areas": [],
+            "positive_trends": ["You're actively tracking your health - keep it up!"]
+        }
+
+
+# ==================== IMAGE ANALYSIS FUNCTIONS ====================
+
+def analyze_prescription_image(image_data: bytes) -> Optional[Dict[str, Any]]:
+    """
+    Analyze a prescription image using Gemini Vision API.
+    Detects medications, dosages, and frequencies from the prescription.
+    
+    Args:
+        image_data: Raw bytes of the prescription image
+        
+    Returns:
+        Dictionary with detected medications or None if analysis fails
+    """
+    global gemini_model
+    
+    if not gemini_model:
+        initialize_gemini()
+        if not gemini_model:
+            return None
+    
+    try:
+        import google.generativeai as genai
+        import base64
+        
+        # Create image part for vision model
+        image_part = {
+            "mime_type": "image/jpeg",
+            "data": base64.b64encode(image_data).decode('utf-8')
+        }
+        
+        prompt = """Analyze this prescription image and extract all medications listed.
+
+For each medication found, extract:
+1. Medication name (generic or brand name)
+2. Dosage (e.g., 500mg, 10mg)
+3. Frequency (how often to take - once daily, twice daily, etc.)
+4. Instructions (e.g., take with food, before meals)
+
+Return a JSON object with this exact structure (no markdown, just raw JSON):
+{
+    "medications": [
+        {
+            "name": "<medication name>",
+            "dosage": "<dosage>",
+            "frequency": "<daily/twice_daily/three_times/as_needed>",
+            "times_of_day": ["<suggested time in 24h format>"],
+            "instructions": "<any special instructions>"
+        }
+    ],
+    "doctor_name": "<doctor name if visible>",
+    "date": "<prescription date if visible>",
+    "notes": "<any additional notes from prescription>"
+}
+
+If no medications can be detected, return:
+{"medications": [], "error": "Could not detect medications from this image"}"""
+
+        response = gemini_model.generate_content([prompt, image_part])
+        response_text = response.text.strip()
+        
+        # Clean up response
+        if response_text.startswith("```json"):
+            response_text = response_text[7:]
+        if response_text.startswith("```"):
+            response_text = response_text[3:]
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+        
+        result = json.loads(response_text.strip())
+        logger.info(f"Prescription analysis detected {len(result.get('medications', []))} medications")
+        return result
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse prescription analysis response: {e}")
+        return {"medications": [], "error": "Failed to parse AI response"}
+    except Exception as e:
+        error_str = str(e).lower()
+        logger.error(f"Prescription analysis failed: {type(e).__name__}: {e}")
+        # Check for quota/rate limit errors
+        if "429" in str(e) or "quota" in error_str or "exceeded" in error_str or "rate" in error_str:
+            return {"medications": [], "error": "AI service is busy. Please wait a moment and try again."}
+        return {"medications": [], "error": "Analysis failed. Please try again."}
+
+
+def analyze_food_image(image_data: bytes, condition: str = "diabetes") -> Optional[Dict[str, Any]]:
+    """
+    Analyze a food plate image using Gemini Vision API.
+    Detects food items and provides nutritional analysis.
+    
+    Args:
+        image_data: Raw bytes of the food plate image
+        condition: User's health condition (diabetes/hypertension)
+        
+    Returns:
+        Dictionary with nutritional analysis or None if analysis fails
+    """
+    global gemini_model
+    
+    if not gemini_model:
+        initialize_gemini()
+        if not gemini_model:
+            return None
+    
+    try:
+        import google.generativeai as genai
+        import base64
+        
+        # Create image part for vision model
+        image_part = {
+            "mime_type": "image/jpeg",
+            "data": base64.b64encode(image_data).decode('utf-8')
+        }
+        
+        condition_context = ""
+        if condition == "diabetes":
+            condition_context = "This person has Type 2 Diabetes. Focus on glycemic index, carbohydrates, and sugar content."
+        elif condition == "hypertension":
+            condition_context = "This person has Hypertension. Focus on sodium content and heart-healthy aspects."
+        
+        prompt = f"""Analyze this food plate image and provide detailed nutritional information.
+
+{condition_context}
+
+Identify all food items visible on the plate and estimate their nutritional content.
+
+Return a JSON object with this exact structure (no markdown, just raw JSON):
+{{
+    "detected_foods": [
+        {{
+            "name": "<food item name>",
+            "estimated_portion": "<estimated portion size>",
+            "calories": <estimated calories>,
+            "carbs_g": <grams>,
+            "protein_g": <grams>,
+            "fat_g": <grams>,
+            "fiber_g": <grams>,
+            "sugar_g": <grams>,
+            "sodium_mg": <milligrams>
+        }}
+    ],
+    "total_nutrition": {{
+        "calories": <total calories>,
+        "carbohydrates_g": <total carbs>,
+        "protein_g": <total protein>,
+        "fat_g": <total fat>,
+        "fiber_g": <total fiber>,
+        "sugar_g": <total sugar>,
+        "sodium_mg": <total sodium>,
+        "glycemic_index": <estimated average GI 0-100>
+    }},
+    "health_assessment": {{
+        "suitable_for_condition": <true/false>,
+        "rating": "<Excellent/Good/Moderate/Poor>",
+        "positives": ["<positive aspects>"],
+        "concerns": ["<health concerns>"],
+        "recommendations": ["<suggestions to improve>"]
+    }},
+    "meal_description": "<brief description of the meal>"
+}}
+
+If no food can be detected, return:
+{{"detected_foods": [], "error": "Could not detect food items from this image"}}"""
+
+        response = gemini_model.generate_content([prompt, image_part])
+        response_text = response.text.strip()
+        
+        # Clean up response
+        if response_text.startswith("```json"):
+            response_text = response_text[7:]
+        if response_text.startswith("```"):
+            response_text = response_text[3:]
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+        
+        result = json.loads(response_text.strip())
+        logger.info(f"Food image analysis detected {len(result.get('detected_foods', []))} food items")
+        return result
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse food image analysis response: {e}")
+        return {"detected_foods": [], "error": "Failed to parse AI response"}
+    except Exception as e:
+        error_str = str(e).lower()
+        logger.error(f"Food image analysis failed: {type(e).__name__}: {e}")
+        # Check for quota/rate limit errors
+        if "429" in str(e) or "quota" in error_str or "exceeded" in error_str or "rate" in error_str:
+            return {"detected_foods": [], "error": "AI service is busy. Please wait a moment and try again."}
+        return {"detected_foods": [], "error": "Analysis failed. Please try again."}
+

@@ -44,8 +44,6 @@ const Home = () => {
 
     // Get user's diseases from stored user data
     const userDiseases = user?.diseases || [];
-    const hasDiabetes = userDiseases.includes('diabetes');
-    const hasHypertension = userDiseases.includes('hypertension');
 
     return (
         <div className="home-dashboard">

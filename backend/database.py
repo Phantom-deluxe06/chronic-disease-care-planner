@@ -409,6 +409,20 @@ def get_medication_logs_today(user_id: int) -> list:
         return [dict(row) for row in cursor.fetchall()]
 
 
+def delete_medication(user_id: int, medication_id: int) -> bool:
+    """Delete a medication (soft delete by setting is_active=FALSE)"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """UPDATE medications SET is_active = FALSE 
+               WHERE id = ? AND user_id = ?""",
+            (medication_id, user_id)
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+
 # ==================== APPOINTMENTS & CALENDAR ====================
 
 def init_appointment_tables():

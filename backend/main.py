@@ -40,7 +40,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3002",
         "https://chronic-disease-care-planner.vercel.app",
         "https://*.vercel.app",  # Allow Vercel preview deployments
     ],
@@ -793,6 +797,20 @@ def log_medication_intake(intake: MedicationIntake, current_user: dict = Depends
     }
 
 
+@app.delete("/medications/{medication_id}")
+def delete_medication(medication_id: int, current_user: dict = Depends(get_current_user)):
+    """Delete a medication"""
+    try:
+        success = database.delete_medication(current_user["id"], medication_id)
+        if success:
+            return {"message": "Medication deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Medication not found")
+    except Exception as e:
+        logger.error(f"Failed to delete medication: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ==================== APPOINTMENT ENDPOINTS ====================
 
 @app.post("/appointments")
@@ -904,6 +922,33 @@ def get_weekly_summary(current_user: dict = Depends(get_current_user)):
     return ai_analyzer.generate_weekly_summary(current_user["id"])
 
 
+@app.get("/health/ai-insights")
+def get_ai_health_insights(current_user: dict = Depends(get_current_user)):
+    """Get AI-powered personalized health insights based on user's health data"""
+    try:
+        # Get user's health data
+        diseases = database.get_user_diseases(current_user["id"])
+        health_data = database.get_user_health_data(current_user["id"])
+        glucose_logs = database.get_daily_logs(current_user["id"], "glucose", 30)
+        bp_logs = database.get_daily_logs(current_user["id"], "blood_pressure", 30)
+        hba1c = database.get_last_hba1c(current_user["id"])
+        
+        # Generate AI insights
+        insights = ai_analyzer.generate_health_insights(
+            user_id=current_user["id"],
+            diseases=diseases,
+            health_data=health_data,
+            glucose_logs=glucose_logs,
+            bp_logs=bp_logs,
+            hba1c=hba1c
+        )
+        return insights
+    except Exception as e:
+        logger.error(f"Failed to generate AI health insights: {e}")
+        return {"error": "Could not generate insights. Please try again."}
+
+
+
 # ==================== REMINDERS ENDPOINT ====================
 
 @app.get("/reminders")
@@ -986,4 +1031,121 @@ Yours sincerely,
         """,
         "disclaimer": "⚠️ Please have your doctor sign the letter before travel."
     }
+
+
+# ==================== CHATBOT ENDPOINTS ====================
+
+class ChatMessage(BaseModel):
+    message: str
+    conversation_history: Optional[List[Dict[str, str]]] = None
+
+@app.post("/chat")
+def chat_with_assistant(chat: ChatMessage, current_user: dict = Depends(get_current_user)):
+    """Chat with Health Buddy AI assistant"""
+    # Get user context for personalized responses
+    diseases = database.get_user_diseases(current_user["id"])
+    
+    user_context = {
+        "name": current_user.get("name", "there"),
+        "age": current_user.get("age"),
+        "diseases": diseases
+    }
+    
+    # Call the AI chatbot
+    response = ai_analyzer.chat_with_health_buddy(
+        message=chat.message,
+        user_context=user_context,
+        conversation_history=chat.conversation_history
+    )
+    
+    return response
+
+
+@app.get("/chat/welcome")
+def get_chat_welcome(current_user: dict = Depends(get_current_user)):
+    """Get a personalized welcome message for the chatbot"""
+    diseases = database.get_user_diseases(current_user["id"])
+    name = current_user.get("name", "there")
+    
+    # Personalized greeting based on conditions
+    condition_tips = []
+    if "diabetes" in diseases:
+        condition_tips.append("blood sugar management")
+    if "hypertension" in diseases:
+        condition_tips.append("blood pressure control")
+    
+    tips_text = " and ".join(condition_tips) if condition_tips else "your health journey"
+    
+    return {
+        "welcome_message": f"Hi {name}! 👋 I'm Health Buddy, your AI health assistant. I'm here to help you with {tips_text}. How can I assist you today?",
+        "suggestions": [
+            "What should I eat today?",
+            "Give me health tips",
+            "How can I improve my readings?"
+        ],
+        "disclaimer": "⚠️ I'm an AI assistant. This is not medical advice. Always consult your healthcare provider."
+    }
+
+
+# ==================== IMAGE ANALYSIS ENDPOINTS ====================
+
+from fastapi import UploadFile, File
+
+@app.post("/prescription/analyze")
+async def analyze_prescription(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Analyze a prescription image to detect medications.
+    Upload a prescription photo and get detected medications.
+    """
+    try:
+        # Read the uploaded file
+        contents = await file.read()
+        
+        # Analyze with AI
+        result = ai_analyzer.analyze_prescription_image(contents)
+        
+        if result is None:
+            raise HTTPException(
+                status_code=503,
+                detail="AI analysis service is not available. Please try again later."
+            )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Prescription analysis endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/food/analyze-image")
+async def analyze_food_image_endpoint(
+    file: UploadFile = File(...),
+    condition: str = "diabetes",
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Analyze a food plate image to detect food items and nutritional content.
+    Upload a food photo and get nutritional analysis.
+    """
+    try:
+        # Read the uploaded file
+        contents = await file.read()
+        
+        # Analyze with AI
+        result = ai_analyzer.analyze_food_image(contents, condition)
+        
+        if result is None:
+            raise HTTPException(
+                status_code=503,
+                detail="AI analysis service is not available. Please try again later."
+            )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Food image analysis endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 

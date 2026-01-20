@@ -9,12 +9,14 @@ import { apiUrl } from '../config/api';
 import LogEntryModal from '../components/LogEntryModal';
 import WaterTracker from '../components/WaterTracker';
 import FoodAnalysisModal from '../components/FoodAnalysisModal';
+import FoodImageAnalysisModal from '../components/FoodImageAnalysisModal';
 import MedicationManager from '../components/MedicationManager';
 import WeeklySummary from '../components/WeeklySummary';
 import HealthMonitor from '../components/HealthMonitor';
 import PreventiveCare from '../components/PreventiveCare';
-import ExerciseTracker from '../components/ExerciseTracker';
 import MobileNav from '../components/MobileNav';
+import NutritionDashboard from '../components/NutritionDashboard';
+import WorkoutAnalytics from '../components/WorkoutAnalytics';
 
 const DiabetesDashboard = () => {
     const navigate = useNavigate();
@@ -22,6 +24,7 @@ const DiabetesDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [showLogModal, setShowLogModal] = useState(false);
     const [showFoodModal, setShowFoodModal] = useState(false);
+    const [showFoodImageModal, setShowFoodImageModal] = useState(false);
     const [logType, setLogType] = useState('glucose');
     const [activeTab, setActiveTab] = useState('overview');
 
@@ -271,18 +274,24 @@ const DiabetesDashboard = () => {
                     <div className="tab-content">
                         <div className="section-intro">
                             <h3>🍽️ Food & Diet Tracking</h3>
-                            <p>Log your meals and get AI-powered nutritional analysis with glucose spike risk assessment.</p>
-                            <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
-                                + Log a Meal
-                            </button>
+                            <p>Track your calories, macros, and get AI-powered nutritional analysis.</p>
+                            <div className="food-action-buttons">
+                                <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
+                                    + Log a Meal
+                                </button>
+                                <button className="btn-secondary scan-food-btn" onClick={() => setShowFoodImageModal(true)}>
+                                    📷 Scan Food Plate
+                                </button>
+                            </div>
                         </div>
+                        <NutritionDashboard token={token} />
                     </div>
                 );
 
             case 'exercise':
                 return (
                     <div className="tab-content">
-                        <ExerciseTracker token={token} />
+                        <WorkoutAnalytics token={token} />
                     </div>
                 );
 
@@ -468,8 +477,17 @@ const DiabetesDashboard = () => {
                 onSuccess={handleLogSuccess}
                 token={token}
             />
+
+            {/* Food Image Analysis Modal */}
+            <FoodImageAnalysisModal
+                isOpen={showFoodImageModal}
+                onClose={() => setShowFoodImageModal(false)}
+                token={token}
+                condition="diabetes"
+            />
         </div>
     );
 };
 
 export default DiabetesDashboard;
+

@@ -1,15 +1,18 @@
 /**
  * Health Monitor Component
- * Blood sugar trends, HbA1c tracking, and health alerts
+ * Blood sugar trends, HbA1c tracking, and health alerts with AI insights
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { FiCpu, FiRefreshCw } from 'react-icons/fi';
 
 const HealthMonitor = ({ token }) => {
     const [hba1cData, setHba1cData] = useState(null);
     const [showHba1cForm, setShowHba1cForm] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [aiInsights, setAiInsights] = useState(null);
+    const [loadingAiInsights, setLoadingAiInsights] = useState(false);
 
     const [newHba1c, setNewHba1c] = useState({
         value: '',
@@ -79,6 +82,24 @@ const HealthMonitor = ({ token }) => {
         if (value < 7.0) return '#84cc16';
         if (value < 8.0) return '#f97316';
         return '#ef4444';
+    };
+
+    const fetchAiHealthInsights = async () => {
+        setLoadingAiInsights(true);
+        try {
+            const response = await fetch(apiUrl('/health/ai-insights'), {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setAiInsights(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch AI health insights:', err);
+            setAiInsights({ error: 'Could not load AI insights. Please try again.' });
+        } finally {
+            setLoadingAiInsights(false);
+        }
     };
 
     return (
@@ -196,6 +217,84 @@ const HealthMonitor = ({ token }) => {
                 )}
             </div>
 
+            {/* AI Health Insights Section */}
+            <div className="ai-insights-section">
+                <div className="ai-insights-header">
+                    <h4><FiCpu /> AI Health Insights</h4>
+                    <button
+                        className="get-insights-btn"
+                        onClick={fetchAiHealthInsights}
+                        disabled={loadingAiInsights}
+                    >
+                        {loadingAiInsights ? (
+                            <>
+                                <FiRefreshCw className="spinning" /> Analyzing...
+                            </>
+                        ) : (
+                            <>
+                                <FiCpu /> Get AI Analysis
+                            </>
+                        )}
+                    </button>
+                </div>
+
+                {aiInsights && !aiInsights.error && (
+                    <div className="ai-insights-content">
+                        {aiInsights.overall_status && (
+                            <div className="insight-card status-card">
+                                <h5>Overall Health Status</h5>
+                                <p className="status-text">{aiInsights.overall_status}</p>
+                            </div>
+                        )}
+
+                        {aiInsights.risk_areas && aiInsights.risk_areas.length > 0 && (
+                            <div className="insight-card risk-card">
+                                <h5>⚠️ Areas to Watch</h5>
+                                <ul>
+                                    {aiInsights.risk_areas.map((risk, i) => (
+                                        <li key={i}>{risk}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {aiInsights.recommendations && aiInsights.recommendations.length > 0 && (
+                            <div className="insight-card recommendations-card">
+                                <h5>💡 Personalized Recommendations</h5>
+                                <ul>
+                                    {aiInsights.recommendations.map((rec, i) => (
+                                        <li key={i}>{rec}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {aiInsights.positive_trends && aiInsights.positive_trends.length > 0 && (
+                            <div className="insight-card positive-card">
+                                <h5>✅ Positive Trends</h5>
+                                <ul>
+                                    {aiInsights.positive_trends.map((trend, i) => (
+                                        <li key={i}>{trend}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {aiInsights?.error && (
+                    <div className="ai-insights-error">
+                        {aiInsights.error}
+                    </div>
+                )}
+
+                {!aiInsights && !loadingAiInsights && (
+                    <div className="ai-insights-placeholder">
+                        <p>Click "Get AI Analysis" to receive personalized health insights based on your data.</p>
+                    </div>
+                )}
+            </div>
+
             {/* Testing Reminders */}
             <div className="testing-reminders">
                 <h4>📋 Recommended Tests</h4>
@@ -231,3 +330,4 @@ const HealthMonitor = ({ token }) => {
 };
 
 export default HealthMonitor;
+

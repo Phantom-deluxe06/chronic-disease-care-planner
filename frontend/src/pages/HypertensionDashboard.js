@@ -7,13 +7,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BPEntryModal from '../components/BPEntryModal';
 import HypertensionFoodModal from '../components/HypertensionFoodModal';
+import FoodImageAnalysisModal from '../components/FoodImageAnalysisModal';
 import WaterTracker from '../components/WaterTracker';
 import MedicationManager from '../components/MedicationManager';
-import ExerciseTracker from '../components/ExerciseTracker';
 import StressTracker from '../components/StressTracker';
 import WeeklySummaryBP from '../components/WeeklySummaryBP';
 import { apiUrl } from '../config/api';
 import MobileNav from '../components/MobileNav';
+import NutritionDashboard from '../components/NutritionDashboard';
+import WorkoutAnalytics from '../components/WorkoutAnalytics';
 
 const HypertensionDashboard = () => {
     const navigate = useNavigate();
@@ -21,6 +23,7 @@ const HypertensionDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [showBPModal, setShowBPModal] = useState(false);
     const [showFoodModal, setShowFoodModal] = useState(false);
+    const [showFoodImageModal, setShowFoodImageModal] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [alert, setAlert] = useState(null);
 
@@ -274,11 +277,17 @@ const HypertensionDashboard = () => {
                     <div className="tab-content">
                         <div className="section-intro">
                             <h3>🥗 DASH Diet Tracking</h3>
-                            <p>Log your meals and get AI-powered sodium analysis for heart-healthy eating.</p>
-                            <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
-                                + Log a Meal
-                            </button>
+                            <p>Track your sodium intake and macros for heart-healthy eating.</p>
+                            <div className="food-action-buttons">
+                                <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
+                                    + Log a Meal
+                                </button>
+                                <button className="btn-secondary scan-food-btn" onClick={() => setShowFoodImageModal(true)}>
+                                    📷 Scan Food Plate
+                                </button>
+                            </div>
                         </div>
+                        <NutritionDashboard token={token} />
                         <div className="dash-tips">
                             <h4>🍽️ DASH Diet Principles</h4>
                             <ul>
@@ -296,7 +305,7 @@ const HypertensionDashboard = () => {
             case 'exercise':
                 return (
                     <div className="tab-content">
-                        <ExerciseTracker token={token} />
+                        <WorkoutAnalytics token={token} />
                         <div className="exercise-bp-info">
                             <h4>🫀 Exercise & Blood Pressure</h4>
                             <p>Regular physical activity helps lower blood pressure by making your heart stronger.
@@ -493,6 +502,15 @@ const HypertensionDashboard = () => {
                 onClose={() => setShowFoodModal(false)}
                 onSuccess={() => { }}
                 token={token}
+            />
+
+            {/* Food Image Analysis Modal */}
+            <FoodImageAnalysisModal
+                isOpen={showFoodImageModal}
+                onClose={() => setShowFoodImageModal(false)}
+                onSuccess={() => { }}
+                token={token}
+                condition="hypertension"
             />
         </div>
     );
