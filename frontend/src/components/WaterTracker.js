@@ -1,90 +1,161 @@
 /**
  * Water Tracker Component
- * Visual water intake tracking with animated water circle
+ * Visual water intake tracking with animated water bottle
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Droplet, Plus, Info } from 'lucide-react';
 
 const WaterTracker = ({ token }) => {
-    const [glasses, setGlasses] = useState(0);
-    const [goal] = useState(8);
+    const [waterData, setWaterData] = useState({
+        total_ml: 0,
+        glasses: 0,
+        target_ml: 2500,
+        percentage: 0,
+        remaining_ml: 2500
+    });
+    const [loading, setLoading] = useState(false);
     const { t } = useLanguage();
 
-    useEffect(() => {
-        const fetchWater = async () => {
-            try {
-                const response = await fetch(apiUrl('/water/today'), {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setGlasses(data.glasses || 0);
-                }
-            } catch (err) {
-                console.error('Failed to fetch water intake:', err);
+    const fetchWaterData = useCallback(async () => {
+        try {
+            const response = await fetch(apiUrl('/water/today'), {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setWaterData(data);
             }
-        };
-
-        if (token) fetchWater();
+        } catch (err) {
+            console.error('Failed to fetch water data:', err);
+        }
     }, [token]);
 
-    const addWater = async (count = 1) => {
+    useEffect(() => {
+        if (token) {
+            fetchWaterData();
+        }
+    }, [token, fetchWaterData]);
+
+    const logWater = async (amount_ml = 250) => {
+        setLoading(true);
         try {
-            const response = await fetch(apiUrl('/water/add'), {
+            const response = await fetch(apiUrl('/logs/water'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ glasses: count })
+                body: JSON.stringify({ amount_ml })
             });
-
             if (response.ok) {
-                const data = await response.json();
-                setGlasses(data.total_glasses);
+                fetchWaterData();
             }
         } catch (err) {
-            console.error('Failed to add water:', err);
+            console.error('Failed to log water:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const percentage = Math.min((glasses / goal) * 100, 100);
+    const fillPercentage = Math.min(waterData.percentage, 100);
+    const isGoalReached = waterData.percentage >= 100;
 
     return (
-        <div className="water-tracker">
-            <div className="tracker-header">
-                <h3><Droplet size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Water Intake')}</h3>
-                <span className="goal-text">{t('Daily Goal: 8 glasses')}</span>
+        <div className="water-tracker-card">
+            <div className="water-header">
+                <h3>💧 {t('Water Intake')}</h3>
             </div>
 
-            <div className="water-progress-container">
-                <div className="water-level-circle">
-                    <div className="water-wave" style={{ height: `${percentage}%` }}></div>
-                    <div className="water-count">
-                        <span className="current">{glasses}</span>
-                        <span className="total">/ {goal}</span>
-                    </div>
+            {/* Water Bottle Visualization */}
+            <div className="water-bottle-container">
+                <svg className="water-bottle" viewBox="0 0 100 180" preserveAspectRatio="xMidYMid meet">
+                    {/* Bottle cap */}
+                    <rect x="35" y="0" width="30" height="15" rx="3" className="bottle-cap" />
+
+                    {/* Bottle neck */}
+                    <path
+                        d="M 38 15 L 38 30 Q 20 35 20 55 L 20 160 Q 20 175 35 175 L 65 175 Q 80 175 80 160 L 80 55 Q 80 35 62 30 L 62 15"
+                        className="bottle-outline"
+                        fill="none"
+                        strokeWidth="3"
+                    />
+
+                    {/* Water fill - clipPath for bottle shape */}
+                    <defs>
+                        <clipPath id="bottleClip">
+                            <path d="M 38 15 L 38 30 Q 20 35 20 55 L 20 160 Q 20 175 35 175 L 65 175 Q 80 175 80 160 L 80 55 Q 80 35 62 30 L 62 15 Z" />
+                        </clipPath>
+                    </defs>
+
+                    {/* Water fill area */}
+                    <g clipPath="url(#bottleClip)">
+                        {/* Water fill rectangle - positioned from bottom */}
+                        <rect
+                            x="20"
+                            y={175 - (fillPercentage / 100) * 145}
+                            width="60"
+                            height={(fillPercentage / 100) * 145}
+                            className={`water-fill ${isGoalReached ? 'goal-reached' : ''}`}
+                        />
+
+                        {/* Wave animation overlay */}
+                        <g className="wave-container" style={{ transform: `translateY(${175 - (fillPercentage / 100) * 145 - 5}px)` }}>
+                            <path
+                                className={`water-wave ${isGoalReached ? 'goal-reached' : ''}`}
+                                d="M 20 5 Q 30 0 40 5 T 60 5 T 80 5 T 100 5 L 100 15 L 20 15 Z"
+                            />
+                        </g>
+                    </g>
+
+                    {/* Bottle highlight for 3D effect */}
+                    <ellipse cx="30" cy="100" rx="5" ry="40" className="bottle-highlight" />
+                </svg>
+
+                {/* Water level text */}
+                <div className="water-level-text">
+                    <span className="current-amount">{waterData.total_ml}ml</span>
+                    <span className="target-amount">/ {waterData.target_ml}ml</span>
                 </div>
+            </div>
 
-                <div className="water-info">
-                    <p className="status-msg">
-                        {glasses >= goal ? t('Goal reached! Great job!') : t('Stay hydrated for better glucose control.')}
-                    </p>
-                    <div className="water-actions">
-                        <button className="add-water-btn" onClick={() => addWater(1)}>
-                            <Plus size={16} /> {t('Add Glass')}
-                        </button>
-                    </div>
+            {/* Quick add buttons */}
+            <div className="water-actions">
+                <button
+                    className="water-btn small"
+                    onClick={() => logWater(150)}
+                    disabled={loading}
+                >
+                    +150ml
+                </button>
+                <button
+                    className="water-btn"
+                    onClick={() => logWater(250)}
+                    disabled={loading}
+                >
+                    +250ml
+                </button>
+                <button
+                    className="water-btn large"
+                    onClick={() => logWater(500)}
+                    disabled={loading}
+                >
+                    +500ml
+                </button>
+            </div>
+
+            {waterData.percentage < 50 && (
+                <div className="water-reminder">
+                    💡 {t('Stay hydrated for better glucose control.')}
                 </div>
-            </div>
+            )}
 
-            <div className="water-stats-mini">
-                <Info size={14} style={{ marginRight: '6px' }} />
-                <span>{t('Today\'s Intake:')} {glasses} {t('glasses')}</span>
-            </div>
+            {isGoalReached && (
+                <div className="water-success">
+                    ✅ {t('Goal reached! Great job!')}
+                </div>
+            )}
         </div>
     );
 };
