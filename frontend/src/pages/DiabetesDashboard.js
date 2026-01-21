@@ -17,6 +17,13 @@ import PreventiveCare from '../components/PreventiveCare';
 import MobileNav from '../components/MobileNav';
 import NutritionDashboard from '../components/NutritionDashboard';
 import WorkoutAnalytics from '../components/WorkoutAnalytics';
+import SidebarRail from '../components/SidebarRail';
+import { useLanguage } from '../context/LanguageContext';
+import {
+    Droplet, Utensils, Activity, HeartPulse,
+    LayoutDashboard, Salad, Dumbbell, Pill,
+    Monitor, ShieldCheck, Brain
+} from 'lucide-react';
 
 const DiabetesDashboard = () => {
     const navigate = useNavigate();
@@ -27,6 +34,7 @@ const DiabetesDashboard = () => {
     const [showFoodImageModal, setShowFoodImageModal] = useState(false);
     const [logType, setLogType] = useState('glucose');
     const [activeTab, setActiveTab] = useState('overview');
+    const { t, language, translateAsync } = useLanguage();
 
     // Real data from API
     const [sugarLogs, setSugarLogs] = useState([]);
