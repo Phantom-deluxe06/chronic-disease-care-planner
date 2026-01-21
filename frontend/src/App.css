@@ -4247,6 +4247,79 @@ body {
   font-size: 0.85rem;
 }
 
+/* Water Bottle SVG Visualization */
+.water-bottle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+}
+
+.water-bottle {
+  width: 100px;
+  height: 160px;
+  margin-bottom: var(--spacing-md);
+}
+
+.bottle-cap {
+  fill: #0e7490;
+}
+
+.bottle-outline {
+  stroke: rgba(255, 255, 255, 0.6);
+}
+
+.water-fill {
+  fill: rgba(255, 255, 255, 0.4);
+  transition: all 0.5s ease;
+}
+
+.water-fill.goal-reached {
+  fill: rgba(255, 255, 255, 0.7);
+}
+
+.water-wave {
+  fill: rgba(255, 255, 255, 0.5);
+  animation: wave-animation 2s ease-in-out infinite;
+}
+
+.water-wave.goal-reached {
+  fill: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes wave-animation {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-5px);
+  }
+}
+
+.bottle-highlight {
+  fill: rgba(255, 255, 255, 0.1);
+}
+
+.water-level-text {
+  text-align: center;
+  margin-top: var(--spacing-sm);
+}
+
+.water-level-text .current-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.water-level-text .target-amount {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 4px;
+}
+
 /* ==================== FOOD ANALYSIS MODAL ==================== */
 .food-analysis-modal {
   max-width: 600px;

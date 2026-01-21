@@ -17,6 +17,13 @@ import PreventiveCare from '../components/PreventiveCare';
 import MobileNav from '../components/MobileNav';
 import NutritionDashboard from '../components/NutritionDashboard';
 import WorkoutAnalytics from '../components/WorkoutAnalytics';
+import SidebarRail from '../components/SidebarRail';
+import { useLanguage } from '../context/LanguageContext';
+import {
+    Droplet, Utensils, Activity, HeartPulse,
+    LayoutDashboard, Salad, Dumbbell, Pill,
+    Monitor, ShieldCheck, Brain
+} from 'lucide-react';
 
 const DiabetesDashboard = () => {
     const navigate = useNavigate();
@@ -27,11 +34,14 @@ const DiabetesDashboard = () => {
     const [showFoodImageModal, setShowFoodImageModal] = useState(false);
     const [logType, setLogType] = useState('glucose');
     const [activeTab, setActiveTab] = useState('overview');
+    const { t, language, translateAsync } = useLanguage();
 
     // Real data from API
     const [sugarLogs, setSugarLogs] = useState([]);
     const [carePlan, setCarePlan] = useState([]);
+    const [translatedCarePlan, setTranslatedCarePlan] = useState([]);
     const [tips, setTips] = useState([]);
+    const [translatedTips, setTranslatedTips] = useState([]);
     const [weeklyStats, setWeeklyStats] = useState(null);
     const [trends, setTrends] = useState(null);
     const [alert, setAlert] = useState(null);
@@ -125,6 +135,36 @@ const DiabetesDashboard = () => {
         ]).finally(() => setLoading(false));
     }, [navigate, token, fetchGlucoseLogs, fetchCarePlan, fetchTrends]);
 
+    // Translate care plan and tips when language changes
+    useEffect(() => {
+        const translateContent = async () => {
+            if (language === 'en') {
+                setTranslatedCarePlan(carePlan);
+                setTranslatedTips(tips);
+                return;
+            }
+
+            // Translate care plan tasks
+            const translatedTasks = await Promise.all(
+                carePlan.map(async (task) => ({
+                    ...task,
+                    task: await translateAsync(task.task)
+                }))
+            );
+            setTranslatedCarePlan(translatedTasks);
+
+            // Translate tips
+            const translatedTipsArray = await Promise.all(
+                tips.map(async (tip) => await translateAsync(tip))
+            );
+            setTranslatedTips(translatedTipsArray);
+        };
+
+        if (carePlan.length > 0 || tips.length > 0) {
+            translateContent();
+        }
+    }, [language, carePlan, tips, translateAsync]);
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -158,7 +198,7 @@ const DiabetesDashboard = () => {
                     <div className="dashboard-grid">
                         {/* Progress Card */}
                         <div className="dash-card progress-card">
-                            <h3>Today's Progress</h3>
+                            <h3>{t("Today's Progress")}</h3>
                             <div className="progress-circle">
                                 <svg viewBox="0 0 100 100">
                                     <circle className="progress-bg" cx="50" cy="50" r="40" />
@@ -172,7 +212,7 @@ const DiabetesDashboard = () => {
                                 </svg>
                                 <span className="progress-text">{progress}%</span>
                             </div>
-                            <p className="progress-status">{completedTasks} of {carePlan.length} tasks done</p>
+                            <p className="progress-status">{completedTasks} {t('of')} {carePlan.length} {t('tasks done')}</p>
                         </div>
 
                         {/* Water Tracker */}
@@ -180,7 +220,7 @@ const DiabetesDashboard = () => {
 
                         {/* Sugar Readings */}
                         <div className="dash-card readings-card">
-                            <h3>Today's Sugar Readings</h3>
+                            <h3>{t("Today's Sugar Readings")}</h3>
                             <div className="readings-list">
                                 {sugarLogs.map((log, i) => (
                                     <div key={i} className={`reading-item ${log.status}`}>
@@ -191,35 +231,35 @@ const DiabetesDashboard = () => {
                                 ))}
                             </div>
                             {sugarLogs.length === 0 && (
-                                <p className="no-data">No readings yet today. Log your first reading!</p>
+                                <p className="no-data">{t('No readings yet today. Log your first reading!')}</p>
                             )}
-                            <button className="add-reading-btn" onClick={() => openLogModal('glucose')}>+ Log Glucose</button>
+                            <button className="add-reading-btn" onClick={() => openLogModal('glucose')}>+ {t('Log Glucose')}</button>
                         </div>
 
                         {/* Quick Actions */}
                         <div className="dash-card quick-actions-card">
-                            <h3>Quick Actions</h3>
+                            <h3>{t('Quick Actions')}</h3>
                             <div className="quick-actions-grid">
                                 <button className="quick-action" onClick={() => openLogModal('glucose')}>
-                                    🩸 Log Glucose
+                                    🩸 {t('Log Glucose')}
                                 </button>
                                 <button className="quick-action" onClick={() => setShowFoodModal(true)}>
-                                    🍽️ Log Food
+                                    🍽️ {t('Log Food')}
                                 </button>
                                 <button className="quick-action" onClick={() => openLogModal('activity')}>
-                                    🏃 Log Activity
+                                    🏃 {t('Log Activity')}
                                 </button>
                                 <button className="quick-action" onClick={() => openLogModal('bp')}>
-                                    💓 Log BP
+                                    💓 {t('Log BP')}
                                 </button>
                             </div>
                         </div>
 
                         {/* Care Plan */}
                         <div className="dash-card care-plan-card">
-                            <h3>Today's Care Plan</h3>
+                            <h3>{t("Today's Care Plan")}</h3>
                             <div className="care-plan-list">
-                                {carePlan.slice(0, 5).map((task, i) => (
+                                {translatedCarePlan.slice(0, 5).map((task, i) => (
                                     <div key={i} className={`care-task ${task.done ? 'done' : ''}`}>
                                         <span className="task-icon">{task.icon}</span>
                                         <div className="task-content">
@@ -234,9 +274,9 @@ const DiabetesDashboard = () => {
 
                         {/* Tips */}
                         <div className="dash-card tips-card">
-                            <h3>💡 Diabetes Tips</h3>
+                            <h3>💡 {t('Diabetes Tips')}</h3>
                             <ul className="tips-list">
-                                {tips.map((tip, i) => (
+                                {translatedTips.map((tip, i) => (
                                     <li key={i}>{tip}</li>
                                 ))}
                             </ul>
@@ -244,19 +284,19 @@ const DiabetesDashboard = () => {
 
                         {/* Quick Stats */}
                         <div className="dash-card stats-card">
-                            <h3>Weekly Overview</h3>
+                            <h3>{t('Weekly Overview')}</h3>
                             <div className="quick-stats">
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.avg_value ? Math.round(weeklyStats.avg_value) : '--'}</span>
-                                    <span className="stat-label">Avg Glucose</span>
+                                    <span className="stat-label">{t('Avg Glucose')}</span>
                                 </div>
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.min_value || '--'}</span>
-                                    <span className="stat-label">Min</span>
+                                    <span className="stat-label">{t('Min')}</span>
                                 </div>
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.max_value || '--'}</span>
-                                    <span className="stat-label">Max</span>
+                                    <span className="stat-label">{t('Max')}</span>
                                 </div>
                             </div>
                             {trends?.insights && trends.insights.length > 0 && (
@@ -273,14 +313,14 @@ const DiabetesDashboard = () => {
                 return (
                     <div className="tab-content">
                         <div className="section-intro">
-                            <h3>🍽️ Food & Diet Tracking</h3>
-                            <p>Track your calories, macros, and get AI-powered nutritional analysis.</p>
+                            <h3>🍽️ {t('Food & Diet Tracking')}</h3>
+                            <p>{t('Track your calories, macros, and get AI-powered nutritional analysis.')}</p>
                             <div className="food-action-buttons">
                                 <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
-                                    + Log a Meal
+                                    + {t('Log a Meal')}
                                 </button>
                                 <button className="btn-secondary scan-food-btn" onClick={() => setShowFoodImageModal(true)}>
-                                    📷 Scan Food Plate
+                                    📷 {t('Scan Food Plate')}
                                 </button>
                             </div>
                         </div>
@@ -333,51 +373,8 @@ const DiabetesDashboard = () => {
             {/* Mobile Navigation */}
             <MobileNav user={user} onLogout={handleLogout} />
 
-            {/* Sidebar */}
-            <aside className="dashboard-sidebar">
-                <div className="sidebar-brand">
-                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
-                    <span className="brand-text">HealthBuddy</span>
-                </div>
-
-                <nav className="sidebar-nav">
-                    <Link to="/home" className="nav-link">
-                        <span className="nav-icon">🏠</span>
-                        <span>Overview</span>
-                    </Link>
-                    <Link to="/dashboard/diabetes" className="nav-link active">
-                        <span className="nav-icon">🩸</span>
-                        <span>Diabetes</span>
-                    </Link>
-                    <Link to="/dashboard/hypertension" className="nav-link">
-                        <span className="nav-icon">💓</span>
-                        <span>Hypertension</span>
-                    </Link>
-                    <Link to="/logs" className="nav-link">
-                        <span className="nav-icon">📊</span>
-                        <span>Health Logs</span>
-                    </Link>
-                    <Link to="/reports" className="nav-link">
-                        <span className="nav-icon">📈</span>
-                        <span>Reports</span>
-                    </Link>
-                    <Link to="/settings" className="nav-link">
-                        <span className="nav-icon">⚙️</span>
-                        <span>Settings</span>
-                    </Link>
-                </nav>
-
-                <div className="sidebar-user">
-                    <div className="user-avatar">👤</div>
-                    <div className="user-info">
-                        <span className="user-name">{user?.name || 'User'}</span>
-                        <span className="user-email">{user?.email}</span>
-                    </div>
-                    <button className="logout-btn" onClick={handleLogout} title="Sign Out">
-                        🚪 Logout
-                    </button>
-                </div>
-            </aside>
+            {/* Sidebar Rail */}
+            <SidebarRail user={user} />
 
             {/* Main Content */}
             <main className="dashboard-main home-main">
@@ -385,12 +382,12 @@ const DiabetesDashboard = () => {
                     <div className="header-title">
                         <span className="disease-icon">🩸</span>
                         <div>
-                            <h1>Diabetes Care</h1>
-                            <p>Track your blood sugar and manage your daily routine</p>
+                            <h1>{t('Diabetes Care')}</h1>
+                            <p>{t('Track your blood sugar and manage your daily routine')}</p>
                         </div>
                     </div>
                     <div className="header-date">
-                        {new Date().toLocaleDateString('en-US', {
+                        {new Date().toLocaleDateString(language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-US', {
                             weekday: 'long',
                             month: 'long',
                             day: 'numeric'
@@ -404,43 +401,43 @@ const DiabetesDashboard = () => {
                         className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        📊 Overview
+                        📊 {t('Overview')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'food' ? 'active' : ''}`}
                         onClick={() => setActiveTab('food')}
                     >
-                        🍽️ Food & Diet
+                        🍽️ {t('Food & Diet')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'exercise' ? 'active' : ''}`}
                         onClick={() => setActiveTab('exercise')}
                     >
-                        🏃 Exercise
+                        🏃 {t('Exercise')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'medications' ? 'active' : ''}`}
                         onClick={() => setActiveTab('medications')}
                     >
-                        💊 Medications
+                        💊 {t('Medications')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'health' ? 'active' : ''}`}
                         onClick={() => setActiveTab('health')}
                     >
-                        📈 Health Monitor
+                        📈 {t('Health Monitor')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'preventive' ? 'active' : ''}`}
                         onClick={() => setActiveTab('preventive')}
                     >
-                        🛡️ Preventive Care and Tips
+                        🛡️ {t('Preventive Care and Tips')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
                         onClick={() => setActiveTab('summary')}
                     >
-                        🤖 AI Summary
+                        🤖 {t('AI Summary')}
                     </button>
                 </div>
 

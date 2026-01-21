@@ -5,10 +5,13 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { Home, Droplet, HeartPulse, ClipboardList, BarChart3, Settings, LogOut, X, Menu, User as UserIcon } from 'lucide-react';
 
 const MobileNav = ({ user, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
+    const { t } = useLanguage();
 
     // Close menu when route changes
     useEffect(() => {
@@ -28,12 +31,12 @@ const MobileNav = ({ user, onLogout }) => {
     }, [isOpen]);
 
     const navLinks = [
-        { path: '/home', icon: '🏠', label: 'Home' },
-        { path: '/dashboard/diabetes', icon: '🩸', label: 'Diabetes' },
-        { path: '/dashboard/hypertension', icon: '💓', label: 'Hypertension' },
-        { path: '/logs', icon: '📊', label: 'Health Logs' },
-        { path: '/reports', icon: '📈', label: 'Reports' },
-        { path: '/settings', icon: '⚙️', label: 'Settings' },
+        { path: '/home', icon: <Home size={20} />, label: t('Home') },
+        { path: '/dashboard/diabetes', icon: <Droplet size={20} />, label: t('Diabetes') },
+        { path: '/dashboard/hypertension', icon: <HeartPulse size={20} />, label: t('Hypertension') },
+        { path: '/logs', icon: <ClipboardList size={20} />, label: t('Health Logs') },
+        { path: '/reports', icon: <BarChart3 size={20} />, label: t('Reports') },
+        { path: '/settings', icon: <Settings size={20} />, label: t('Settings') },
     ];
 
     return (
@@ -43,11 +46,9 @@ const MobileNav = ({ user, onLogout }) => {
                 <button
                     className="hamburger-btn"
                     onClick={() => setIsOpen(true)}
-                    aria-label="Open menu"
+                    aria-label={t('Open menu')}
                 >
-                    <span className="hamburger-line"></span>
-                    <span className="hamburger-line"></span>
-                    <span className="hamburger-line"></span>
+                    <Menu size={24} color="#06B6D4" />
                 </button>
                 <div className="mobile-brand">
                     <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
@@ -72,9 +73,9 @@ const MobileNav = ({ user, onLogout }) => {
                     <button
                         className="close-drawer-btn"
                         onClick={() => setIsOpen(false)}
-                        aria-label="Close menu"
+                        aria-label={t('Close menu')}
                     >
-                        ✕
+                        <X size={24} color="#06B6D4" />
                     </button>
                 </div>
 
@@ -94,15 +95,17 @@ const MobileNav = ({ user, onLogout }) => {
                 <div className="drawer-footer">
                     {user && (
                         <div className="drawer-user">
-                            <div className="user-avatar">👤</div>
+                            <div className="user-avatar">
+                                <UserIcon size={20} color="#06B6D4" />
+                            </div>
                             <div className="user-info">
-                                <span className="user-name">{user.name || 'User'}</span>
+                                <span className="user-name">{user.name || t('User')}</span>
                                 <span className="user-email">{user.email}</span>
                             </div>
                         </div>
                     )}
                     <button className="drawer-logout-btn" onClick={onLogout}>
-                        🚪 Sign Out
+                        <LogOut size={18} style={{ marginRight: '8px' }} /> {t('Sign Out')}
                     </button>
                 </div>
             </nav>

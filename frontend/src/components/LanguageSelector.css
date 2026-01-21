@@ -1,0 +1,132 @@
+/* LanguageSelector.css - Language dropdown styling */
+
+.language-selector {
+    position: relative;
+    z-index: 150;
+    /* High z-index to float above sidebar and dashboard */
+}
+
+.language-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.language-trigger:hover {
+    background: rgba(30, 41, 59, 1);
+    border-color: rgba(6, 182, 212, 0.3);
+}
+
+.language-trigger svg {
+    color: #06B6D4;
+}
+
+.language-current {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.chevron {
+    transition: transform 0.2s ease;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dropdown menu - opens to the RIGHT of sidebar */
+.language-dropdown {
+    position: fixed;
+    /* Fixed position to escape sidebar overflow */
+    z-index: 200;
+    /* Very high z-index */
+    min-width: 180px;
+    background: rgba(15, 23, 42, 0.95);
+    /* bg-slate-900/95 */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    overflow: visible;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(6, 182, 212, 0.1);
+    backdrop-filter: blur(12px);
+    /* backdrop-blur-md */
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    white-space: nowrap;
+    /* Prevent text wrapping */
+}
+
+.language-option:first-child {
+    border-radius: 12px 12px 0 0;
+}
+
+.language-option:last-child {
+    border-radius: 0 0 12px 12px;
+}
+
+.language-option:hover {
+    background: rgba(6, 182, 212, 0.15);
+}
+
+.language-option.active {
+    background: rgba(6, 182, 212, 0.2);
+}
+
+.lang-native {
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 70px;
+    white-space: nowrap;
+}
+
+.lang-name {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    flex: 1;
+    white-space: nowrap;
+}
+
+.check-icon {
+    color: #06B6D4;
+    margin-left: auto;
+}
+
+/* Tamil and Hindi text styling */
+.language-selector[data-lang="ta"],
+.language-selector[data-lang="hi"] {
+    line-height: 1.6;
+}

@@ -4,9 +4,12 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MobileNav from '../components/MobileNav';
 import StravaConnect from '../components/StravaConnect';
+import SidebarRail from '../components/SidebarRail';
+import { useLanguage } from '../context/LanguageContext';
+import { Settings as SettingsIcon, User, Ruler, Link, Bell, AlertTriangle, LogOut } from 'lucide-react';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -18,6 +21,7 @@ const Settings = () => {
         darkMode: true,
         language: 'en'
     });
+    const { t, language, setLanguage } = useLanguage();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -43,7 +47,7 @@ const Settings = () => {
     };
 
     if (loading) {
-        return <div className="dashboard-loading">Loading...</div>;
+        return <div className="dashboard-loading">{t('Loading...')}</div>;
     }
 
     return (
@@ -51,87 +55,55 @@ const Settings = () => {
             {/* Mobile Navigation */}
             <MobileNav user={user} onLogout={handleLogout} />
 
-            {/* Sidebar */}
-            <aside className="dashboard-sidebar">
-                <div className="sidebar-brand">
-                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
-                    <span className="brand-text">HealthBuddy</span>
-                </div>
-
-                <nav className="sidebar-nav">
-                    <Link to="/home" className="nav-link">
-                        <span className="nav-icon">🏠</span>
-                        <span>Overview</span>
-                    </Link>
-                    <Link to="/dashboard/diabetes" className="nav-link">
-                        <span className="nav-icon">🩸</span>
-                        <span>Diabetes</span>
-                    </Link>
-                    <Link to="/dashboard/hypertension" className="nav-link">
-                        <span className="nav-icon">💓</span>
-                        <span>Hypertension</span>
-                    </Link>
-                    <Link to="/logs" className="nav-link">
-                        <span className="nav-icon">📊</span>
-                        <span>Health Logs</span>
-                    </Link>
-                    <Link to="/reports" className="nav-link">
-                        <span className="nav-icon">📈</span>
-                        <span>Reports</span>
-                    </Link>
-                    <Link to="/settings" className="nav-link active">
-                        <span className="nav-icon">⚙️</span>
-                        <span>Settings</span>
-                    </Link>
-                </nav>
-
-                <div className="sidebar-user">
-                    <div className="user-avatar">👤</div>
-                    <div className="user-info">
-                        <span className="user-name">{user?.name || 'User'}</span>
-                        <span className="user-email">{user?.email}</span>
-                    </div>
-                    <button className="logout-btn" onClick={handleLogout} title="Sign Out">
-                        🚪 Logout
-                    </button>
-                </div>
-            </aside>
+            {/* Sidebar Rail */}
+            <SidebarRail user={user} />
 
             {/* Main Content */}
             <main className="dashboard-main home-main">
                 <header className="home-header">
                     <div>
-                        <h1>⚙️ Settings</h1>
-                        <p>Manage your preferences and account</p>
+                        <h1><SettingsIcon size={28} color="#06B6D4" style={{ display: 'inline', marginRight: '10px' }} /> {t('Settings')}</h1>
+                        <p>{t('Manage your preferences and account')}</p>
                     </div>
                 </header>
 
                 <section className="settings-section">
                     {/* Profile Settings */}
                     <div className="settings-card">
-                        <h3>👤 Profile Information</h3>
+                        <h3><User size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Profile Information')}</h3>
                         <div className="settings-group">
                             <div className="setting-item">
-                                <label>Name</label>
+                                <label>{t('Name')}</label>
                                 <input type="text" value={user?.name || ''} readOnly />
                             </div>
                             <div className="setting-item">
-                                <label>Email</label>
+                                <label>{t('Email')}</label>
                                 <input type="email" value={user?.email || ''} readOnly />
                             </div>
                             <div className="setting-item">
-                                <label>Age</label>
+                                <label>{t('Age')}</label>
                                 <input type="number" value={user?.age || ''} readOnly />
                             </div>
                         </div>
                     </div>
 
-                    {/* Measurement Settings */}
+                    {/* Regional & Units */}
                     <div className="settings-card">
-                        <h3>📏 Measurement Units</h3>
+                        <h3><Ruler size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Regional & Units')}</h3>
                         <div className="settings-group">
                             <div className="setting-item">
-                                <label>Blood Sugar Unit</label>
+                                <label>{t('Language')}</label>
+                                <select
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                >
+                                    <option value="en">English</option>
+                                    <option value="ta">தமிழ் (Tamil)</option>
+                                    <option value="hi">हिन्दी (Hindi)</option>
+                                </select>
+                            </div>
+                            <div className="setting-item">
+                                <label>{t('Blood Sugar Unit')}</label>
                                 <select
                                     value={settings.glucoseUnit}
                                     onChange={(e) => handleSettingChange('glucoseUnit', e.target.value)}
@@ -145,7 +117,7 @@ const Settings = () => {
 
                     {/* Connected Apps */}
                     <div className="settings-card">
-                        <h3>🔗 Connected Apps</h3>
+                        <h3><Link size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Connected Apps')}</h3>
                         <div className="settings-group">
                             <StravaConnect token={localStorage.getItem('token')} />
                         </div>
@@ -153,18 +125,18 @@ const Settings = () => {
 
                     {/* Notification Settings */}
                     <div className="settings-card">
-                        <h3>🔔 Notifications</h3>
+                        <h3><Bell size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Notifications')}</h3>
                         <div className="settings-group">
                             <div className="setting-item toggle-item">
                                 <div>
-                                    <label>Medication Reminders</label>
-                                    <p className="setting-desc">Get notified when it's time to take medication</p>
+                                    <label>{t('Medication Reminders')}</label>
+                                    <p className="setting-desc">{t('Get notified when it\'s time to take medication')}</p>
                                 </div>
                                 <button
                                     className={`toggle-btn ${settings.reminderEnabled ? 'active' : ''}`}
                                     onClick={() => handleSettingChange('reminderEnabled', !settings.reminderEnabled)}
                                 >
-                                    {settings.reminderEnabled ? 'ON' : 'OFF'}
+                                    {settings.reminderEnabled ? t('ON') : t('OFF')}
                                 </button>
                             </div>
                         </div>
@@ -172,10 +144,10 @@ const Settings = () => {
 
                     {/* Account Actions */}
                     <div className="settings-card danger-zone">
-                        <h3>⚠️ Account</h3>
+                        <h3><AlertTriangle size={20} color="#f59e0b" style={{ display: 'inline', marginRight: '8px' }} /> {t('Account')}</h3>
                         <div className="settings-group">
                             <button className="settings-action-btn logout" onClick={handleLogout}>
-                                🚪 Sign Out
+                                <LogOut size={18} style={{ marginRight: '8px' }} /> {t('Sign Out')}
                             </button>
                         </div>
                     </div>
@@ -183,7 +155,7 @@ const Settings = () => {
 
                 <div className="settings-footer">
                     <p>HealthBuddy v1.0.0</p>
-                    <p>Made with ❤️ for better health management</p>
+                    <p>{t('Made with')} ❤️ {t('for better health management')}</p>
                 </div>
             </main>
         </div>

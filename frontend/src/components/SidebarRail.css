@@ -1,0 +1,554 @@
+/* SidebarRail.css - Mini-sidebar with expand on hover */
+
+.sidebar-rail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 80px;
+    /* Initial collapsed width */
+    background: var(--bg-card, #1E293B);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 40;
+    /* Standard z-index, modal uses z-100+ */
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: visible;
+    /* Changed from hidden to allow dropdown to overflow */
+}
+
+/* Expand on hover */
+.sidebar-rail:hover {
+    width: 256px;
+    /* Expanded width (w-64) */
+}
+
+/* Logo Section */
+.rail-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 72px;
+}
+
+.rail-logo-img {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.rail-logo-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-rail:hover .rail-logo-text {
+    opacity: 1;
+}
+
+/* Language Selector Section */
+.rail-language {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-rail:hover .rail-language {
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    padding: 12px;
+}
+
+/* Navigation */
+.rail-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 12px;
+    overflow-y: auto;
+}
+
+.rail-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-height: 48px;
+}
+
+.rail-nav-item:hover {
+    background: rgba(6, 182, 212, 0.1);
+    color: #06B6D4;
+}
+
+.rail-nav-item.active {
+    background: rgba(6, 182, 212, 0.15);
+    color: #06B6D4;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.rail-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.rail-nav-item.active .rail-nav-icon {
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
+}
+
+.rail-nav-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-rail:hover .rail-nav-label {
+    opacity: 1;
+}
+
+/* Footer / User Section */
+.rail-footer {
+    padding: 16px 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rail-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+}
+
+.rail-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #06B6D4, #3B82F6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.rail-user-info {
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar-rail:hover .rail-user-info {
+    opacity: 1;
+}
+
+.rail-user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+}
+
+.rail-user-email {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.rail-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rail-logout:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.rail-logout-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-rail:hover .rail-logout-text {
+    opacity: 1;
+}
+
+/* ==================== MAIN CONTENT OFFSET ==================== */
+/* When sidebar-rail exists, offset the main content to the right */
+
+/* Dashboard containers - add left margin for sidebar */
+.home-dashboard,
+.disease-dashboard {
+    margin-left: 80px !important;
+    /* Match sidebar collapsed width */
+    padding-left: 24px !important;
+    /* px-6 breathing room */
+    padding-right: 24px !important;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+/* Dashboard main content area - full width within offset container */
+.dashboard-main,
+.home-main {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Dashboard header - ensure it's within the offset */
+.dashboard-header,
+.home-header {
+    width: 100%;
+}
+
+/* Dashboard tabs - critical fix for tab overflow */
+.dashboard-tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+/* Tab buttons container */
+.dashboard-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.dashboard-tabs::-webkit-scrollbar-thumb {
+    background: rgba(6, 182, 212, 0.3);
+    border-radius: 2px;
+}
+
+/* Dashboard grid - full width */
+.dashboard-grid {
+    width: 100%;
+}
+
+/* The has-sidebar-rail explicit class */
+.has-sidebar-rail {
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== OLD SIDEBAR HIDE ==================== */
+/* Hide the old inline dashboard-sidebar when sidebar-rail is present */
+.dashboard-sidebar {
+    display: none !important;
+}
+
+/* ==================== QUICK OVERVIEW CARDS ==================== */
+/* Premium medical tech styling for stat cards */
+
+.quick-stats-section h2 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.quick-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.quick-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    /* p-6 */
+    background: rgba(30, 41, 59, 0.6);
+    /* slate-800 with transparency */
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    /* border-slate-700 */
+    border-radius: 16px;
+    /* rounded-xl */
+    transition: all 0.2s ease;
+}
+
+.quick-stat-card:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(6, 182, 212, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Circular icon container with subtle background */
+.quick-stat-card .stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    /* circular */
+    background: rgba(6, 182, 212, 0.1);
+    /* bg-cyan-500/10 */
+    flex-shrink: 0;
+}
+
+.quick-stat-card .stat-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.quick-stat-card .stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.quick-stat-card .stat-value {
+    font-size: 1.75rem;
+    /* text-2xl */
+    font-weight: 700;
+    /* font-bold */
+    color: #fff;
+    /* text-white */
+    line-height: 1;
+}
+
+.quick-stat-card .stat-label {
+    font-size: 0.875rem;
+    /* text-sm */
+    color: #94a3b8;
+    /* text-slate-400 */
+}
+
+/* ==================== TIPS SECTION ==================== */
+.tips-section h2 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.tip-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    border-radius: 12px;
+}
+
+.tip-card .tip-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.1);
+    flex-shrink: 0;
+}
+
+.tip-card p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ==================== QUICK ACTIONS ==================== */
+/* Professional vertical button list for quick actions */
+
+.quick-actions-card {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border: 1px solid rgba(51, 65, 85, 0.8) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+}
+
+.quick-actions-card h3 {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.quick-actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.quick-action:hover {
+    background: rgba(30, 41, 59, 0.8);
+}
+
+/* Circular icon container */
+.quick-action .action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.1);
+    flex-shrink: 0;
+}
+
+.quick-action .action-icon svg {
+    width: 18px;
+    height: 18px;
+    color: #06B6D4;
+}
+
+/* Text label styling */
+.quick-action .action-label {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* ==================== MOBILE RESPONSIVENESS ==================== */
+@media (max-width: 768px) {
+
+    /* Hide sidebar rail on mobile */
+    .sidebar-rail {
+        display: none;
+    }
+
+    /* Remove all left margins on mobile */
+    .has-sidebar-rail,
+    .home-dashboard,
+    .disease-dashboard {
+        margin-left: 0 !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .dashboard-main,
+    .home-main {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Tabs - horizontal scroll on mobile */
+    .dashboard-tabs {
+        padding-bottom: 8px;
+    }
+}
+
+/* ==================== MULTILINGUAL TEXT SUPPORT ==================== */
+/* Layout fixes for Tamil and Hindi text which can be longer than English */
+
+/* Allow text to wrap in cards */
+.quick-stat-card .stat-info,
+.quick-action .action-label,
+.tip-card p,
+.card-features li {
+    flex-wrap: wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Improved line-height for Tamil and Hindi scripts */
+[data-lang="ta"] .stat-label,
+[data-lang="ta"] .action-label,
+[data-lang="ta"] .rail-nav-label,
+[data-lang="ta"] .tip-card p,
+[data-lang="ta"] h1,
+[data-lang="ta"] h2,
+[data-lang="ta"] h3,
+[data-lang="hi"] .stat-label,
+[data-lang="hi"] .action-label,
+[data-lang="hi"] .rail-nav-label,
+[data-lang="hi"] .tip-card p,
+[data-lang="hi"] h1,
+[data-lang="hi"] h2,
+[data-lang="hi"] h3 {
+    line-height: 1.6;
+}
+
+/* Ensure quick overview cards allow for longer text */
+.quick-stat-card .stat-label {
+    white-space: normal;
+    max-width: 100%;
+}
+
+/* Quick actions - allow label to wrap */
+.quick-action .action-label {
+    white-space: normal;
+    text-align: left;
+}
+
+/* Tab buttons - flexible width for longer text */
+.dashboard-tabs .tab-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Dashboard cards - flexible height */
+.dashboard-cards .dashboard-card {
+    min-height: fit-content;
+}
+
+.dashboard-cards .card-features li {
+    white-space: normal;
+}

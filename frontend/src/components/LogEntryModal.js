@@ -6,11 +6,14 @@
 import { useState } from 'react';
 import './LogEntryModal.css';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
+import { X, AlertTriangle, Droplet, HeartPulse, Utensils, Activity, Save } from 'lucide-react';
 
 const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [alert, setAlert] = useState('');
+    const { t } = useLanguage();
 
     // Form states for different log types
     const [glucoseValue, setGlucoseValue] = useState('');
@@ -58,7 +61,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
 
         const token = localStorage.getItem('token');
         if (!token) {
-            setError('Please log in to continue');
+            setError(t('Please log in to continue'));
             setLoading(false);
             return;
         }
@@ -102,7 +105,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                 };
                 break;
             default:
-                setError('Invalid log type');
+                setError(t('Invalid log type'));
                 setLoading(false);
                 return;
         }
@@ -120,7 +123,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.detail || 'Failed to save log');
+                throw new Error(data.detail || t('Failed to save log'));
             }
 
             // Check for health alerts
@@ -148,11 +151,11 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
 
     const getTitle = () => {
         switch (logType) {
-            case 'glucose': return '🩸 Log Blood Glucose';
-            case 'bp': return '💓 Log Blood Pressure';
-            case 'food': return '🍽️ Log Food Intake';
-            case 'activity': return '🏃 Log Activity';
-            default: return 'Log Entry';
+            case 'glucose': return <><Droplet size={20} color="#06B6D4" /> {t('Log Blood Glucose')}</>;
+            case 'bp': return <><HeartPulse size={20} color="#06B6D4" /> {t('Log Blood Pressure')}</>;
+            case 'food': return <><Utensils size={20} color="#06B6D4" /> {t('Log Food Intake')}</>;
+            case 'activity': return <><Activity size={20} color="#06B6D4" /> {t('Log Activity')}</>;
+            default: return t('Log Entry');
         }
     };
 
@@ -161,19 +164,21 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>{getTitle()}</h2>
-                    <button className="modal-close" onClick={handleClose}>×</button>
+                    <button className="modal-close" onClick={handleClose}>
+                        <X size={20} />
+                    </button>
                 </div>
 
                 {error && <div className="modal-error">{error}</div>}
                 {alert && (
                     <div className="modal-alert">
-                        <span className="alert-icon">⚠️</span>
+                        <AlertTriangle className="alert-icon" color="#f59e0b" />
                         <div className="alert-content">
-                            <strong>Health Alert</strong>
+                            <strong>{t('Health Alert')}</strong>
                             <p>{alert}</p>
                         </div>
                         <button className="alert-dismiss" onClick={handleClose}>
-                            I Understand
+                            {t('I Understand')}
                         </button>
                     </div>
                 )}
@@ -183,7 +188,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                     {logType === 'glucose' && (
                         <>
                             <div className="form-group">
-                                <label>Blood Glucose (mg/dL)</label>
+                                <label>{t('Blood Glucose (mg/dL)')}</label>
                                 <input
                                     type="number"
                                     value={glucoseValue}
@@ -195,15 +200,15 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Reading Type</label>
+                                <label>{t('Reading Type')}</label>
                                 <select
                                     value={readingType}
                                     onChange={e => setReadingType(e.target.value)}
                                 >
-                                    <option value="fasting">Fasting (before meal)</option>
-                                    <option value="after_meal">After Meal</option>
-                                    <option value="random">Random</option>
-                                    <option value="bedtime">Bedtime</option>
+                                    <option value="fasting">{t('Fasting (before meal)')}</option>
+                                    <option value="after_meal">{t('After Meal')}</option>
+                                    <option value="random">{t('Random')}</option>
+                                    <option value="bedtime">{t('Bedtime')}</option>
                                 </select>
                             </div>
                         </>
@@ -214,7 +219,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                         <>
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>Systolic (top number)</label>
+                                    <label>{t('Systolic (top number)')}</label>
                                     <input
                                         type="number"
                                         value={systolic}
@@ -226,7 +231,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label>Diastolic (bottom number)</label>
+                                    <label>{t('Diastolic (bottom number)')}</label>
                                     <input
                                         type="number"
                                         value={diastolic}
@@ -245,19 +250,19 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                     {logType === 'food' && (
                         <>
                             <div className="form-group">
-                                <label>Meal Type</label>
+                                <label>{t('Meal Type')}</label>
                                 <select
                                     value={mealType}
                                     onChange={e => setMealType(e.target.value)}
                                 >
-                                    <option value="breakfast">Breakfast</option>
-                                    <option value="lunch">Lunch</option>
-                                    <option value="dinner">Dinner</option>
-                                    <option value="snack">Snack</option>
+                                    <option value="breakfast">{t('Breakfast')}</option>
+                                    <option value="lunch">{t('Lunch')}</option>
+                                    <option value="dinner">{t('Dinner')}</option>
+                                    <option value="snack">{t('Snack')}</option>
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label>Calories (estimated)</label>
+                                <label>{t('Calories (estimated)')}</label>
                                 <input
                                     type="number"
                                     value={calories}
@@ -269,7 +274,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Description (optional)</label>
+                                <label>{t('Description (optional)')}</label>
                                 <input
                                     type="text"
                                     value={foodDescription}
@@ -284,23 +289,23 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                     {logType === 'activity' && (
                         <>
                             <div className="form-group">
-                                <label>Activity Type</label>
+                                <label>{t('Activity Type')}</label>
                                 <select
                                     value={activityType}
                                     onChange={e => setActivityType(e.target.value)}
                                 >
-                                    <option value="walking">Walking</option>
-                                    <option value="running">Running</option>
-                                    <option value="cycling">Cycling</option>
-                                    <option value="swimming">Swimming</option>
-                                    <option value="yoga">Yoga</option>
-                                    <option value="strength_training">Strength Training</option>
-                                    <option value="stretching">Stretching</option>
-                                    <option value="other">Other</option>
+                                    <option value="walking">{t('Walking')}</option>
+                                    <option value="running">{t('Running')}</option>
+                                    <option value="cycling">{t('Cycling')}</option>
+                                    <option value="swimming">{t('Swimming')}</option>
+                                    <option value="yoga">{t('Yoga')}</option>
+                                    <option value="strength_training">{t('Strength Training')}</option>
+                                    <option value="stretching">{t('Stretching')}</option>
+                                    <option value="other">{t('Other')}</option>
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label>Duration (minutes)</label>
+                                <label>{t('Duration (minutes)')}</label>
                                 <input
                                     type="number"
                                     value={duration}
@@ -312,14 +317,14 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Intensity</label>
+                                <label>{t('Intensity')}</label>
                                 <select
                                     value={intensity}
                                     onChange={e => setIntensity(e.target.value)}
                                 >
-                                    <option value="light">Light</option>
-                                    <option value="moderate">Moderate</option>
-                                    <option value="vigorous">Vigorous</option>
+                                    <option value="light">{t('Light')}</option>
+                                    <option value="moderate">{t('Moderate')}</option>
+                                    <option value="vigorous">{t('Vigorous')}</option>
                                 </select>
                             </div>
                         </>
@@ -327,27 +332,27 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
 
                     {/* Notes field for all types */}
                     <div className="form-group">
-                        <label>Notes (optional)</label>
+                        <label>{t('Notes (optional)')}</label>
                         <textarea
                             value={notes}
                             onChange={e => setNotes(e.target.value)}
-                            placeholder="Any additional notes..."
+                            placeholder={t('Any additional notes...')}
                             rows="2"
                         />
                     </div>
 
                     <div className="modal-actions">
                         <button type="button" className="btn-cancel" onClick={handleClose}>
-                            Cancel
+                            {t('Cancel')}
                         </button>
                         <button type="submit" className="btn-submit" disabled={loading}>
-                            {loading ? 'Saving...' : 'Save Log'}
+                            {loading ? t('Saving...') : <><Save size={18} /> {t('Save Log')}</>}
                         </button>
                     </div>
                 </form>
 
                 <div className="modal-disclaimer">
-                    ⚠️ This is not medical advice. Always consult your healthcare provider.
+                    {t('This is not medical advice. Always consult your healthcare provider.')}
                 </div>
             </div>
         </div>

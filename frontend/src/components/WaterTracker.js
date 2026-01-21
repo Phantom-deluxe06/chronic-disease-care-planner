@@ -1,10 +1,11 @@
 /**
  * Water Tracker Component
  * Visual water intake tracking with animated water bottle
-    */
+ */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
 
 const WaterTracker = ({ token }) => {
     const [waterData, setWaterData] = useState({
@@ -15,6 +16,7 @@ const WaterTracker = ({ token }) => {
         remaining_ml: 2500
     });
     const [loading, setLoading] = useState(false);
+    const { t } = useLanguage();
 
     const fetchWaterData = useCallback(async () => {
         try {
@@ -63,7 +65,7 @@ const WaterTracker = ({ token }) => {
     return (
         <div className="water-tracker-card">
             <div className="water-header">
-                <h3>💧 Water Intake</h3>
+                <h3>💧 {t('Water Intake')}</h3>
             </div>
 
             {/* Water Bottle Visualization */}
@@ -145,13 +147,13 @@ const WaterTracker = ({ token }) => {
 
             {waterData.percentage < 50 && (
                 <div className="water-reminder">
-                    💡 Tip: Staying hydrated helps manage blood sugar levels!
+                    💡 {t('Stay hydrated for better glucose control.')}
                 </div>
             )}
 
             {isGoalReached && (
                 <div className="water-success">
-                    ✅ Great job! You've reached your daily water goal!
+                    ✅ {t('Goal reached! Great job!')}
                 </div>
             )}
         </div>
