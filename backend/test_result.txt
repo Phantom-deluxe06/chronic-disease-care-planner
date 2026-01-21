@@ -1,0 +1,27 @@
+SUCCESS!
+```json
+{
+  "medications": [
+    {
+      "name": "ABCIXIMAB",
+      "dosage": "1 Morning",
+      "frequency": "8 Days"
+    },
+    {
+      "name": "VOMILAST",
+      "dosage": "1 Morning, 1 Night (After Food)",
+      "frequency": "8 Days"
+    },
+    {
+      "name": "ZOCLAR 500",
+      "dosage": "1 Morning",
+      "frequency": "3 Days"
+    },
+    {
+      "name": "GESTAKIND 10/SR",
+      "dosage": "1 Night",
+      "frequency": "4 Days"
+    }
+  ]
+}
+```

@@ -1,0 +1,259 @@
+/* Food Image Analysis Modal - Full-screen Backdrop Overlay */
+
+/* Full-screen fixed overlay with blur */
+.food-analysis-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Centered modal card */
+.food-analysis-modal-content {
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 0 30px rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Modal header */
+.food-analysis-modal-content .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.food-analysis-modal-content .modal-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.food-analysis-modal-content .modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #888;
+    font-size: 24px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.food-analysis-modal-content .modal-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* Error styling */
+.food-analysis-modal-content .modal-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 20px 0;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    color: #f87171;
+    font-size: 0.9rem;
+}
+
+.food-analysis-modal-content .modal-error svg {
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+/* Upload section */
+.food-analysis-modal-content .upload-section {
+    padding: 24px;
+}
+
+.food-analysis-modal-content .upload-dropzone {
+    border: 2px dashed rgba(6, 182, 212, 0.3);
+    border-radius: 16px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(6, 182, 212, 0.02);
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.food-analysis-modal-content .upload-dropzone:hover {
+    border-color: #06B6D4;
+    background: rgba(6, 182, 212, 0.08);
+}
+
+.food-analysis-modal-content .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.food-analysis-modal-content .upload-placeholder .upload-icon {
+    font-size: 56px;
+    color: #06B6D4;
+}
+
+.food-analysis-modal-content .upload-placeholder p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.food-analysis-modal-content .upload-placeholder span {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.food-analysis-modal-content .upload-preview {
+    max-width: 100%;
+    max-height: 280px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Loading state */
+.food-analysis-modal-content .upload-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.food-analysis-modal-content .upload-loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(6, 182, 212, 0.2);
+    border-top-color: #06B6D4;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.food-analysis-modal-content .upload-loading p {
+    font-weight: 600;
+    color: white;
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.food-analysis-modal-content .upload-loading span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Tips section */
+.food-analysis-modal-content .upload-tips {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(6, 182, 212, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(6, 182, 212, 0.1);
+}
+
+.food-analysis-modal-content .upload-tips h4 {
+    font-size: 0.9rem;
+    color: #06B6D4;
+    margin: 0 0 12px 0;
+    font-weight: 600;
+}
+
+.food-analysis-modal-content .upload-tips ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.food-analysis-modal-content .upload-tips li {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 5px 0;
+    padding-left: 22px;
+    position: relative;
+}
+
+.food-analysis-modal-content .upload-tips li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #06B6D4;
+}
+
+/* Results section */
+.food-analysis-modal-content .food-analysis-results {
+    padding: 20px;
+}
+
+/* Disclaimer */
+.food-analysis-modal-content .modal-disclaimer {
+    padding: 14px 20px;
+    background: rgba(245, 158, 11, 0.1);
+    border-top: 1px solid rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+    font-size: 0.8rem;
+    text-align: center;
+    border-radius: 0 0 20px 20px;
+}

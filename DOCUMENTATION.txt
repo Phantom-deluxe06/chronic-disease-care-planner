@@ -1,0 +1,300 @@
+HEALTH BUDDY
+AI-Powered Chronic Disease Care Companion
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROJECT OVERVIEW
+
+Health Buddy is a comprehensive, AI-powered chronic disease care planner designed to help individuals manage Type-2 Diabetes and Hypertension effectively. Built for the AI Ignite 2025 Hackathon, it combines modern web technologies with Google's Gemini AI to deliver personalized health insights, real-time food analysis, medication tracking, and intelligent weekly health summaries.
+
+
+PROBLEM STATEMENT
+
+Chronic diseases like diabetes and hypertension require consistent daily management, including:
+• Monitoring vital health metrics (blood glucose, blood pressure)
+• Following strict dietary guidelines
+• Maintaining medication schedules
+• Tracking physical activity and hydration
+
+Health Buddy solves this by providing an all-in-one platform with AI-powered insights that makes chronic disease management simple, intuitive, and personalized.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FEATURES
+
+1. SECURE AUTHENTICATION
+   • JWT-based authentication with SHA-256 password hashing
+   • Disease-specific onboarding - Users select their condition(s) during signup
+   • Personalized dashboard routing based on health profile
+
+2. DIABETES DASHBOARD
+   • Blood Glucose Tracking - Log fasting, pre-meal, and post-meal readings with trend analysis
+   • HbA1c Management - Track long-term glucose control with historical data
+   • AI Food Analysis - Real-time nutritional analysis powered by Gemini AI
+     - Glycemic Index & Carbohydrate estimation
+     - Glucose spike risk assessment
+     - Portion recommendations for diabetics
+   • Medication Manager - Track insulin and oral medications with reminders
+   • Exercise Tracker - Log physical activities with intensity levels
+   • Weekly AI Summary - Personalized health insights and improvement suggestions
+
+3. HYPERTENSION DASHBOARD
+   • Blood Pressure Monitoring - Track systolic/diastolic readings with pulse
+   • DASH Diet Analysis - AI-powered sodium analysis for meal planning
+   • Water Intake Tracker - Hydration monitoring for BP management
+   • Stress & Lifestyle Tracker - Monitor stress levels and sleep patterns
+   • Medication Management - Track antihypertensives and schedule adherence
+   • Weekly BP Summary - Trend analysis with cardiovascular risk assessment
+
+4. SMART HOME DASHBOARD
+   • Unified view for users managing multiple conditions
+   • Quick health stats and pending tasks at a glance
+   • AI-curated daily health tips
+
+5. HEALTH REPORTS & LOGS
+   • Comprehensive health history with filtering options
+   • Visual trend charts for glucose and BP readings
+   • Export-ready data for healthcare providers
+
+6. MOBILE-RESPONSIVE DESIGN
+   • Fully responsive UI with mobile navigation
+   • Touch-friendly interface optimized for on-the-go tracking
+   • Android APK support via WebView wrapper
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TECHNOLOGY STACK
+
+FRONTEND
+• React.js 18 - Core UI framework with functional components & hooks
+• React Router v6 - Client-side routing and navigation
+• CSS3 Variables - Dynamic theming (Dark mode, disease-specific colors)
+• Glassmorphism UI - Modern, premium design aesthetics
+
+BACKEND
+• Python FastAPI - High-performance async REST API
+• Google Gemini AI - Intelligent food analysis & health recommendations
+• SQLite - Lightweight database for user data & health logs
+• JWT (python-jose) - Stateless authentication tokens
+• Pydantic - Request/response validation & serialization
+• Uvicorn - ASGI server for production deployment
+
+DEPLOYMENT
+• Vercel - Frontend hosting with auto-deployment
+• Render - Backend API hosting
+• GitHub - Version control & CI/CD triggers
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AI FEATURES (GEMINI AI INTEGRATION)
+
+1. FOOD ANALYSIS FOR DIABETES
+   Input: "2 slices of whole wheat bread with peanut butter"
+   Output:
+   • Calories: 320
+   • Carbohydrates: 42g
+   • Glycemic Index: 51 (Medium)
+   • Glucose Spike Risk: Medium
+   • Recommendation: "Good choice! Pair with protein for slower absorption."
+   • Portion Advice: "Stick to 2 tablespoons of peanut butter"
+
+2. DASH DIET ANALYSIS FOR HYPERTENSION
+   Input: "grilled salmon with steamed vegetables"
+   Output:
+   • Sodium: 120mg
+   • Potassium: 680mg
+   • DASH Compliance: Excellent
+   • Recommendation: "Heart-healthy choice! Rich in omega-3."
+
+3. WEEKLY AI HEALTH SUMMARY
+   AI analyzes 7-day health data to provide:
+   • Diet quality score
+   • Exercise consistency rating
+   • Medication adherence percentage
+   • Personalized improvement suggestions
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+API ENDPOINTS
+
+AUTHENTICATION
+• POST /signup - Register new user with health profile
+• POST /login - Authenticate and receive JWT token
+• GET /me - Get current user information
+
+HEALTH LOGGING
+• POST /logs/glucose - Log blood glucose reading
+• POST /logs/bp - Log blood pressure reading
+• POST /logs/food - Log food intake
+• POST /logs/activity - Log physical activity
+• POST /logs/water - Log water intake
+• POST /logs/hba1c - Log HbA1c test result
+• GET /logs/{type} - Get logs by type
+• GET /logs/all - Get all user logs
+
+AI-POWERED ANALYSIS
+• POST /analyze/food - AI food analysis for diabetes
+• POST /analyze/food/hypertension - AI food analysis for hypertension (DASH diet)
+• GET /weekly-summary - AI-generated weekly health summary
+
+TREND ANALYSIS
+• GET /trends - Comprehensive health trend analysis
+• GET /trends/glucose - Glucose-specific trends
+• GET /trends/bp - Blood pressure trends
+• GET /trends/weekly-adjustments - AI care plan adjustments
+
+MEDICATION & APPOINTMENTS
+• POST /medications - Add new medication
+• GET /medications - Get all active medications
+• POST /medications/intake - Log medication intake
+• POST /appointments - Create appointment
+• GET /appointments - Get upcoming appointments
+
+CARE PLAN & UTILITIES
+• GET /care-plan - Get personalized daily care plan
+• GET /reminders - Get health reminders
+• GET /travel-checklist - Get diabetic travel safety tips
+• GET /water/today - Get today's water intake
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MEDICAL GUIDELINES IMPLEMENTATION
+
+Health Buddy follows established medical guidelines:
+
+DIABETES (ADA - American Diabetes Association)
+• Glucose thresholds for alerts
+• HbA1c targets
+• Nutrition recommendations
+
+HYPERTENSION (AHA - American Heart Association)
+• BP categories and risk levels
+• DASH diet scoring
+• Sodium intake limits
+
+ALERT THRESHOLDS
+• Hypoglycemia Alert: Blood glucose < 70 mg/dL
+• Hyperglycemia Alert: Blood glucose > 180 mg/dL
+• Hypertensive Crisis: BP > 180/120 mmHg
+• Hypotension Alert: BP < 90/60 mmHg
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LIVE DEPLOYMENT
+
+Frontend (Vercel): https://chronic-disease-care-planner.vercel.app
+Backend API (Render): https://chronic-disease-care-planner.onrender.com
+API Documentation: https://chronic-disease-care-planner.onrender.com/docs
+GitHub Repository: https://github.com/Phantom-deluxe06/chronic-disease-care-planner
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROJECT STRUCTURE
+
+chronic-disease-care-planner/
+│
+├── frontend/
+│   ├── public/
+│   │   ├── index.html (App entry point)
+│   │   ├── manifest.json (PWA manifest)
+│   │   ├── favicon.ico (Health Buddy icon)
+│   │   └── logo*.png (App logos)
+│   │
+│   └── src/
+│       ├── pages/
+│       │   ├── Landing.js (Welcome page)
+│       │   ├── Login.js (Authentication)
+│       │   ├── Signup.js (Registration with disease selection)
+│       │   ├── Home.js (Dashboard hub)
+│       │   ├── DiabetesDashboard.js (Diabetes management)
+│       │   ├── HypertensionDashboard.js (BP management)
+│       │   ├── HealthLogs.js (Health history)
+│       │   ├── Reports.js (Analytics & reports)
+│       │   └── Settings.js (User preferences)
+│       │
+│       ├── components/
+│       │   ├── FoodAnalysisModal.js (AI food analysis - Diabetes)
+│       │   ├── HypertensionFoodModal.js (AI food analysis - BP)
+│       │   ├── BPEntryModal.js (Blood pressure logging)
+│       │   ├── LogEntryModal.js (Glucose logging)
+│       │   ├── MedicationManager.js (Medication tracking)
+│       │   ├── ExerciseTracker.js (Activity logging)
+│       │   ├── WaterTracker.js (Hydration tracking)
+│       │   ├── StressTracker.js (Lifestyle monitoring)
+│       │   ├── WeeklySummary.js (AI weekly insights)
+│       │   ├── WeeklySummaryBP.js (BP weekly summary)
+│       │   ├── Sidebar.js (Navigation sidebar)
+│       │   └── MobileNav.js (Mobile navigation)
+│       │
+│       ├── config/
+│       │   └── api.js (API configuration)
+│       │
+│       ├── App.js (Root component)
+│       └── App.css (Global styles)
+│
+├── backend/
+│   ├── main.py (FastAPI application & 25+ endpoints)
+│   ├── database.py (SQLite database operations)
+│   ├── ai_analyzer.py (Gemini AI integration)
+│   ├── trend_analyzer.py (Health trend analysis)
+│   ├── guidelines.py (Medical guidelines - ADA/AHA)
+│   ├── requirements.txt (Python dependencies)
+│   ├── Procfile (Render deployment config)
+│   └── runtime.txt (Python version)
+│
+└── README.md
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+INSTALLATION & SETUP
+
+PREREQUISITES
+• Node.js v16 or higher
+• Python v3.9 or higher
+• Git
+• Google Gemini API Key (for AI features)
+
+STEP 1: Clone the Repository
+git clone https://github.com/Phantom-deluxe06/chronic-disease-care-planner.git
+cd chronic-disease-care-planner
+
+STEP 2: Backend Setup
+cd backend
+python -m venv venv
+.\venv\Scripts\activate (Windows) or source venv/bin/activate (Mac/Linux)
+pip install -r requirements.txt
+Set GEMINI_API_KEY environment variable
+python -m uvicorn main:app --reload
+Backend runs at http://127.0.0.1:8000
+
+STEP 3: Frontend Setup
+cd frontend
+npm install
+npm start
+Frontend runs at http://localhost:3000
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACKNOWLEDGMENTS
+
+• Google Gemini AI - For powering intelligent health analysis
+• American Diabetes Association (ADA) - For diabetes care guidelines
+• American Heart Association (AHA) - For hypertension management guidelines
+• Vercel and Render - For seamless cloud deployment
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Developed for AI Ignite 2025 Hackathon
+Built with React, FastAPI, and Google Gemini AI
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
