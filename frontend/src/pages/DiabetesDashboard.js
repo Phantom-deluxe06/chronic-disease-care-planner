@@ -39,7 +39,9 @@ const DiabetesDashboard = () => {
     // Real data from API
     const [sugarLogs, setSugarLogs] = useState([]);
     const [carePlan, setCarePlan] = useState([]);
+    const [translatedCarePlan, setTranslatedCarePlan] = useState([]);
     const [tips, setTips] = useState([]);
+    const [translatedTips, setTranslatedTips] = useState([]);
     const [weeklyStats, setWeeklyStats] = useState(null);
     const [trends, setTrends] = useState(null);
     const [alert, setAlert] = useState(null);
@@ -132,6 +134,36 @@ const DiabetesDashboard = () => {
             fetchTrends()
         ]).finally(() => setLoading(false));
     }, [navigate, token, fetchGlucoseLogs, fetchCarePlan, fetchTrends]);
+
+    // Translate care plan and tips when language changes
+    useEffect(() => {
+        const translateContent = async () => {
+            if (language === 'en') {
+                setTranslatedCarePlan(carePlan);
+                setTranslatedTips(tips);
+                return;
+            }
+
+            // Translate care plan tasks
+            const translatedTasks = await Promise.all(
+                carePlan.map(async (task) => ({
+                    ...task,
+                    task: await translateAsync(task.task)
+                }))
+            );
+            setTranslatedCarePlan(translatedTasks);
+
+            // Translate tips
+            const translatedTipsArray = await Promise.all(
+                tips.map(async (tip) => await translateAsync(tip))
+            );
+            setTranslatedTips(translatedTipsArray);
+        };
+
+        if (carePlan.length > 0 || tips.length > 0) {
+            translateContent();
+        }
+    }, [language, carePlan, tips, translateAsync]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -227,7 +259,7 @@ const DiabetesDashboard = () => {
                         <div className="dash-card care-plan-card">
                             <h3>{t("Today's Care Plan")}</h3>
                             <div className="care-plan-list">
-                                {carePlan.slice(0, 5).map((task, i) => (
+                                {translatedCarePlan.slice(0, 5).map((task, i) => (
                                     <div key={i} className={`care-task ${task.done ? 'done' : ''}`}>
                                         <span className="task-icon">{task.icon}</span>
                                         <div className="task-content">
@@ -244,7 +276,7 @@ const DiabetesDashboard = () => {
                         <div className="dash-card tips-card">
                             <h3>💡 {t('Diabetes Tips')}</h3>
                             <ul className="tips-list">
-                                {tips.map((tip, i) => (
+                                {translatedTips.map((tip, i) => (
                                     <li key={i}>{tip}</li>
                                 ))}
                             </ul>
