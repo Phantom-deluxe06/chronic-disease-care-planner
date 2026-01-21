@@ -197,22 +197,44 @@ const DiabetesDashboard = () => {
                 return (
                     <div className="dashboard-grid">
                         {/* Progress Card */}
-                        <div className="dash-card progress-card">
+                        <div className="dash-card progress-card enhanced-progress">
                             <h3>{t("Today's Progress")}</h3>
-                            <div className="progress-circle">
-                                <svg viewBox="0 0 100 100">
-                                    <circle className="progress-bg" cx="50" cy="50" r="40" />
-                                    <circle
-                                        className="progress-fill"
-                                        cx="50"
-                                        cy="50"
-                                        r="40"
-                                        strokeDasharray={`${progress * 2.51} 251`}
-                                    />
-                                </svg>
-                                <span className="progress-text">{progress}%</span>
+                            <div className="progress-content">
+                                <div className="progress-circle">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle className="progress-bg" cx="50" cy="50" r="40" />
+                                        <circle
+                                            className="progress-fill"
+                                            cx="50"
+                                            cy="50"
+                                            r="40"
+                                            strokeDasharray={`${progress * 2.51} 251`}
+                                        />
+                                    </svg>
+                                    <span className="progress-text">{progress}%</span>
+                                </div>
+                                <div className="progress-details">
+                                    <p className="progress-status">{completedTasks} {t('of')} {carePlan.length} {t('tasks done')}</p>
+
+                                    {/* Motivational Message */}
+                                    <div className="motivation-box">
+                                        {progress === 0 && <span className="motivation-text">🌅 {t("Let's start your healthy day!")}</span>}
+                                        {progress > 0 && progress < 50 && <span className="motivation-text">💪 {t("Great start! Keep going!")}</span>}
+                                        {progress >= 50 && progress < 100 && <span className="motivation-text">🔥 {t("You're on fire! Almost there!")}</span>}
+                                        {progress === 100 && <span className="motivation-text">🎉 {t("Amazing! All tasks completed!")}</span>}
+                                    </div>
+
+                                    {/* Next Task Preview */}
+                                    {translatedCarePlan.length > 0 && (
+                                        <div className="next-task-preview">
+                                            <span className="next-label">{t('Next task')}:</span>
+                                            <span className="next-task-name">
+                                                {translatedCarePlan.find(task => !task.done)?.task || t('All done!')}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <p className="progress-status">{completedTasks} {t('of')} {carePlan.length} {t('tasks done')}</p>
                         </div>
 
                         {/* Water Tracker */}
