@@ -1,14 +1,6 @@
 /**
  * Water Tracker Component
-<<<<<<< Updated upstream
-<<<<<<< HEAD
- * Visual water intake tracking with animated water bottle
-=======
- * Visual water intake tracking with glass icons
->>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
-=======
- * Tracks daily water intake for metabolic health
->>>>>>> Stashed changes
+ * Visual water intake tracking with animated water circle
  */
 
 import { useState, useEffect } from 'react';
@@ -59,137 +51,6 @@ const WaterTracker = ({ token }) => {
         }
     };
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-    const fillPercentage = Math.min(waterData.percentage, 100);
-    const isGoalReached = waterData.percentage >= 100;
-=======
-    const glassesTarget = 10; // 10 glasses of 250ml = 2.5L
-    const glassesCompleted = Math.min(Math.ceil(waterData.total_ml / 250), glassesTarget);
->>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
-
-    return (
-        <div className="water-tracker-card">
-            <div className="water-header">
-                <h3>💧 Water Intake</h3>
-<<<<<<< HEAD
-            </div>
-
-            {/* Water Bottle Visualization */}
-            <div className="water-bottle-container">
-                <svg className="water-bottle" viewBox="0 0 100 180" preserveAspectRatio="xMidYMid meet">
-                    {/* Bottle cap */}
-                    <rect x="35" y="0" width="30" height="15" rx="3" className="bottle-cap" />
-
-                    {/* Bottle neck */}
-                    <path
-                        d="M 38 15 L 38 30 Q 20 35 20 55 L 20 160 Q 20 175 35 175 L 65 175 Q 80 175 80 160 L 80 55 Q 80 35 62 30 L 62 15"
-                        className="bottle-outline"
-                        fill="none"
-                        strokeWidth="3"
-                    />
-
-                    {/* Water fill - clipPath for bottle shape */}
-                    <defs>
-                        <clipPath id="bottleClip">
-                            <path d="M 38 15 L 38 30 Q 20 35 20 55 L 20 160 Q 20 175 35 175 L 65 175 Q 80 175 80 160 L 80 55 Q 80 35 62 30 L 62 15 Z" />
-                        </clipPath>
-                    </defs>
-
-                    {/* Water fill area */}
-                    <g clipPath="url(#bottleClip)">
-                        {/* Water fill rectangle - positioned from bottom */}
-                        <rect
-                            x="20"
-                            y={175 - (fillPercentage / 100) * 145}
-                            width="60"
-                            height={(fillPercentage / 100) * 145}
-                            className={`water-fill ${isGoalReached ? 'goal-reached' : ''}`}
-                        />
-
-                        {/* Wave animation overlay */}
-                        <g className="wave-container" style={{ transform: `translateY(${175 - (fillPercentage / 100) * 145 - 5}px)` }}>
-                            <path
-                                className={`water-wave ${isGoalReached ? 'goal-reached' : ''}`}
-                                d="M 20 5 Q 30 0 40 5 T 60 5 T 80 5 T 100 5 L 100 15 L 20 15 Z"
-                            />
-                        </g>
-                    </g>
-
-                    {/* Bottle highlight for 3D effect */}
-                    <ellipse cx="30" cy="100" rx="5" ry="40" className="bottle-highlight" />
-                </svg>
-
-                {/* Water level text */}
-                <div className="water-level-text">
-                    <span className="current-amount">{waterData.total_ml}ml</span>
-                    <span className="target-amount">/ {waterData.target_ml}ml</span>
-                </div>
-            </div>
-
-            {/* Quick add buttons */}
-=======
-                <span className="water-target">{waterData.total_ml}ml / {waterData.target_ml}ml</span>
-            </div>
-
-            <div className="water-progress-bar">
-                <div
-                    className="water-progress-fill"
-                    style={{ width: `${Math.min(waterData.percentage, 100)}%` }}
-                />
-            </div>
-
-            <div className="water-glasses">
-                {[...Array(glassesTarget)].map((_, i) => (
-                    <button
-                        key={i}
-                        className={`water-glass ${i < glassesCompleted ? 'filled' : ''}`}
-                        onClick={() => logWater(250)}
-                        disabled={loading}
-                        title="Click to add a glass (250ml)"
-                    >
-                        🥤
-                    </button>
-                ))}
-            </div>
-
->>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
-            <div className="water-actions">
-                <button
-                    className="water-btn small"
-                    onClick={() => logWater(150)}
-                    disabled={loading}
-                >
-                    +150ml
-                </button>
-                <button
-                    className="water-btn"
-                    onClick={() => logWater(250)}
-                    disabled={loading}
-                >
-<<<<<<< HEAD
-                    +250ml
-=======
-                    +250ml (Glass)
->>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
-                </button>
-                <button
-                    className="water-btn large"
-                    onClick={() => logWater(500)}
-                    disabled={loading}
-                >
-<<<<<<< HEAD
-                    +500ml
-=======
-                    +500ml (Bottle)
->>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
-                </button>
-            </div>
-
-            {waterData.percentage < 50 && (
-                <div className="water-reminder">
-                    💡 Tip: Staying hydrated helps manage blood sugar levels!
-=======
     const percentage = Math.min((glasses / goal) * 100, 100);
 
     return (
@@ -206,18 +67,8 @@ const WaterTracker = ({ token }) => {
                         <span className="current">{glasses}</span>
                         <span className="total">/ {goal}</span>
                     </div>
->>>>>>> Stashed changes
                 </div>
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-            {isGoalReached && (
-=======
-            {waterData.percentage >= 100 && (
->>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
-                <div className="water-success">
-                    ✅ Great job! You've reached your daily water goal!
-=======
                 <div className="water-info">
                     <p className="status-msg">
                         {glasses >= goal ? t('Goal reached! Great job!') : t('Stay hydrated for better glucose control.')}
@@ -227,7 +78,6 @@ const WaterTracker = ({ token }) => {
                             <Plus size={16} /> {t('Add Glass')}
                         </button>
                     </div>
->>>>>>> Stashed changes
                 </div>
             </div>
 
