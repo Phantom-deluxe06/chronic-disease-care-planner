@@ -623,5 +623,155 @@ def init_all_tables():
     init_appointment_tables()
     init_hba1c_table()
     init_reminder_tables()
+    init_strava_tables()
 
 
+# ==================== STRAVA INTEGRATION ====================
+
+def init_strava_tables():
+    """Initialize Strava OAuth and activities tables"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        
+        # Strava OAuth tokens table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS strava_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER UNIQUE NOT NULL,
+                access_token TEXT NOT NULL,
+                refresh_token TEXT NOT NULL,
+                expires_at INTEGER NOT NULL,
+                athlete_id INTEGER,
+                athlete_name TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        """)
+        
+        # Strava activities table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS strava_activities (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                strava_id INTEGER UNIQUE NOT NULL,
+                activity_type TEXT NOT NULL,
+                name TEXT,
+                distance REAL,
+                moving_time INTEGER,
+                elapsed_time INTEGER,
+                start_date TEXT NOT NULL,
+                start_date_local TEXT,
+                average_speed REAL,
+                max_speed REAL,
+                average_heartrate REAL,
+                max_heartrate REAL,
+                calories REAL,
+                synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        """)
+        conn.commit()
+
+
+def save_strava_tokens(user_id: int, access_token: str, refresh_token: str, 
+                       expires_at: int, athlete_id: int = None, 
+                       athlete_name: str = None) -> int:
+    """Save or update Strava OAuth tokens for a user"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        # Use REPLACE to handle both insert and update
+        cursor.execute(
+            """INSERT OR REPLACE INTO strava_tokens 
+               (user_id, access_token, refresh_token, expires_at, athlete_id, athlete_name, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+            (user_id, access_token, refresh_token, expires_at, athlete_id, athlete_name)
+        )
+        conn.commit()
+        return cursor.lastrowid
+
+
+def get_strava_tokens(user_id: int) -> Optional[Dict[str, Any]]:
+    """Get Strava tokens for a user"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT * FROM strava_tokens WHERE user_id = ?""",
+            (user_id,)
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def delete_strava_tokens(user_id: int) -> bool:
+    """Delete Strava tokens for a user (disconnect)"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """DELETE FROM strava_tokens WHERE user_id = ?""",
+            (user_id,)
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+
+
+def save_strava_activity(user_id: int, strava_id: int, activity_type: str,
+                         name: str, distance: float, moving_time: int,
+                         elapsed_time: int, start_date: str,
+                         start_date_local: str = None, average_speed: float = None,
+                         max_speed: float = None, average_heartrate: float = None,
+                         max_heartrate: float = None, calories: float = None) -> int:
+    """Save or update a Strava activity"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """INSERT OR REPLACE INTO strava_activities 
+               (user_id, strava_id, activity_type, name, distance, moving_time, 
+                elapsed_time, start_date, start_date_local, average_speed, 
+                max_speed, average_heartrate, max_heartrate, calories, synced_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+            (user_id, strava_id, activity_type, name, distance, moving_time,
+             elapsed_time, start_date, start_date_local, average_speed,
+             max_speed, average_heartrate, max_heartrate, calories)
+        )
+        conn.commit()
+        return cursor.lastrowid
+
+
+def get_strava_activities(user_id: int, days: int = 7) -> list:
+    """Get Strava activities for a user within the specified days"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT * FROM strava_activities 
+               WHERE user_id = ? AND date(start_date) >= date('now', ?)
+               ORDER BY start_date DESC""",
+            (user_id, f'-{days} days')
+        )
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_strava_weekly_stats(user_id: int) -> Dict[str, Any]:
+    """Get weekly statistics from Strava activities"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT 
+                SUM(moving_time) as total_moving_time,
+                SUM(distance) as total_distance,
+                COUNT(*) as activity_count,
+                AVG(average_heartrate) as avg_heartrate
+               FROM strava_activities 
+               WHERE user_id = ? AND date(start_date) >= date('now', '-7 days')""",
+            (user_id,)
+        )
+        row = cursor.fetchone()
+        if row:
+            total_seconds = row["total_moving_time"] or 0
+            return {
+                "total_minutes": round(total_seconds / 60),
+                "total_distance_km": round((row["total_distance"] or 0) / 1000, 2),
+                "activity_count": row["activity_count"] or 0,
+                "avg_heartrate": round(row["avg_heartrate"]) if row["avg_heartrate"] else None
+            }
+        return {"total_minutes": 0, "total_distance_km": 0, "activity_count": 0, "avg_heartrate": None}

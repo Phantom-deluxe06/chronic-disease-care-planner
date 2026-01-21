@@ -1149,3 +1149,248 @@ async def analyze_food_image_endpoint(
         logger.error(f"Food image analysis endpoint error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ==================== STRAVA INTEGRATION ENDPOINTS ====================
+
+import os
+import httpx
+from dotenv import load_dotenv
+from fastapi.responses import RedirectResponse
+
+load_dotenv()
+
+STRAVA_CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID", "197229")
+STRAVA_CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET", "")
+STRAVA_REDIRECT_URI = "http://localhost:3000/strava/callback"
+STRAVA_AUTH_URL = "https://www.strava.com/oauth/authorize"
+STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token"
+STRAVA_API_URL = "https://www.strava.com/api/v3"
+
+
+@app.get("/strava/auth")
+def strava_auth(current_user: dict = Depends(get_current_user)):
+    """Redirect user to Strava OAuth page"""
+    auth_url = (
+        f"{STRAVA_AUTH_URL}?"
+        f"client_id={STRAVA_CLIENT_ID}&"
+        f"redirect_uri={STRAVA_REDIRECT_URI}&"
+        f"response_type=code&"
+        f"scope=activity:read_all&"
+        f"state={current_user['id']}"
+    )
+    return {"auth_url": auth_url}
+
+
+@app.post("/strava/callback")
+async def strava_callback(code: str, state: str, current_user: dict = Depends(get_current_user)):
+    """Exchange authorization code for access tokens"""
+    try:
+        # Exchange code for tokens
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                STRAVA_TOKEN_URL,
+                data={
+                    "client_id": STRAVA_CLIENT_ID,
+                    "client_secret": STRAVA_CLIENT_SECRET,
+                    "code": code,
+                    "grant_type": "authorization_code"
+                }
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Strava token exchange failed: {response.text}")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Failed to exchange code for tokens"
+                )
+            
+            token_data = response.json()
+        
+        # Save tokens to database
+        athlete = token_data.get("athlete", {})
+        database.save_strava_tokens(
+            user_id=current_user["id"],
+            access_token=token_data["access_token"],
+            refresh_token=token_data["refresh_token"],
+            expires_at=token_data["expires_at"],
+            athlete_id=athlete.get("id"),
+            athlete_name=f"{athlete.get('firstname', '')} {athlete.get('lastname', '')}".strip()
+        )
+        
+        logger.info(f"Strava connected for user {current_user['id']}")
+        
+        return {
+            "success": True,
+            "message": "Strava connected successfully",
+            "athlete_name": f"{athlete.get('firstname', '')} {athlete.get('lastname', '')}".strip()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Strava callback error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+async def refresh_strava_token(user_id: int) -> Optional[Dict[str, Any]]:
+    """Refresh Strava access token if expired"""
+    tokens = database.get_strava_tokens(user_id)
+    if not tokens:
+        return None
+    
+    import time
+    current_time = int(time.time())
+    
+    # If token is not expired, return existing tokens
+    if tokens["expires_at"] > current_time:
+        return tokens
+    
+    # Refresh the token
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            STRAVA_TOKEN_URL,
+            data={
+                "client_id": STRAVA_CLIENT_ID,
+                "client_secret": STRAVA_CLIENT_SECRET,
+                "grant_type": "refresh_token",
+                "refresh_token": tokens["refresh_token"]
+            }
+        )
+        
+        if response.status_code != 200:
+            logger.error(f"Strava token refresh failed: {response.text}")
+            return None
+        
+        new_tokens = response.json()
+    
+    # Update tokens in database
+    database.save_strava_tokens(
+        user_id=user_id,
+        access_token=new_tokens["access_token"],
+        refresh_token=new_tokens["refresh_token"],
+        expires_at=new_tokens["expires_at"],
+        athlete_id=tokens.get("athlete_id"),
+        athlete_name=tokens.get("athlete_name")
+    )
+    
+    return database.get_strava_tokens(user_id)
+
+
+@app.get("/strava/status")
+async def strava_status(current_user: dict = Depends(get_current_user)):
+    """Check if user has connected Strava"""
+    tokens = database.get_strava_tokens(current_user["id"])
+    
+    if not tokens:
+        return {"connected": False}
+    
+    return {
+        "connected": True,
+        "athlete_name": tokens.get("athlete_name", ""),
+        "athlete_id": tokens.get("athlete_id")
+    }
+
+
+@app.post("/strava/sync")
+async def strava_sync(current_user: dict = Depends(get_current_user)):
+    """Sync activities from Strava"""
+    try:
+        # Get valid tokens (refresh if needed)
+        tokens = await refresh_strava_token(current_user["id"])
+        
+        if not tokens:
+            raise HTTPException(
+                status_code=400,
+                detail="Strava not connected. Please connect your Strava account first."
+            )
+        
+        # Fetch activities from Strava
+        import time
+        after_timestamp = int(time.time()) - (7 * 24 * 60 * 60)  # Last 7 days
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{STRAVA_API_URL}/athlete/activities",
+                headers={"Authorization": f"Bearer {tokens['access_token']}"},
+                params={
+                    "after": after_timestamp,
+                    "per_page": 50
+                }
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Strava activities fetch failed: {response.text}")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Failed to fetch activities from Strava"
+                )
+            
+            activities = response.json()
+        
+        # Save activities to database
+        synced_count = 0
+        for activity in activities:
+            database.save_strava_activity(
+                user_id=current_user["id"],
+                strava_id=activity["id"],
+                activity_type=activity.get("type", "Unknown"),
+                name=activity.get("name", ""),
+                distance=activity.get("distance", 0),
+                moving_time=activity.get("moving_time", 0),
+                elapsed_time=activity.get("elapsed_time", 0),
+                start_date=activity.get("start_date", ""),
+                start_date_local=activity.get("start_date_local", ""),
+                average_speed=activity.get("average_speed"),
+                max_speed=activity.get("max_speed"),
+                average_heartrate=activity.get("average_heartrate"),
+                max_heartrate=activity.get("max_heartrate"),
+                calories=activity.get("calories")
+            )
+            synced_count += 1
+        
+        logger.info(f"Synced {synced_count} activities for user {current_user['id']}")
+        
+        return {
+            "success": True,
+            "synced_count": synced_count,
+            "message": f"Successfully synced {synced_count} activities from Strava"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Strava sync error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/strava/activities")
+async def get_strava_activities(days: int = 7, current_user: dict = Depends(get_current_user)):
+    """Get synced Strava activities"""
+    activities = database.get_strava_activities(current_user["id"], days)
+    weekly_stats = database.get_strava_weekly_stats(current_user["id"])
+    
+    # Calculate progress towards 150 minute goal
+    goal_minutes = 150
+    progress_percent = min((weekly_stats["total_minutes"] / goal_minutes) * 100, 100)
+    
+    return {
+        "activities": activities,
+        "weekly_stats": weekly_stats,
+        "goal": {
+            "target_minutes": goal_minutes,
+            "current_minutes": weekly_stats["total_minutes"],
+            "progress_percent": round(progress_percent, 1),
+            "remaining_minutes": max(0, goal_minutes - weekly_stats["total_minutes"])
+        }
+    }
+
+
+@app.delete("/strava/disconnect")
+async def strava_disconnect(current_user: dict = Depends(get_current_user)):
+    """Disconnect Strava account"""
+    deleted = database.delete_strava_tokens(current_user["id"])
+    
+    if deleted:
+        return {"success": True, "message": "Strava disconnected successfully"}
+    else:
+        return {"success": False, "message": "Strava was not connected"}

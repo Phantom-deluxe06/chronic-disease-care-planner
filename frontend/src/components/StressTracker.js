@@ -16,7 +16,7 @@ const StressTracker = ({ token }) => {
     const [breathCount, setBreathCount] = useState(0);
 
     const stressLevels = [
-        { level: 'low', label: 'Low', icon: '😊', color: '#22c55e' },
+        { level: 'low', label: 'Low', icon: '😊', color: '#06B6D4' },
         { level: 'moderate', label: 'Moderate', icon: '😐', color: '#f59e0b' },
         { level: 'high', label: 'High', icon: '😰', color: '#ef4444' }
     ];

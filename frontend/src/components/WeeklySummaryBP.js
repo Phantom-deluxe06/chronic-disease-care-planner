@@ -59,7 +59,7 @@ const WeeklySummaryBP = ({ token }) => {
     };
 
     const getBPTrendColor = (trend) => {
-        if (trend === 'improving') return '#22c55e';
+        if (trend === 'improving') return '#06B6D4';
         if (trend === 'stable') return '#f59e0b';
         if (trend === 'worsening') return '#ef4444';
         return '#6b7280';
@@ -137,7 +137,7 @@ const WeeklySummaryBP = ({ token }) => {
                                 className="adherence-fill"
                                 style={{
                                     width: `${summary.medication_adherence || 0}%`,
-                                    backgroundColor: (summary.medication_adherence || 0) >= 80 ? '#22c55e' : '#f59e0b'
+                                    backgroundColor: (summary.medication_adherence || 0) >= 80 ? '#06B6D4' : '#f59e0b'
                                 }}
                             />
                         </div>

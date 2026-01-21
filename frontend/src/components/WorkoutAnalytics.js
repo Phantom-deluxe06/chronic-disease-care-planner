@@ -37,7 +37,7 @@ const WorkoutAnalytics = ({ token }) => {
     const [submitting, setSubmitting] = useState(false);
 
     const activityTypes = [
-        { id: 'walking', name: 'Walking', icon: MdDirectionsWalk, color: '#10b981' },
+        { id: 'walking', name: 'Walking', icon: MdDirectionsWalk, color: '#06B6D4' },
         { id: 'running', name: 'Running', icon: MdDirectionsRun, color: '#3b82f6' },
         { id: 'cycling', name: 'Cycling', icon: MdDirectionsBike, color: '#f59e0b' },
         { id: 'swimming', name: 'Swimming', icon: MdPool, color: '#06b6d4' },
@@ -209,7 +209,7 @@ const WorkoutAnalytics = ({ token }) => {
                                 cy="50"
                                 r="40"
                                 fill="none"
-                                stroke="#10b981"
+                                stroke="#06B6D4"
                                 strokeWidth="10"
                                 strokeDasharray={`${weeklyPercentage * 2.51} 251`}
                                 strokeLinecap="round"
@@ -299,7 +299,7 @@ const WorkoutAnalytics = ({ token }) => {
                             />
                             <Bar
                                 dataKey="minutes"
-                                fill="#10b981"
+                                fill="#06B6D4"
                                 radius={[4, 4, 0, 0]}
                             />
                         </BarChart>

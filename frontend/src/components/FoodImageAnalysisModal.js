@@ -7,7 +7,7 @@ import { useState, useRef } from 'react';
 import { FiCamera, FiAlertCircle } from 'react-icons/fi';
 import { MdRestaurant, MdLocalFireDepartment } from 'react-icons/md';
 import { apiUrl } from '../config/api';
-import './LogEntryModal.css';
+import './FoodImageAnalysisModal.css';
 
 const FoodImageAnalysisModal = ({ isOpen, onClose, onSuccess, token, condition = 'diabetes' }) => {
     const [uploading, setUploading] = useState(false);
@@ -88,8 +88,8 @@ const FoodImageAnalysisModal = ({ isOpen, onClose, onSuccess, token, condition =
 
     const getRatingColor = (rating) => {
         switch (rating) {
-            case 'Excellent': return '#22c55e';
-            case 'Good': return '#10b981';
+            case 'Excellent': return '#06B6D4';
+            case 'Good': return '#06B6D4';
             case 'Moderate': return '#f59e0b';
             case 'Poor': return '#ef4444';
             default: return '#6b7280';
@@ -99,8 +99,8 @@ const FoodImageAnalysisModal = ({ isOpen, onClose, onSuccess, token, condition =
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay" onClick={handleClose}>
-            <div className="modal-content food-image-modal" onClick={e => e.stopPropagation()}>
+        <div className="food-analysis-overlay" onClick={handleClose}>
+            <div className="food-analysis-modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>📷 Food Image Analysis</h2>
                     <button className="modal-close" onClick={handleClose}>×</button>

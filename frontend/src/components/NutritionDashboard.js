@@ -139,7 +139,7 @@ const NutritionDashboard = ({ token }) => {
 
     // Pie chart data for calories
     const calorieChartData = [
-        { name: 'Consumed', value: nutritionData.calories.consumed, color: '#10b981' },
+        { name: 'Consumed', value: nutritionData.calories.consumed, color: '#06B6D4' },
         { name: 'Remaining', value: Math.max(0, remaining), color: '#1f2937' }
     ];
 
@@ -156,7 +156,7 @@ const NutritionDashboard = ({ token }) => {
             name: 'Protein',
             consumed: nutritionData.macros.protein.consumed,
             goal: nutritionData.macros.protein.goal,
-            color: '#10b981',
+            color: '#06B6D4',
             unit: 'g'
         },
         {
@@ -300,8 +300,8 @@ const NutritionDashboard = ({ token }) => {
                         <AreaChart data={weeklyData}>
                             <defs>
                                 <linearGradient id="calorieGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -318,7 +318,7 @@ const NutritionDashboard = ({ token }) => {
                             <Area
                                 type="monotone"
                                 dataKey="calories"
-                                stroke="#10b981"
+                                stroke="#06B6D4"
                                 strokeWidth={2}
                                 fill="url(#calorieGradient)"
                             />
@@ -335,7 +335,7 @@ const NutritionDashboard = ({ token }) => {
 
                 <div className="trend-legend">
                     <span className="legend-item">
-                        <span className="dot" style={{ backgroundColor: '#10b981' }}></span>
+                        <span className="dot" style={{ backgroundColor: '#06B6D4' }}></span>
                         Calories
                     </span>
                     <span className="legend-item">

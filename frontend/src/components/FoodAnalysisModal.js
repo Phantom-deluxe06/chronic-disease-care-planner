@@ -70,7 +70,7 @@ const FoodAnalysisModal = ({ isOpen, onClose, onSuccess, token }) => {
 
     const getRiskColor = (level) => {
         switch (level) {
-            case 'low': return '#22c55e';
+            case 'low': return '#06B6D4';
             case 'medium': return '#f59e0b';
             case 'high': return '#ef4444';
             default: return '#6b7280';

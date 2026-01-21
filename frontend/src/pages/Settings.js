@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MobileNav from '../components/MobileNav';
+import StravaConnect from '../components/StravaConnect';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -139,6 +140,14 @@ const Settings = () => {
                                     <option value="mmol/L">mmol/L</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Connected Apps */}
+                    <div className="settings-card">
+                        <h3>🔗 Connected Apps</h3>
+                        <div className="settings-group">
+                            <StravaConnect token={localStorage.getItem('token')} />
                         </div>
                     </div>
 

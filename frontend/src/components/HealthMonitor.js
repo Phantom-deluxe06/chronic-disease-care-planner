@@ -77,7 +77,7 @@ const HealthMonitor = ({ token }) => {
     };
 
     const getHba1cColor = (value) => {
-        if (value < 5.7) return '#22c55e';
+        if (value < 5.7) return '#06B6D4';
         if (value < 6.5) return '#f59e0b';
         if (value < 7.0) return '#84cc16';
         if (value < 8.0) return '#f97316';

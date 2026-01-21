@@ -69,7 +69,7 @@ const HypertensionFoodModal = ({ isOpen, onClose, onSuccess, token }) => {
     if (!isOpen) return null;
 
     const getSodiumColor = (mg) => {
-        if (mg < 400) return '#22c55e';
+        if (mg < 400) return '#06B6D4';
         if (mg < 800) return '#f59e0b';
         return '#ef4444';
     };
@@ -215,7 +215,7 @@ const HypertensionFoodModal = ({ isOpen, onClose, onSuccess, token }) => {
                                         className="sodium-fill"
                                         style={{
                                             width: `${Math.min((analysis.daily_sodium || 0) / 2300 * 100, 100)}%`,
-                                            backgroundColor: (analysis.daily_sodium || 0) > 2300 ? '#ef4444' : '#10b981'
+                                            backgroundColor: (analysis.daily_sodium || 0) > 2300 ? '#ef4444' : '#06B6D4'
                                         }}
                                     />
                                 </div>

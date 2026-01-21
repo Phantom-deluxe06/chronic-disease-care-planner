@@ -35,7 +35,7 @@ const WeeklySummary = ({ token }) => {
 
     const getRatingColor = (rating) => {
         switch (rating) {
-            case 'Excellent': return '#22c55e';
+            case 'Excellent': return '#06B6D4';
             case 'Good': return '#84cc16';
             case 'Fair': return '#f59e0b';
             case 'Needs Improvement': return '#ef4444';

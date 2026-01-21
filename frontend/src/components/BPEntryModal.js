@@ -76,7 +76,7 @@ const BPEntryModal = ({ isOpen, onClose, onSuccess, token }) => {
         } else {
             return {
                 category: 'Normal',
-                color: '#22c55e',
+                color: '#06B6D4',
                 icon: '✅',
                 message: 'Great! Your blood pressure is in the healthy range.',
                 severe: false
@@ -267,7 +267,7 @@ const BPEntryModal = ({ isOpen, onClose, onSuccess, token }) => {
                         <div className="bp-reference">
                             <h4>BP Categories (AHA Guidelines)</h4>
                             <div className="bp-ref-list">
-                                <div className="bp-ref-item"><span style={{ color: '#22c55e' }}>●</span> Normal: &lt;120 / &lt;80</div>
+                                <div className="bp-ref-item"><span style={{ color: '#06B6D4' }}>●</span> Normal: &lt;120 / &lt;80</div>
                                 <div className="bp-ref-item"><span style={{ color: '#eab308' }}>●</span> Elevated: 120-129 / &lt;80</div>
                                 <div className="bp-ref-item"><span style={{ color: '#f59e0b' }}>●</span> Stage 1: 130-139 / 80-89</div>
                                 <div className="bp-ref-item"><span style={{ color: '#ef4444' }}>●</span> Stage 2: ≥140 / ≥90</div>

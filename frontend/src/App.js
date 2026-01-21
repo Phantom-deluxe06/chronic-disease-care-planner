@@ -75,6 +75,13 @@ function App() {
           </ProtectedRoute>
         } />
 
+        {/* Strava OAuth Callback - redirects to settings */}
+        <Route path="/strava/callback" element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } />
+
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

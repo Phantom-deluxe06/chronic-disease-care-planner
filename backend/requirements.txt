@@ -6,3 +6,4 @@ python-multipart
 email-validator
 google-generativeai
 python-dotenv
+httpx
