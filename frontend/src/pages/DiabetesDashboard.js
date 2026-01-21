@@ -401,43 +401,43 @@ const DiabetesDashboard = () => {
                         className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        📊 {t('Overview')}
+                        <LayoutDashboard size={18} strokeWidth={2} /> {t('Overview')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'food' ? 'active' : ''}`}
                         onClick={() => setActiveTab('food')}
                     >
-                        🍽️ {t('Food & Diet')}
+                        <Utensils size={18} strokeWidth={2} /> {t('Food & Diet')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'exercise' ? 'active' : ''}`}
                         onClick={() => setActiveTab('exercise')}
                     >
-                        🏃 {t('Exercise')}
+                        <Dumbbell size={18} strokeWidth={2} /> {t('Exercise')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'medications' ? 'active' : ''}`}
                         onClick={() => setActiveTab('medications')}
                     >
-                        💊 {t('Medications')}
+                        <Pill size={18} strokeWidth={2} /> {t('Medications')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'health' ? 'active' : ''}`}
                         onClick={() => setActiveTab('health')}
                     >
-                        📈 {t('Health Monitor')}
+                        <Monitor size={18} strokeWidth={2} /> {t('Health Monitor')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'preventive' ? 'active' : ''}`}
                         onClick={() => setActiveTab('preventive')}
                     >
-                        🛡️ {t('Preventive Care and Tips')}
+                        <ShieldCheck size={18} strokeWidth={2} /> {t('Preventive Care and Tips')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
                         onClick={() => setActiveTab('summary')}
                     >
-                        🤖 {t('AI Summary')}
+                        <Brain size={18} strokeWidth={2} /> {t('AI Summary')}
                     </button>
                 </div>
 
