@@ -41,8 +41,9 @@ def initialize_gemini():
         logger.info("google.generativeai imported successfully")
         
         genai.configure(api_key=GEMINI_API_KEY)
-        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
-        logger.info("Gemini AI initialized successfully with model gemini-1.5-flash")
+        # Using gemini-2.0-flash (gemini-1.5 models are deprecated)
+        gemini_model = genai.GenerativeModel('models/gemini-2.0-flash')
+        logger.info("Gemini AI initialized successfully with model gemini-2.0-flash")
         return gemini_model
     except ImportError as ie:
         logger.error(f"ImportError - google.generativeai not found: {ie}")
@@ -1252,40 +1253,49 @@ def analyze_prescription_image(image_data: bytes) -> Optional[Dict[str, Any]]:
     if not gemini_model:
         initialize_gemini()
         if not gemini_model:
+            logger.error("Gemini model not initialized for prescription analysis")
             return None
     
     try:
         import google.generativeai as genai
         import base64
         
-        # Create image part for vision model
+        # Detect image format from bytes
+        mime_type = "image/jpeg"  # Default
+        if image_data[:4] == b'\x89PNG':
+            mime_type = "image/png"
+        elif image_data[:2] == b'\xff\xd8':
+            mime_type = "image/jpeg"
+        elif image_data[:4] == b'GIF8':
+            mime_type = "image/gif"
+        elif image_data[:4] == b'RIFF':
+            mime_type = "image/webp"
+        
+        logger.info(f"Prescription image size: {len(image_data)} bytes, detected mime_type: {mime_type}")
+        
+        # Create image part for vision model - using inline_data format
         image_part = {
-            "mime_type": "image/jpeg",
-            "data": base64.b64encode(image_data).decode('utf-8')
+            "inline_data": {
+                "mime_type": mime_type,
+                "data": base64.b64encode(image_data).decode('utf-8')
+            }
         }
         
-        prompt = """Analyze this prescription image and extract all medications listed.
+        prompt = """You are a specialized medical OCR agent for the 'Health Buddy' app.
 
-For each medication found, extract:
-1. Medication name (generic or brand name)
-2. Dosage (e.g., 500mg, 10mg)
-3. Frequency (how often to take - once daily, twice daily, etc.)
-4. Instructions (e.g., take with food, before meals)
+Task: Inspect the provided image of a medical prescription.
 
-Return a JSON object with this exact structure (no markdown, just raw JSON):
+Extraction Rules:
+1. Extract only the Medication Name, Dosage (e.g., 500mg), and Frequency (e.g., Twice a day).
+2. Do NOT provide any medical advice, diagnosis, or treatment recommendations.
+3. If a value is unclear or handwritten text is illegible, return 'unclear' for that field.
+4. Do NOT paraphrase; use the exact text seen in the image.
+
+Output Format: Provide the results strictly as a JSON object (no markdown, just raw JSON):
 {
     "medications": [
-        {
-            "name": "<medication name>",
-            "dosage": "<dosage>",
-            "frequency": "<daily/twice_daily/three_times/as_needed>",
-            "times_of_day": ["<suggested time in 24h format>"],
-            "instructions": "<any special instructions>"
-        }
-    ],
-    "doctor_name": "<doctor name if visible>",
-    "date": "<prescription date if visible>",
-    "notes": "<any additional notes from prescription>"
+        {"name": "...", "dosage": "...", "frequency": "..."}
+    ]
 }
 
 If no medications can be detected, return:
