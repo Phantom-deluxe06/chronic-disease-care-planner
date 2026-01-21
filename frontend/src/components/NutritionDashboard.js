@@ -5,17 +5,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
 import {
     PieChart, Pie, Cell, ResponsiveContainer,
     XAxis, YAxis, CartesianGrid, Tooltip,
     Line, Area, AreaChart
 } from 'recharts';
 import {
-    FiTrendingUp, FiPieChart,
-    FiCoffee, FiSun, FiMoon, FiStar
-} from 'react-icons/fi';
+    TrendingUp, PieChart as PieChartIcon,
+    Coffee, Sun, Moon, Star, Utensils, Zap, Droplet
+} from 'lucide-react';
 import {
-    MdRestaurant, MdLocalFireDepartment, MdGrain,
+    MdLocalFireDepartment, MdGrain,
     MdEgg, MdWaterDrop
 } from 'react-icons/md';
 
@@ -36,6 +37,7 @@ const NutritionDashboard = ({ token }) => {
     });
     const [weeklyData, setWeeklyData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { t, language } = useLanguage();
 
     const fetchNutritionData = useCallback(async () => {
         try {
@@ -84,7 +86,7 @@ const NutritionDashboard = ({ token }) => {
                 const mealType = (log.reading_context || 'snacks').toLowerCase();
                 if (meals[mealType]) {
                     meals[mealType].push({
-                        name: log.notes?.split('|')[0] || 'Food item',
+                        name: log.notes?.split('|')[0] || t('Food item'),
                         calories: log.value
                     });
                 }
@@ -97,7 +99,10 @@ const NutritionDashboard = ({ token }) => {
             const date = new Date();
             date.setDate(date.getDate() - i);
             const dateStr = date.toDateString();
-            const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+
+            // Get localized weekday
+            const localeStr = language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-US';
+            const dayName = date.toLocaleDateString(localeStr, { weekday: 'short' });
 
             const dayCalories = logs
                 .filter(log => new Date(log.created_at).toDateString() === dateStr)
@@ -139,28 +144,28 @@ const NutritionDashboard = ({ token }) => {
 
     // Pie chart data for calories
     const calorieChartData = [
-        { name: 'Consumed', value: nutritionData.calories.consumed, color: '#06B6D4' },
-        { name: 'Remaining', value: Math.max(0, remaining), color: '#1f2937' }
+        { name: t('Consumed'), value: nutritionData.calories.consumed, color: '#06B6D4' },
+        { name: t('Remaining'), value: Math.max(0, remaining), color: '#1f2937' }
     ];
 
     // Macro chart data
     const macroChartData = [
         {
-            name: 'Carbs',
+            name: t('Carbs'),
             consumed: nutritionData.macros.carbs.consumed,
             goal: nutritionData.macros.carbs.goal,
             color: '#3b82f6',
             unit: 'g'
         },
         {
-            name: 'Protein',
+            name: t('Protein'),
             consumed: nutritionData.macros.protein.consumed,
             goal: nutritionData.macros.protein.goal,
             color: '#06B6D4',
             unit: 'g'
         },
         {
-            name: 'Fat',
+            name: t('Fat'),
             consumed: nutritionData.macros.fat.consumed,
             goal: nutritionData.macros.fat.goal,
             color: '#f59e0b',
@@ -170,10 +175,10 @@ const NutritionDashboard = ({ token }) => {
 
     const getMealIcon = (mealType) => {
         switch (mealType) {
-            case 'breakfast': return <FiCoffee />;
-            case 'lunch': return <FiSun />;
-            case 'dinner': return <FiMoon />;
-            default: return <FiStar />;
+            case 'breakfast': return <Coffee size={18} />;
+            case 'lunch': return <Sun size={18} />;
+            case 'dinner': return <Moon size={18} />;
+            default: return <Star size={18} />;
         }
     };
 
@@ -182,7 +187,7 @@ const NutritionDashboard = ({ token }) => {
     };
 
     if (loading) {
-        return <div className="nutrition-loading">Loading nutrition data...</div>;
+        return <div className="nutrition-loading">{t('Analyzing...')}</div>;
     }
 
     return (
@@ -190,8 +195,8 @@ const NutritionDashboard = ({ token }) => {
             {/* Calorie Summary Card */}
             <div className="nutrition-card calorie-summary">
                 <div className="card-header">
-                    <MdLocalFireDepartment className="card-icon" />
-                    <h3>Today's Calories</h3>
+                    <Zap className="card-icon" color="#06B6D4" size={20} />
+                    <h3>{t('Today\'s Calories')}</h3>
                 </div>
 
                 <div className="calorie-chart-container">
@@ -217,25 +222,25 @@ const NutritionDashboard = ({ token }) => {
                         </ResponsiveContainer>
                         <div className="calorie-center">
                             <span className="calorie-number">{nutritionData.calories.consumed}</span>
-                            <span className="calorie-label">kcal</span>
+                            <span className="calorie-label">{t('kcal')}</span>
                         </div>
                     </div>
 
                     <div className="calorie-breakdown">
                         <div className="calorie-item">
-                            <span className="label">Goal</span>
+                            <span className="label">{t('Goal')}</span>
                             <span className="value">{nutritionData.calories.goal}</span>
                         </div>
                         <div className="calorie-item consumed">
-                            <span className="label">Food</span>
+                            <span className="label">{t('Food')}</span>
                             <span className="value">-{nutritionData.calories.consumed}</span>
                         </div>
                         <div className="calorie-item burned">
-                            <span className="label">Exercise</span>
+                            <span className="label">{t('Exercise')}</span>
                             <span className="value">+{nutritionData.calories.burned}</span>
                         </div>
                         <div className="calorie-item remaining">
-                            <span className="label">Remaining</span>
+                            <span className="label">{t('Remaining')}</span>
                             <span className="value">{Math.max(0, remaining)}</span>
                         </div>
                     </div>
@@ -247,14 +252,14 @@ const NutritionDashboard = ({ token }) => {
                         style={{ width: `${caloriePercentage}%` }}
                     />
                 </div>
-                <span className="progress-text">{caloriePercentage}% of daily goal</span>
+                <span className="progress-text">{t('{percentage}% of daily goal').replace('{percentage}', caloriePercentage)}</span>
             </div>
 
             {/* Macros Card */}
             <div className="nutrition-card macros-card">
                 <div className="card-header">
-                    <FiPieChart className="card-icon" />
-                    <h3>Macronutrients</h3>
+                    <PieChartIcon className="card-icon" color="#06B6D4" size={20} />
+                    <h3>{t('Macronutrients')}</h3>
                 </div>
 
                 <div className="macros-grid">
@@ -264,9 +269,9 @@ const NutritionDashboard = ({ token }) => {
                             <div key={macro.name} className="macro-item">
                                 <div className="macro-header">
                                     <span className="macro-name" style={{ color: macro.color }}>
-                                        {macro.name === 'Carbs' && <MdGrain />}
-                                        {macro.name === 'Protein' && <MdEgg />}
-                                        {macro.name === 'Fat' && <MdWaterDrop />}
+                                        {macro.name === t('Carbs') && <MdGrain />}
+                                        {macro.name === t('Protein') && <MdEgg />}
+                                        {macro.name === t('Fat') && <MdWaterDrop />}
                                         {macro.name}
                                     </span>
                                     <span className="macro-values">
@@ -291,8 +296,8 @@ const NutritionDashboard = ({ token }) => {
             {/* Weekly Trend */}
             <div className="nutrition-card weekly-trend">
                 <div className="card-header">
-                    <FiTrendingUp className="card-icon" />
-                    <h3>Weekly Calorie Trend</h3>
+                    <TrendingUp className="card-icon" color="#06B6D4" size={20} />
+                    <h3>{t('Weekly Calorie Trend')}</h3>
                 </div>
 
                 <div className="chart-container">
@@ -314,10 +319,12 @@ const NutritionDashboard = ({ token }) => {
                                     borderRadius: '8px',
                                     color: '#fff'
                                 }}
+                                labelFormatter={(label) => `${t('Day')}: ${label}`}
                             />
                             <Area
                                 type="monotone"
                                 dataKey="calories"
+                                name={t('Calories')}
                                 stroke="#06B6D4"
                                 strokeWidth={2}
                                 fill="url(#calorieGradient)"
@@ -325,6 +332,7 @@ const NutritionDashboard = ({ token }) => {
                             <Line
                                 type="monotone"
                                 dataKey="goal"
+                                name={t('Goal')}
                                 stroke="#6b7280"
                                 strokeDasharray="5 5"
                                 dot={false}
@@ -336,11 +344,11 @@ const NutritionDashboard = ({ token }) => {
                 <div className="trend-legend">
                     <span className="legend-item">
                         <span className="dot" style={{ backgroundColor: '#06B6D4' }}></span>
-                        Calories
+                        {t('Calories')}
                     </span>
                     <span className="legend-item">
                         <span className="dot dashed" style={{ backgroundColor: '#6b7280' }}></span>
-                        Goal
+                        {t('Goal')}
                     </span>
                 </div>
             </div>
@@ -348,8 +356,8 @@ const NutritionDashboard = ({ token }) => {
             {/* Meals Breakdown */}
             <div className="nutrition-card meals-card">
                 <div className="card-header">
-                    <MdRestaurant className="card-icon" />
-                    <h3>Today's Meals</h3>
+                    <Utensils className="card-icon" color="#06B6D4" size={20} />
+                    <h3>{t('Today\'s Meals')}</h3>
                 </div>
 
                 <div className="meals-list">
@@ -359,14 +367,14 @@ const NutritionDashboard = ({ token }) => {
                                 {getMealIcon(meal)}
                             </div>
                             <div className="meal-info">
-                                <span className="meal-name">{meal.charAt(0).toUpperCase() + meal.slice(1)}</span>
+                                <span className="meal-name">{t(meal.charAt(0).toUpperCase() + meal.slice(1))}</span>
                                 <span className="meal-items">
-                                    {nutritionData.meals[meal]?.length || 0} items logged
+                                    {nutritionData.meals[meal]?.length || 0} {t('items logged')}
                                 </span>
                             </div>
                             <div className="meal-calories">
                                 <span className="calories-value">{getMealCalories(meal)}</span>
-                                <span className="calories-unit">kcal</span>
+                                <span className="calories-unit">{t('kcal')}</span>
                             </div>
                         </div>
                     ))}

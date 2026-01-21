@@ -5,11 +5,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
+import { Activity, Plus, X, Info, Globe, TrendingUp, CheckCircle2, Star, Clock, Zap } from 'lucide-react';
 
 const ExerciseTracker = ({ token }) => {
     const [exercises, setExercises] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { t, language } = useLanguage();
     const [weeklyStats, setWeeklyStats] = useState({
         totalMinutes: 0,
         sessions: 0,
@@ -24,14 +27,14 @@ const ExerciseTracker = ({ token }) => {
     });
 
     const exerciseTypes = [
-        { id: 'walking', label: 'Walking', icon: '🚶', met: 3.5 },
-        { id: 'jogging', label: 'Jogging', icon: '🏃', met: 7.0 },
-        { id: 'cycling', label: 'Cycling', icon: '🚴', met: 6.0 },
-        { id: 'swimming', label: 'Swimming', icon: '🏊', met: 6.0 },
-        { id: 'yoga', label: 'Yoga', icon: '🧘', met: 2.5 },
-        { id: 'strength', label: 'Strength', icon: '💪', met: 5.0 },
-        { id: 'dancing', label: 'Dancing', icon: '💃', met: 4.5 },
-        { id: 'other', label: 'Other', icon: '🏋️', met: 4.0 }
+        { id: 'walking', label: t('Walking'), icon: '🚶', met: 3.5 },
+        { id: 'jogging', label: t('Jogging'), icon: '🏃', met: 7.0 },
+        { id: 'cycling', label: t('Cycling'), icon: '🚴', met: 6.0 },
+        { id: 'swimming', label: t('Swimming'), icon: '🏊', met: 6.0 },
+        { id: 'yoga', label: t('Yoga'), icon: '🧘', met: 2.5 },
+        { id: 'strength', label: t('Strength'), icon: '💪', met: 5.0 },
+        { id: 'dancing', label: t('Dancing'), icon: '💃', met: 4.5 },
+        { id: 'other', label: t('Other'), icon: '🏋️', met: 4.0 }
     ];
 
     const fetchExercises = useCallback(async () => {
@@ -101,20 +104,20 @@ const ExerciseTracker = ({ token }) => {
     return (
         <div className="exercise-tracker">
             <div className="exercise-header">
-                <h3>🏃 Exercise Tracker</h3>
+                <h3><Activity size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Exercise Tracker')}</h3>
                 <button
                     className="add-exercise-btn"
                     onClick={() => setShowForm(!showForm)}
                 >
-                    {showForm ? '✕ Cancel' : '+ Log Exercise'}
+                    {showForm ? <><X size={16} /> {t('Cancel')}</> : <><Plus size={16} /> {t('Log Exercise')}</>}
                 </button>
             </div>
 
             {/* Weekly Progress */}
             <div className="exercise-progress-card">
                 <div className="progress-header">
-                    <span>Weekly Goal Progress</span>
-                    <span className="progress-target">{weeklyStats.totalMinutes} / {weeklyStats.targetMinutes} min</span>
+                    <span>{t('Weekly Goal Progress')}</span>
+                    <span className="progress-target">{weeklyStats.totalMinutes} / {weeklyStats.targetMinutes} {t('min')}</span>
                 </div>
                 <div className="exercise-progress-bar">
                     <div
@@ -125,30 +128,30 @@ const ExerciseTracker = ({ token }) => {
                 <div className="progress-stats">
                     <div className="stat">
                         <span className="stat-value">{weeklyStats.sessions}</span>
-                        <span className="stat-label">Sessions</span>
+                        <span className="stat-label">{t('Sessions')}</span>
                     </div>
                     <div className="stat">
                         <span className="stat-value">{Math.round(weeklyStats.totalMinutes / 7)}</span>
-                        <span className="stat-label">Avg min/day</span>
+                        <span className="stat-label">{t('Avg min/day')}</span>
                     </div>
                     <div className="stat">
                         <span className="stat-value">{progressPercent >= 100 ? '🎉' : `${Math.round(progressPercent)}%`}</span>
-                        <span className="stat-label">Goal</span>
+                        <span className="stat-label">{t('Goal')}</span>
                     </div>
                 </div>
             </div>
 
-            {/* ADA Recommendation */}
+            {/* Recommendation */}
             <div className="exercise-info">
-                <span className="info-icon">ℹ️</span>
-                <span>ADA recommends 150+ minutes of moderate exercise per week for diabetes management</span>
+                <Info size={16} color="#06B6D4" style={{ marginRight: '8px', flexShrink: 0 }} />
+                <span>{t('ADA recommends 150+ minutes of moderate exercise per week for diabetes management')}</span>
             </div>
 
             {/* Log Form */}
             {showForm && (
                 <form className="exercise-form" onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Activity Type</label>
+                        <label>{t('Activity Type')}</label>
                         <div className="exercise-type-grid">
                             {exerciseTypes.map(type => (
                                 <button
@@ -166,7 +169,7 @@ const ExerciseTracker = ({ token }) => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Duration (minutes)</label>
+                            <label>{t('Duration (minutes)')}</label>
                             <input
                                 type="number"
                                 value={newExercise.duration}
@@ -177,57 +180,58 @@ const ExerciseTracker = ({ token }) => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Intensity</label>
+                            <label>{t('Intensity')}</label>
                             <select
                                 value={newExercise.intensity}
                                 onChange={e => setNewExercise({ ...newExercise, intensity: e.target.value })}
                             >
-                                <option value="light">Light</option>
-                                <option value="moderate">Moderate</option>
-                                <option value="vigorous">Vigorous</option>
+                                <option value="light">{t('Light')}</option>
+                                <option value="moderate">{t('Moderate')}</option>
+                                <option value="vigorous">{t('Vigorous')}</option>
                             </select>
                         </div>
                     </div>
 
                     <div className="form-group">
-                        <label>Notes (optional)</label>
+                        <label>{t('Notes (optional)')}</label>
                         <input
                             type="text"
                             value={newExercise.notes}
                             onChange={e => setNewExercise({ ...newExercise, notes: e.target.value })}
-                            placeholder="e.g., Morning walk in park"
+                            placeholder={t('e.g., Morning walk in park')}
                         />
                     </div>
 
                     <button type="submit" className="save-btn" disabled={loading}>
-                        {loading ? 'Saving...' : 'Log Exercise'}
+                        {loading ? t('Saving...') : t('Log Exercise')}
                     </button>
                 </form>
             )}
 
             {/* Recent Activities */}
             <div className="recent-exercises">
-                <h4>Recent Activities</h4>
+                <h4><Clock size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Recent Activities')}</h4>
                 {exercises.length === 0 ? (
                     <div className="no-exercises">
-                        <p>No exercises logged yet this week.</p>
-                        <p>Start tracking your activity to see your progress!</p>
+                        <p>{t('No exercises logged yet this week.')}</p>
+                        <p>{t('Start tracking your activity to see your progress!')}</p>
                     </div>
                 ) : (
                     <div className="exercises-list">
                         {exercises.slice(0, 5).map((exercise, i) => {
                             const type = exerciseTypes.find(t => t.id === exercise.activity_type) || exerciseTypes[7];
+                            const localeStr = language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-US';
                             return (
                                 <div key={i} className="exercise-item">
                                     <span className="exercise-icon">{type.icon}</span>
                                     <div className="exercise-details">
                                         <span className="exercise-name">{type.label}</span>
                                         <span className="exercise-meta">
-                                            {exercise.duration_minutes} min • {exercise.intensity}
+                                            {exercise.duration_minutes} {t('min')} • {t(exercise.intensity.charAt(0).toUpperCase() + exercise.intensity.slice(1))}
                                         </span>
                                     </div>
                                     <span className="exercise-date">
-                                        {new Date(exercise.logged_at).toLocaleDateString()}
+                                        {new Date(exercise.logged_at).toLocaleDateString(localeStr)}
                                     </span>
                                 </div>
                             );
@@ -238,12 +242,12 @@ const ExerciseTracker = ({ token }) => {
 
             {/* Benefits */}
             <div className="exercise-benefits">
-                <h4>🌟 Benefits for Diabetics</h4>
+                <h4><Star size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Benefits for Diabetics')}</h4>
                 <ul>
-                    <li>Improves insulin sensitivity</li>
-                    <li>Helps control blood sugar levels</li>
-                    <li>Reduces cardiovascular risk</li>
-                    <li>Supports healthy weight management</li>
+                    <li><CheckCircle2 size={14} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Improves insulin sensitivity')}</li>
+                    <li><CheckCircle2 size={14} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Helps control blood sugar levels')}</li>
+                    <li><CheckCircle2 size={14} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Reduces cardiovascular risk')}</li>
+                    <li><CheckCircle2 size={14} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Supports healthy weight management')}</li>
                 </ul>
             </div>
         </div>

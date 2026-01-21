@@ -5,6 +5,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
+import { Wind, Moon, Sun, Smile, Meh, Frown, MoreHorizontal, CheckCircle2, AlertCircle, Info, Zap, Clock, Star, BarChart3, TrendingUp } from 'lucide-react';
 
 const StressTracker = ({ token }) => {
     const [stressLevel, setStressLevel] = useState(null);
@@ -14,19 +16,20 @@ const StressTracker = ({ token }) => {
     const [showBreathing, setShowBreathing] = useState(false);
     const [breathPhase, setBreathPhase] = useState('');
     const [breathCount, setBreathCount] = useState(0);
+    const { t } = useLanguage();
 
     const stressLevels = [
-        { level: 'low', label: 'Low', icon: '😊', color: '#06B6D4' },
-        { level: 'moderate', label: 'Moderate', icon: '😐', color: '#f59e0b' },
-        { level: 'high', label: 'High', icon: '😰', color: '#ef4444' }
+        { level: 'low', label: t('Low'), icon: <Smile size={24} />, color: '#06B6D4' },
+        { level: 'moderate', label: t('Moderate'), icon: <Meh size={24} />, color: '#f59e0b' },
+        { level: 'high', label: t('High'), icon: <Frown size={24} />, color: '#ef4444' }
     ];
 
     const lifestyleTips = [
-        { icon: '🚬', text: 'Avoid smoking - it raises blood pressure', important: true },
-        { icon: '🍺', text: 'Limit alcohol - max 1 drink/day for women, 2 for men', important: true },
-        { icon: '☕', text: 'Reduce caffeine - can temporarily spike BP', important: false },
-        { icon: '😴', text: 'Get 7-8 hours of quality sleep', important: false },
-        { icon: '🧘', text: 'Practice relaxation techniques daily', important: false }
+        { icon: '🚬', text: t('Avoid smoking - it raises blood pressure'), important: true },
+        { icon: '🍺', text: t('Limit alcohol - max 1 drink/day for women, 2 for men'), important: true },
+        { icon: '☕', text: t('Reduce caffeine - can temporarily spike BP'), important: false },
+        { icon: '😴', text: t('Get 7-8 hours of quality sleep'), important: false },
+        { icon: '🧘', text: t('Practice relaxation techniques daily'), important: false }
     ];
 
     const fetchTodayCheckin = useCallback(async () => {
@@ -86,9 +89,9 @@ const StressTracker = ({ token }) => {
 
     const runBreathingCycle = () => {
         const phases = [
-            { name: 'Breathe In', duration: 4000 },
-            { name: 'Hold', duration: 4000 },
-            { name: 'Breathe Out', duration: 6000 }
+            { name: t('Breathe In'), duration: 4000 },
+            { name: t('Hold'), duration: 4000 },
+            { name: t('Breathe Out'), duration: 6000 }
         ];
 
         let phaseIndex = 0;
@@ -120,12 +123,12 @@ const StressTracker = ({ token }) => {
     return (
         <div className="stress-tracker">
             <div className="stress-header">
-                <h3>🧘 Stress & Lifestyle</h3>
+                <h3><Wind size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Stress & Lifestyle')}</h3>
             </div>
 
             {/* Daily Check-in */}
             <div className="stress-checkin-card">
-                <h4>How are you feeling today?</h4>
+                <h4>{t('How are you feeling today?')}</h4>
                 <div className="stress-levels">
                     {stressLevels.map(s => (
                         <button
@@ -147,52 +150,58 @@ const StressTracker = ({ token }) => {
 
             {/* Sleep Logging */}
             <div className="sleep-card">
-                <h4>😴 Last Night's Sleep</h4>
+                <h4><Moon size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Last Night\'s Sleep')}</h4>
                 <div className="sleep-input-row">
                     <input
                         type="number"
                         value={sleepHours}
                         onChange={e => setSleepHours(e.target.value)}
-                        placeholder="Hours"
+                        placeholder={t('Hours')}
                         min="0"
                         max="24"
                         step="0.5"
                     />
-                    <span className="sleep-unit">hours</span>
+                    <span className="sleep-unit">{t('hours')}</span>
                     <button
                         className="save-sleep-btn"
                         onClick={() => stressLevel && logStress(stressLevel)}
                         disabled={!sleepHours || loading}
                     >
-                        Save
+                        {t('Save')}
                     </button>
                 </div>
                 {sleepHours && parseFloat(sleepHours) < 7 && (
-                    <p className="sleep-warning">⚠️ Less than 7 hours. Poor sleep can raise blood pressure.</p>
+                    <p className="sleep-warning">
+                        <AlertCircle size={14} style={{ display: 'inline', marginRight: '4px' }} />
+                        {t('Less than 7 hours. Poor sleep can raise blood pressure.')}
+                    </p>
                 )}
             </div>
 
             {/* Breathing Exercise */}
             <div className="breathing-card">
-                <h4>🌬️ Quick Stress Relief</h4>
+                <h4><Wind size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Quick Stress Relief')}</h4>
                 {!showBreathing ? (
                     <button className="breathing-btn" onClick={startBreathingExercise}>
-                        Start 4-4-6 Breathing Exercise
+                        <Zap size={14} style={{ marginRight: '6px' }} /> {t('Start 4-4-6 Breathing Exercise')}
                     </button>
                 ) : (
                     <div className="breathing-exercise">
-                        <div className={`breath-circle ${breathPhase.toLowerCase().replace(' ', '-')}`}>
+                        <div className={`breath-circle ${breathPhase.toLowerCase().includes('in') ? 'breathe-in' : breathPhase.toLowerCase().includes('hold') ? 'hold' : 'breathe-out'}`}>
                             <span className="breath-text">{breathPhase}</span>
                         </div>
-                        <p className="breath-count">Cycle {breathCount + 1} of 3</p>
+                        <p className="breath-count">{t('Cycle {n} of 3').replace('{n}', breathCount + 1)}</p>
                     </div>
                 )}
-                <p className="breathing-tip">Deep breathing activates your parasympathetic nervous system and can help lower blood pressure.</p>
+                <p className="breathing-tip">
+                    <Info size={14} style={{ display: 'inline', marginRight: '6px' }} />
+                    {t('Deep breathing activates your parasympathetic nervous system and can help lower blood pressure.')}
+                </p>
             </div>
 
             {/* Lifestyle Tips */}
             <div className="lifestyle-tips">
-                <h4>💡 Lifestyle Tips for BP Control</h4>
+                <h4><Star size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Lifestyle Tips for BP Control')}</h4>
                 <ul className="tips-list">
                     {lifestyleTips.map((tip, i) => (
                         <li key={i} className={tip.important ? 'important' : ''}>
@@ -206,19 +215,19 @@ const StressTracker = ({ token }) => {
             {/* Weekly Stress Overview */}
             {todayCheckin && todayCheckin.week_summary && (
                 <div className="stress-summary">
-                    <h4>📊 This Week's Stress</h4>
+                    <h4><BarChart3 size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('This Week\'s Stress')}</h4>
                     <div className="stress-stats">
                         <div className="stat">
                             <span className="stat-value">{todayCheckin.week_summary.low || 0}</span>
-                            <span className="stat-label">Low Days</span>
+                            <span className="stat-label">{t('Low Days')}</span>
                         </div>
                         <div className="stat">
                             <span className="stat-value">{todayCheckin.week_summary.moderate || 0}</span>
-                            <span className="stat-label">Moderate Days</span>
+                            <span className="stat-label">{t('Moderate Days')}</span>
                         </div>
                         <div className="stat">
                             <span className="stat-value">{todayCheckin.week_summary.high || 0}</span>
-                            <span className="stat-label">High Days</span>
+                            <span className="stat-label">{t('High Days')}</span>
                         </div>
                     </div>
                 </div>

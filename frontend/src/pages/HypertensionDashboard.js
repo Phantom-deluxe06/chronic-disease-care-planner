@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BPEntryModal from '../components/BPEntryModal';
 import HypertensionFoodModal from '../components/HypertensionFoodModal';
 import FoodImageAnalysisModal from '../components/FoodImageAnalysisModal';
@@ -16,6 +16,18 @@ import { apiUrl } from '../config/api';
 import MobileNav from '../components/MobileNav';
 import NutritionDashboard from '../components/NutritionDashboard';
 import WorkoutAnalytics from '../components/WorkoutAnalytics';
+import SidebarRail from '../components/SidebarRail';
+import {
+    HeartPulse,
+    LayoutDashboard,
+    Utensils,
+    Activity,
+    Pill,
+    Wind,
+    Bot,
+    AlertTriangle
+} from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const HypertensionDashboard = () => {
     const navigate = useNavigate();
@@ -26,10 +38,12 @@ const HypertensionDashboard = () => {
     const [showFoodImageModal, setShowFoodImageModal] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [alert, setAlert] = useState(null);
+    const { t, language, translateAsync } = useLanguage();
 
     // Real data from API
     const [bpLogs, setBpLogs] = useState([]);
     const [carePlan, setCarePlan] = useState([]);
+    const [translatedCarePlan, setTranslatedCarePlan] = useState([]);
     const [tips, setTips] = useState([
         'Target BP: Below 120/80 mmHg',
         'Reduce sodium intake to less than 2,300mg/day',
@@ -37,6 +51,7 @@ const HypertensionDashboard = () => {
         'Limit alcohol and caffeine consumption',
         'Maintain a healthy weight'
     ]);
+    const [translatedTips, setTranslatedTips] = useState([]);
     const [weeklyStats, setWeeklyStats] = useState(null);
 
     const token = localStorage.getItem('token');
@@ -128,6 +143,36 @@ const HypertensionDashboard = () => {
         ]).finally(() => setLoading(false));
     }, [navigate, token, fetchBPLogs, fetchCarePlan]);
 
+    // Translate care plan and tips when language changes
+    useEffect(() => {
+        const translateContent = async () => {
+            if (language === 'en') {
+                setTranslatedCarePlan(carePlan);
+                setTranslatedTips(tips);
+                return;
+            }
+
+            // Translate care plan tasks
+            const translatedTasks = await Promise.all(
+                carePlan.map(async (task) => ({
+                    ...task,
+                    task: await translateAsync(task.task)
+                }))
+            );
+            setTranslatedCarePlan(translatedTasks);
+
+            // Translate tips
+            const translatedTipsArray = await Promise.all(
+                tips.map(async (tip) => await translateAsync(tip))
+            );
+            setTranslatedTips(translatedTipsArray);
+        };
+
+        if (carePlan.length > 0 || tips.length > 0) {
+            translateContent();
+        }
+    }, [language, carePlan, tips, translateAsync]);
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -151,7 +196,7 @@ const HypertensionDashboard = () => {
     const progress = carePlan.length > 0 ? Math.round((completedTasks / carePlan.length) * 100) : 0;
 
     if (loading) {
-        return <div className="dashboard-loading">Loading...</div>;
+        return <div className="dashboard-loading">{t('Loading...')}</div>;
     }
 
     const renderTabContent = () => {
@@ -161,7 +206,7 @@ const HypertensionDashboard = () => {
                     <div className="dashboard-grid">
                         {/* Progress Card */}
                         <div className="dash-card progress-card">
-                            <h3>Today's Progress</h3>
+                            <h3>{t("Today's Progress")}</h3>
                             <div className="progress-circle">
                                 <svg viewBox="0 0 100 100">
                                     <circle className="progress-bg" cx="50" cy="50" r="40" />
@@ -175,7 +220,7 @@ const HypertensionDashboard = () => {
                                 </svg>
                                 <span className="progress-text">{progress}%</span>
                             </div>
-                            <p className="progress-status">{completedTasks} of {carePlan.length} tasks done</p>
+                            <p className="progress-status">{completedTasks} {t('of')} {carePlan.length} {t('tasks done')}</p>
                         </div>
 
                         {/* Water Tracker */}
@@ -183,7 +228,7 @@ const HypertensionDashboard = () => {
 
                         {/* BP Readings */}
                         <div className="dash-card readings-card bp-card">
-                            <h3>Today's BP Readings</h3>
+                            <h3>{t("Today's BP Readings")}</h3>
                             <div className="readings-list">
                                 {bpLogs.length > 0 ? bpLogs.map((log, i) => (
                                     <div key={i} className={`reading-item bp-reading ${log.status}`}>
@@ -195,36 +240,36 @@ const HypertensionDashboard = () => {
                                         {log.pulse && <span className="pulse-value">❤️ {log.pulse} bpm</span>}
                                     </div>
                                 )) : (
-                                    <p className="no-data">No readings yet today. Log your first BP reading!</p>
+                                    <p className="no-data">{t('No readings yet today. Log your first BP reading!')}</p>
                                 )}
                             </div>
-                            <button className="add-reading-btn" onClick={() => setShowBPModal(true)}>+ Log BP Reading</button>
+                            <button className="add-reading-btn" onClick={() => setShowBPModal(true)}>+ {t('Log BP Reading')}</button>
                         </div>
 
                         {/* Quick Actions */}
                         <div className="dash-card quick-actions-card">
-                            <h3>Quick Actions</h3>
+                            <h3>{t('Quick Actions')}</h3>
                             <div className="quick-actions-grid">
                                 <button className="quick-action" onClick={() => setShowBPModal(true)}>
-                                    💓 Log BP
+                                    💓 {t('Log BP')}
                                 </button>
                                 <button className="quick-action" onClick={() => setShowFoodModal(true)}>
-                                    🍽️ Log Food
+                                    🍽️ {t('Log Food')}
                                 </button>
                                 <button className="quick-action" onClick={() => setActiveTab('exercise')}>
-                                    🏃 Log Activity
+                                    🏃 {t('Log Activity')}
                                 </button>
                                 <button className="quick-action" onClick={() => setActiveTab('stress')}>
-                                    🧘 Stress Check-in
+                                    🧘 {t('Stress Check-in')}
                                 </button>
                             </div>
                         </div>
 
                         {/* Care Plan */}
                         <div className="dash-card care-plan-card">
-                            <h3>Today's Care Plan</h3>
+                            <h3>{t("Today's Care Plan")}</h3>
                             <div className="care-plan-list">
-                                {carePlan.slice(0, 6).map((task, i) => (
+                                {(translatedCarePlan.length > 0 ? translatedCarePlan : carePlan).slice(0, 6).map((task, i) => (
                                     <div key={i} className={`care-task ${task.done ? 'done' : ''}`}>
                                         <span className="task-icon">{task.icon}</span>
                                         <div className="task-content">
@@ -241,9 +286,9 @@ const HypertensionDashboard = () => {
 
                         {/* Tips */}
                         <div className="dash-card tips-card">
-                            <h3>💡 Blood Pressure Tips</h3>
+                            <h3>💡 {t('Blood Pressure Tips')}</h3>
                             <ul className="tips-list">
-                                {tips.map((tip, i) => (
+                                {(translatedTips.length > 0 ? translatedTips : tips).map((tip, i) => (
                                     <li key={i}>{tip}</li>
                                 ))}
                             </ul>
@@ -251,21 +296,21 @@ const HypertensionDashboard = () => {
 
                         {/* Quick Stats */}
                         <div className="dash-card stats-card">
-                            <h3>Weekly Overview</h3>
+                            <h3>{t('Weekly Overview')}</h3>
                             <div className="quick-stats">
                                 <div className="stat">
                                     <span className="stat-value">
                                         {weeklyStats?.avg_systolic || '--'}/{weeklyStats?.avg_diastolic || '--'}
                                     </span>
-                                    <span className="stat-label">Avg BP</span>
+                                    <span className="stat-label">{t('Avg BP')}</span>
                                 </div>
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.avg_pulse || '--'}</span>
-                                    <span className="stat-label">Avg Pulse</span>
+                                    <span className="stat-label">{t('Avg Pulse')}</span>
                                 </div>
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.in_range_percent || '--'}%</span>
-                                    <span className="stat-label">In Range</span>
+                                    <span className="stat-label">{t('In Range')}</span>
                                 </div>
                             </div>
                         </div>
@@ -276,14 +321,14 @@ const HypertensionDashboard = () => {
                 return (
                     <div className="tab-content">
                         <div className="section-intro">
-                            <h3>🥗 DASH Diet Tracking</h3>
-                            <p>Track your sodium intake and macros for heart-healthy eating.</p>
+                            <h3>🥗 {t('DASH Diet Tracking')}</h3>
+                            <p>{t('Track your sodium intake and macros for heart-healthy eating.')}</p>
                             <div className="food-action-buttons">
                                 <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
-                                    + Log a Meal
+                                    + {t('Log a Meal')}
                                 </button>
                                 <button className="btn-secondary scan-food-btn" onClick={() => setShowFoodImageModal(true)}>
-                                    📷 Scan Food Plate
+                                    📷 {t('Scan Food Plate')}
                                 </button>
                             </div>
                         </div>
@@ -365,64 +410,21 @@ const HypertensionDashboard = () => {
             {/* Mobile Navigation */}
             <MobileNav user={user} onLogout={handleLogout} />
 
-            {/* Sidebar */}
-            <aside className="dashboard-sidebar">
-                <div className="sidebar-brand">
-                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
-                    <span className="brand-text">HealthBuddy</span>
-                </div>
-
-                <nav className="sidebar-nav">
-                    <Link to="/home" className="nav-link">
-                        <span className="nav-icon">🏠</span>
-                        <span>Overview</span>
-                    </Link>
-                    <Link to="/dashboard/diabetes" className="nav-link">
-                        <span className="nav-icon">🩸</span>
-                        <span>Diabetes</span>
-                    </Link>
-                    <Link to="/dashboard/hypertension" className="nav-link active">
-                        <span className="nav-icon">💓</span>
-                        <span>Hypertension</span>
-                    </Link>
-                    <Link to="/logs" className="nav-link">
-                        <span className="nav-icon">📊</span>
-                        <span>Health Logs</span>
-                    </Link>
-                    <Link to="/reports" className="nav-link">
-                        <span className="nav-icon">📈</span>
-                        <span>Reports</span>
-                    </Link>
-                    <Link to="/settings" className="nav-link">
-                        <span className="nav-icon">⚙️</span>
-                        <span>Settings</span>
-                    </Link>
-                </nav>
-
-                <div className="sidebar-user">
-                    <div className="user-avatar">👤</div>
-                    <div className="user-info">
-                        <span className="user-name">{user?.name || 'User'}</span>
-                        <span className="user-email">{user?.email}</span>
-                    </div>
-                    <button className="logout-btn" onClick={handleLogout} title="Sign Out">
-                        🚪 Logout
-                    </button>
-                </div>
-            </aside>
+            {/* Sidebar Rail */}
+            <SidebarRail user={user} />
 
             {/* Main Content */}
             <main className="dashboard-main home-main">
                 <header className="dashboard-header">
                     <div className="header-title">
-                        <span className="disease-icon">💓</span>
+                        <span className="disease-icon"><HeartPulse size={32} color="#06B6D4" strokeWidth={2} /></span>
                         <div>
-                            <h1>Hypertension Care</h1>
-                            <p>Monitor your blood pressure and heart health</p>
+                            <h1>{t('Hypertension Care')}</h1>
+                            <p>{t('Monitor your blood pressure and heart health')}</p>
                         </div>
                     </div>
                     <div className="header-date">
-                        {new Date().toLocaleDateString('en-US', {
+                        {new Date().toLocaleDateString(language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-US', {
                             weekday: 'long',
                             month: 'long',
                             day: 'numeric'
@@ -436,37 +438,37 @@ const HypertensionDashboard = () => {
                         className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        📊 Overview
+                        <LayoutDashboard size={18} strokeWidth={2} /> {t('Overview')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'diet' ? 'active' : ''}`}
                         onClick={() => setActiveTab('diet')}
                     >
-                        🥗 Diet & Sodium
+                        <Utensils size={18} strokeWidth={2} /> {t('Diet & Sodium')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'exercise' ? 'active' : ''}`}
                         onClick={() => setActiveTab('exercise')}
                     >
-                        🏃 Exercise
+                        <Activity size={18} strokeWidth={2} /> {t('Exercise')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'medications' ? 'active' : ''}`}
                         onClick={() => setActiveTab('medications')}
                     >
-                        💊 Medications
+                        <Pill size={18} strokeWidth={2} /> {t('Medications')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'stress' ? 'active' : ''}`}
                         onClick={() => setActiveTab('stress')}
                     >
-                        🧘 Stress & Lifestyle
+                        <Wind size={18} strokeWidth={2} /> {t('Stress & Lifestyle')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
                         onClick={() => setActiveTab('summary')}
                     >
-                        🤖 AI Summary
+                        <Bot size={18} strokeWidth={2} /> {t('AI Summary')}
                     </button>
                 </div>
 
@@ -476,7 +478,7 @@ const HypertensionDashboard = () => {
                 {/* Alert Banner */}
                 {alert && (
                     <div className="alert-banner">
-                        <span className="alert-icon">⚠️</span>
+                        <span className="alert-icon"><AlertTriangle size={20} color="#f59e0b" /></span>
                         <span>{alert}</span>
                         <button onClick={() => setAlert(null)}>×</button>
                     </div>

@@ -4,8 +4,9 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { FiUpload, FiPlus, FiX, FiTrash2 } from 'react-icons/fi';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
+import { Plus, X, Trash2, Upload, Check, Circle, AlertCircle, Pill, Clock } from 'lucide-react';
 import PrescriptionUploadModal from './PrescriptionUploadModal';
 
 const MedicationManager = ({ token }) => {
@@ -13,6 +14,7 @@ const MedicationManager = ({ token }) => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+    const { t } = useLanguage();
 
     // New medication form
     const [newMed, setNewMed] = useState({
@@ -119,7 +121,7 @@ const MedicationManager = ({ token }) => {
     };
 
     const deleteMedication = async (medicationId) => {
-        if (!window.confirm('Are you sure you want to delete this medication?')) {
+        if (!window.confirm(t('Are you sure you want to delete this medication?'))) {
             return;
         }
         try {
@@ -160,67 +162,68 @@ const MedicationManager = ({ token }) => {
     return (
         <div className="medication-manager">
             <div className="med-header">
-                <h3>💊 Medications</h3>
+                <h3><Pill size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Medications')}</h3>
                 <div className="med-header-buttons">
                     <button
                         className="upload-prescription-btn"
                         onClick={() => setShowPrescriptionModal(true)}
                     >
-                        <FiUpload /> Upload Prescription
+                        <Upload size={16} /> {t('Upload Prescription')}
                     </button>
                     <button
                         className="add-med-btn"
                         onClick={() => setShowAddForm(!showAddForm)}
                     >
-                        {showAddForm ? <><FiX /> Cancel</> : <><FiPlus /> Add Medication</>}
+                        {showAddForm ? <><X size={16} /> {t('Cancel')}</> : <><Plus size={16} /> {t('Add Medication')}</>}
                     </button>
                 </div>
             </div>
 
             <div className="med-warning">
-                ⚠️ Do not modify dosage without consulting your doctor.
+                <AlertCircle size={16} style={{ marginRight: '6px' }} />
+                {t('Do not modify dosage without consulting your doctor.')}
             </div>
 
             {showAddForm && (
                 <form className="add-med-form" onSubmit={handleAddMedication}>
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Medication Name</label>
+                            <label>{t('Medication Name')}</label>
                             <input
                                 type="text"
                                 value={newMed.name}
                                 onChange={e => setNewMed({ ...newMed, name: e.target.value })}
-                                placeholder="e.g., Metformin"
+                                placeholder={t('e.g., Metformin')}
                                 required
                             />
                         </div>
                         <div className="form-group">
-                            <label>Dosage</label>
+                            <label>{t('Dosage')}</label>
                             <input
                                 type="text"
                                 value={newMed.dosage}
                                 onChange={e => setNewMed({ ...newMed, dosage: e.target.value })}
-                                placeholder="e.g., 500mg"
+                                placeholder={t('e.g., 500mg')}
                                 required
                             />
                         </div>
                     </div>
 
                     <div className="form-group">
-                        <label>Frequency</label>
+                        <label>{t('Frequency')}</label>
                         <select
                             value={newMed.frequency}
                             onChange={e => setNewMed({ ...newMed, frequency: e.target.value })}
                         >
-                            <option value="daily">Once daily</option>
-                            <option value="twice_daily">Twice daily</option>
-                            <option value="three_times">Three times daily</option>
-                            <option value="as_needed">As needed</option>
+                            <option value="daily">{t('Once daily')}</option>
+                            <option value="twice_daily">{t('Twice daily')}</option>
+                            <option value="three_times">{t('Three times daily')}</option>
+                            <option value="as_needed">{t('As needed')}</option>
                         </select>
                     </div>
 
                     <div className="form-group">
-                        <label>Times of Day</label>
+                        <label>{t('Times of Day')}</label>
                         <div className="time-slots">
                             {newMed.times_of_day.map((time, index) => (
                                 <div key={index} className="time-slot">
@@ -235,29 +238,29 @@ const MedicationManager = ({ token }) => {
                                             className="remove-time"
                                             onClick={() => removeTimeSlot(index)}
                                         >
-                                            ✕
+                                            <X size={14} />
                                         </button>
                                     )}
                                 </div>
                             ))}
                             <button type="button" className="add-time-btn" onClick={addTimeSlot}>
-                                + Add Time
+                                <Plus size={14} /> {t('Add Time')}
                             </button>
                         </div>
                     </div>
 
                     <div className="form-group">
-                        <label>Notes (optional)</label>
+                        <label>{t('Notes (optional)')}</label>
                         <input
                             type="text"
                             value={newMed.notes}
                             onChange={e => setNewMed({ ...newMed, notes: e.target.value })}
-                            placeholder="e.g., Take with food"
+                            placeholder={t('Take with food')}
                         />
                     </div>
 
                     <button type="submit" className="save-med-btn" disabled={loading}>
-                        {loading ? 'Saving...' : 'Save Medication'}
+                        {loading ? t('Saving...') : t('Save Medication')}
                     </button>
                 </form>
             )}
@@ -265,8 +268,8 @@ const MedicationManager = ({ token }) => {
             <div className="medications-list">
                 {medications.length === 0 ? (
                     <div className="no-meds">
-                        <p>No medications added yet.</p>
-                        <p>Add your doctor-prescribed medications to track them.</p>
+                        <p>{t('No medications added yet.')}</p>
+                        <p>{t('Add your doctor-prescribed medications to track them.')}</p>
                     </div>
                 ) : (
                     medications.map(med => (
@@ -282,13 +285,13 @@ const MedicationManager = ({ token }) => {
                                         key={i}
                                         className={`dose-time ${status.taken ? 'taken' : ''}`}
                                     >
-                                        <span className="time">{status.time}</span>
+                                        <span className="time"><Clock size={12} style={{ marginRight: '4px' }} /> {status.time}</span>
                                         <button
                                             className={`dose-check ${status.taken ? 'checked' : ''}`}
                                             onClick={() => !status.taken && logIntake(med.id, status.time)}
                                             disabled={status.taken}
                                         >
-                                            {status.taken ? '✓' : '○'}
+                                            {status.taken ? <Check size={14} /> : <Circle size={14} />}
                                         </button>
                                     </div>
                                 ))}
@@ -296,9 +299,10 @@ const MedicationManager = ({ token }) => {
                             <button
                                 className="med-delete-btn"
                                 onClick={() => deleteMedication(med.id)}
-                                title="Delete medication"
+                                title={t('Delete medication')}
+                                aria-label={t('Delete medication')}
                             >
-                                <FiTrash2 />
+                                <Trash2 size={18} />
                             </button>
                         </div>
                     ))
@@ -317,4 +321,3 @@ const MedicationManager = ({ token }) => {
 };
 
 export default MedicationManager;
-

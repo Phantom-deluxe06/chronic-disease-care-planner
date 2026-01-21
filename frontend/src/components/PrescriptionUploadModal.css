@@ -1,0 +1,406 @@
+/* PrescriptionUploadModal.css - Portal-based modal with proper z-index */
+
+/* Backdrop - covers entire viewport including sidebar */
+.prescription-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    /* Higher than sidebar (z-40) */
+    background: rgba(15, 23, 42, 0.60);
+    /* slate-950/60 - allows dashboard to show through */
+    backdrop-filter: blur(12px);
+    /* backdrop-blur-md */
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.prescription-modal-backdrop.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Modal card */
+.prescription-modal-card {
+    z-index: 110;
+    /* Above backdrop */
+    background: rgba(30, 41, 59, 0.95);
+    /* slate-800 with some transparency */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(6, 182, 212, 0.1);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.prescription-modal-backdrop.visible .prescription-modal-card {
+    transform: scale(1);
+}
+
+/* Header */
+.prescription-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prescription-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.prescription-modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.prescription-modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+/* Error message */
+.prescription-modal-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 24px;
+    padding: 12px 16px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #ef4444;
+    font-size: 0.9rem;
+}
+
+/* Upload section */
+.prescription-upload-section {
+    padding: 24px;
+}
+
+.prescription-dropzone {
+    border: 2px dashed rgba(6, 182, 212, 0.4);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(6, 182, 212, 0.05);
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prescription-dropzone:hover {
+    border-color: #06B6D4;
+    background: rgba(6, 182, 212, 0.1);
+}
+
+.prescription-placeholder {
+    text-align: center;
+}
+
+.prescription-upload-icon {
+    font-size: 48px;
+    color: #06B6D4;
+    margin-bottom: 16px;
+}
+
+.prescription-placeholder p {
+    color: #fff;
+    font-size: 1rem;
+    margin: 0 0 8px 0;
+}
+
+.prescription-placeholder span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+/* Loading state */
+.prescription-loading {
+    text-align: center;
+}
+
+.prescription-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(6, 182, 212, 0.2);
+    border-top-color: #06B6D4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.prescription-loading p {
+    color: #fff;
+    margin: 0 0 8px 0;
+}
+
+.prescription-loading span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+/* Preview image */
+.prescription-preview {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+/* Tips section */
+.prescription-tips {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.prescription-tips h4 {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0 0 12px 0;
+}
+
+.prescription-tips ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.prescription-tips li {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    padding: 4px 0;
+}
+
+/* Detected medications section */
+.prescription-detected-meds {
+    padding: 24px;
+}
+
+.prescription-success {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.prescription-success-icon {
+    width: 48px;
+    height: 48px;
+    color: #06B6D4;
+    margin-bottom: 12px;
+}
+
+.prescription-success h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 0 0 8px 0;
+}
+
+.prescription-success p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Medication cards */
+.prescription-meds-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.prescription-med-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.prescription-med-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.prescription-med-name {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.prescription-med-dosage {
+    color: #06B6D4;
+    font-size: 0.85rem;
+}
+
+.prescription-med-frequency {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+.prescription-med-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.prescription-med-actions button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.prescription-med-actions button:hover {
+    background: rgba(6, 182, 212, 0.2);
+    color: #06B6D4;
+}
+
+/* Edit form */
+.prescription-med-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.prescription-med-edit input,
+.prescription-med-edit select {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.prescription-med-edit input:focus,
+.prescription-med-edit select:focus {
+    outline: none;
+    border-color: #06B6D4;
+}
+
+.prescription-done-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #06B6D4, #3B82F6);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.prescription-done-btn:hover {
+    opacity: 0.9;
+}
+
+/* Action buttons */
+.prescription-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.prescription-btn-cancel {
+    flex: 1;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.prescription-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.prescription-btn-submit {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #06B6D4, #3B82F6);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.prescription-btn-submit:hover {
+    opacity: 0.9;
+    box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+}
+
+.prescription-btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Disclaimer */
+.prescription-disclaimer {
+    padding: 12px 24px 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 16px;
+}

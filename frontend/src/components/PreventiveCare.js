@@ -5,12 +5,53 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
+import { Shield, Bell, Plane, CheckCircle2, X, Clipboard, ExternalLink, Info, AlertCircle, Heart, Moon, Zap, Star } from 'lucide-react';
 
 const PreventiveCare = ({ token }) => {
     const [reminders, setReminders] = useState(null);
     const [travelChecklist, setTravelChecklist] = useState(null);
     const [showTravelModal, setShowTravelModal] = useState(false);
     const [checkedItems, setCheckedItems] = useState({});
+    const { t, translateAsync, language } = useLanguage();
+
+    const translateReminders = async (data) => {
+        if (language === 'en' || !data) return data;
+        try {
+            const translatedDaily = await Promise.all(
+                (data.daily_reminders || []).map(async r => ({
+                    ...r,
+                    title: await translateAsync(r.title),
+                    description: await translateAsync(r.description)
+                }))
+            );
+            return { ...data, daily_reminders: translatedDaily };
+        } catch (err) {
+            console.error('Failed to translate reminders:', err);
+            return data;
+        }
+    };
+
+    const translateTravelChecklist = async (data) => {
+        if (language === 'en' || !data) return data;
+        try {
+            const translatedChecklist = await Promise.all(
+                (data.checklist || []).map(async item => ({
+                    ...item,
+                    item: await translateAsync(item.item),
+                    reason: await translateAsync(item.reason)
+                }))
+            );
+            return {
+                ...data,
+                checklist: translatedChecklist,
+                disclaimer: await translateAsync(data.disclaimer)
+            };
+        } catch (err) {
+            console.error('Failed to translate travel checklist:', err);
+            return data;
+        }
+    };
 
     const fetchReminders = useCallback(async () => {
         try {
@@ -19,12 +60,13 @@ const PreventiveCare = ({ token }) => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setReminders(data);
+                const translatedData = await translateReminders(data);
+                setReminders(translatedData);
             }
         } catch (err) {
             console.error('Failed to fetch reminders:', err);
         }
-    }, [token]);
+    }, [token, language]);
 
     const fetchTravelChecklist = useCallback(async () => {
         try {
@@ -33,12 +75,13 @@ const PreventiveCare = ({ token }) => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setTravelChecklist(data);
+                const translatedData = await translateTravelChecklist(data);
+                setTravelChecklist(translatedData);
             }
         } catch (err) {
             console.error('Failed to fetch travel checklist:', err);
         }
-    }, [token]);
+    }, [token, language]);
 
     useEffect(() => {
         if (token) {
@@ -59,16 +102,25 @@ const PreventiveCare = ({ token }) => {
         setCheckedItems({});
     };
 
+    const lifestyleTips = [
+        { icon: <Zap size={18} />, title: t('Avoid Smoking'), desc: t('Smoking increases diabetes complications risk') },
+        { icon: <Heart size={18} />, title: t('Limit Alcohol'), desc: t('Alcohol can affect blood sugar levels') },
+        { icon: <Star size={18} />, title: t('High-Fiber Diet'), desc: t('Fiber helps control blood sugar spikes') },
+        { icon: <Shield size={18} />, title: t('High-Protein Foods'), desc: t('Protein helps maintain stable glucose') },
+        { icon: <Moon size={18} />, title: t('Quality Sleep'), desc: t('7-8 hours helps insulin sensitivity') },
+        { icon: <Info size={18} />, title: t('Stress Management'), desc: t('Stress raises blood sugar levels') }
+    ];
+
     return (
         <div className="preventive-care">
             <div className="care-header">
-                <h3>🛡️ Preventive Care and Tips</h3>
+                <h3><Shield size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Preventive Care')}</h3>
             </div>
 
             {/* Daily Reminders */}
             {reminders && (
                 <div className="daily-reminders">
-                    <h4>Daily Reminders</h4>
+                    <h4><Bell size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Daily Reminders')}</h4>
                     <div className="reminders-grid">
                         {reminders.daily_reminders.map((reminder, i) => (
                             <div
@@ -89,7 +141,7 @@ const PreventiveCare = ({ token }) => {
                     className="care-action-btn travel"
                     onClick={openTravelModal}
                 >
-                    ✈️ Travel Checklist
+                    <Plane size={18} style={{ marginRight: '8px' }} /> {t('Travel Checklist')}
                 </button>
             </div>
 
@@ -98,8 +150,8 @@ const PreventiveCare = ({ token }) => {
                 <div className="modal-overlay" onClick={() => setShowTravelModal(false)}>
                     <div className="modal-content travel-modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h2>✈️ Travel Safety Checklist</h2>
-                            <button className="modal-close" onClick={() => setShowTravelModal(false)}>×</button>
+                            <h2><Plane size={24} color="#06B6D4" style={{ marginRight: '12px' }} /> {t('Travel Safety Checklist')}</h2>
+                            <button className="modal-close" onClick={() => setShowTravelModal(false)}><X size={20} /></button>
                         </div>
 
                         <div className="travel-checklist">
@@ -110,7 +162,7 @@ const PreventiveCare = ({ token }) => {
                                     onClick={() => toggleCheckItem(i)}
                                 >
                                     <span className="check-box">
-                                        {checkedItems[i] ? '✓' : '○'}
+                                        {checkedItems[i] ? <CheckCircle2 size={18} color="#06B6D4" /> : <div style={{ width: 18, height: 18, border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%' }} />}
                                     </span>
                                     <div className="item-content">
                                         <span className="item-name">{item.item}</span>
@@ -121,9 +173,9 @@ const PreventiveCare = ({ token }) => {
                         </div>
 
                         <div className="gp-letter-section">
-                            <h4>📝 GP Letter Template</h4>
+                            <h4><Clipboard size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('GP Letter Template')}</h4>
                             <p className="letter-help">
-                                Copy this template and have your doctor sign it before traveling.
+                                {t('Copy this template and have your doctor sign it before traveling.')}
                             </p>
                             <textarea
                                 className="gp-letter"
@@ -135,14 +187,15 @@ const PreventiveCare = ({ token }) => {
                                 className="copy-btn"
                                 onClick={() => {
                                     navigator.clipboard.writeText(travelChecklist.gp_letter_template);
-                                    alert('Letter copied to clipboard!');
+                                    alert(t('Letter copied to clipboard!'));
                                 }}
                             >
-                                📋 Copy to Clipboard
+                                <Clipboard size={14} style={{ marginRight: '6px' }} /> {t('Copy to Clipboard')}
                             </button>
                         </div>
 
                         <div className="modal-disclaimer">
+                            <Info size={14} style={{ marginRight: '6px' }} />
                             {travelChecklist.disclaimer}
                         </div>
                     </div>
@@ -151,50 +204,17 @@ const PreventiveCare = ({ token }) => {
 
             {/* Lifestyle Tips */}
             <div className="lifestyle-tips">
-                <h4>🌿 Lifestyle Tips</h4>
+                <h4><Star size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Lifestyle Tips')}</h4>
                 <div className="tips-grid">
-                    <div className="tip-card">
-                        <span className="tip-icon">🚭</span>
-                        <div className="tip-content">
-                            <strong>Avoid Smoking</strong>
-                            <p>Smoking increases diabetes complications risk</p>
+                    {lifestyleTips.map((tip, i) => (
+                        <div key={i} className="tip-card">
+                            <span className="tip-icon" style={{ color: '#06B6D4' }}>{tip.icon}</span>
+                            <div className="tip-content">
+                                <strong>{tip.title}</strong>
+                                <p>{tip.desc}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="tip-card">
-                        <span className="tip-icon">🍷</span>
-                        <div className="tip-content">
-                            <strong>Limit Alcohol</strong>
-                            <p>Alcohol can affect blood sugar levels</p>
-                        </div>
-                    </div>
-                    <div className="tip-card">
-                        <span className="tip-icon">🥗</span>
-                        <div className="tip-content">
-                            <strong>High-Fiber Diet</strong>
-                            <p>Fiber helps control blood sugar spikes</p>
-                        </div>
-                    </div>
-                    <div className="tip-card">
-                        <span className="tip-icon">💪</span>
-                        <div className="tip-content">
-                            <strong>High-Protein Foods</strong>
-                            <p>Protein helps maintain stable glucose</p>
-                        </div>
-                    </div>
-                    <div className="tip-card">
-                        <span className="tip-icon">😴</span>
-                        <div className="tip-content">
-                            <strong>Quality Sleep</strong>
-                            <p>7-8 hours helps insulin sensitivity</p>
-                        </div>
-                    </div>
-                    <div className="tip-card">
-                        <span className="tip-icon">🧘</span>
-                        <div className="tip-content">
-                            <strong>Stress Management</strong>
-                            <p>Stress raises blood sugar levels</p>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </div>

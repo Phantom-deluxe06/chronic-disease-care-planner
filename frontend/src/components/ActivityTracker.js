@@ -5,6 +5,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
+import { useLanguage } from '../context/LanguageContext';
+import { Activity, CheckCircle2, Info, RefreshCw, Star, MapPin, Clock } from 'lucide-react';
 
 const ActivityTracker = ({ token }) => {
     const [data, setData] = useState({
@@ -22,6 +24,7 @@ const ActivityTracker = ({ token }) => {
         }
     });
     const [loading, setLoading] = useState(true);
+    const { t } = useLanguage();
 
     const fetchActivities = useCallback(async () => {
         try {
@@ -83,9 +86,9 @@ const ActivityTracker = ({ token }) => {
         const diff = today - date;
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-        if (days === 0) return 'Today';
-        if (days === 1) return 'Yesterday';
-        if (days < 7) return `${days} days ago`;
+        if (days === 0) return t('Today');
+        if (days === 1) return t('Yesterday');
+        if (days < 7) return t('{n} days ago').replace('{n}', days);
         return date.toLocaleDateString();
     };
 
@@ -99,8 +102,8 @@ const ActivityTracker = ({ token }) => {
     if (loading) {
         return (
             <div className="activity-tracker loading">
-                <div className="loading-spinner">🔄</div>
-                <p>Loading Strava activities...</p>
+                <div className="loading-spinner"><RefreshCw className="spin" size={24} color="#06B6D4" /></div>
+                <p>{t('Loading Strava activities...')}</p>
             </div>
         );
     }
@@ -108,12 +111,12 @@ const ActivityTracker = ({ token }) => {
     return (
         <div className="activity-tracker">
             <div className="activity-header">
-                <h3>🏃 Strava Activities</h3>
+                <h3><Activity size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Strava Activities')}</h3>
                 <span className="strava-badge">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#FC4C02">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#FC4C02" style={{ marginRight: '4px' }}>
                         <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066l-2.084 4.116z" />
                     </svg>
-                    Synced
+                    {t('Synced')}
                 </span>
             </div>
 
@@ -151,8 +154,8 @@ const ActivityTracker = ({ token }) => {
                 </svg>
                 <div className="progress-ring-content">
                     <span className="progress-value">{data.goal.current_minutes}</span>
-                    <span className="progress-label">/ {data.goal.target_minutes} min</span>
-                    {data.goal.progress_percent >= 100 && <span className="goal-achieved">🎉 Goal!</span>}
+                    <span className="progress-label">/ {data.goal.target_minutes} {t('min')}</span>
+                    {data.goal.progress_percent >= 100 && <span className="goal-achieved">🎉 {t('Goal!')}</span>}
                 </div>
             </div>
 
@@ -160,30 +163,30 @@ const ActivityTracker = ({ token }) => {
             <div className="activity-stats-grid">
                 <div className="activity-stat">
                     <span className="stat-value">{data.weekly_stats.activity_count}</span>
-                    <span className="stat-label">Activities</span>
+                    <span className="stat-label">{t('Activities')}</span>
                 </div>
                 <div className="activity-stat">
                     <span className="stat-value">{data.weekly_stats.total_distance_km}</span>
-                    <span className="stat-label">km Total</span>
+                    <span className="stat-label">{t('km Total')}</span>
                 </div>
                 <div className="activity-stat">
                     <span className="stat-value">{Math.round(data.goal.progress_percent)}%</span>
-                    <span className="stat-label">of Goal</span>
+                    <span className="stat-label">{t('of Goal')}</span>
                 </div>
             </div>
 
             {/* Recent Activities */}
             {data.activities.length > 0 ? (
                 <div className="recent-strava-activities">
-                    <h4>This Week</h4>
+                    <h4>{t('This Week')}</h4>
                     <div className="strava-activities-list">
                         {data.activities.slice(0, 5).map((activity, i) => (
                             <div key={i} className="strava-activity-item">
                                 <span className="activity-icon">{getActivityIcon(activity.activity_type)}</span>
                                 <div className="activity-details">
-                                    <span className="activity-name">{activity.name || activity.activity_type}</span>
+                                    <span className="activity-name">{t(activity.name) || t(activity.activity_type)}</span>
                                     <span className="activity-meta">
-                                        {formatDuration(activity.moving_time)} • {formatDistance(activity.distance)}
+                                        <Clock size={12} style={{ marginRight: '4px' }} /> {formatDuration(activity.moving_time)} • <MapPin size={12} style={{ marginRight: '4px' }} /> {formatDistance(activity.distance)}
                                     </span>
                                 </div>
                                 <span className="activity-date">{formatDate(activity.start_date)}</span>
@@ -193,18 +196,18 @@ const ActivityTracker = ({ token }) => {
                 </div>
             ) : (
                 <div className="no-activities">
-                    <p>No activities synced yet this week.</p>
-                    <p>Go to Settings to connect and sync your Strava account!</p>
+                    <p>{t('No activities synced yet this week.')}</p>
+                    <p>{t('Go to Settings to connect and sync your Strava account!')}</p>
                 </div>
             )}
 
             {/* Goal info */}
             <div className="activity-goal-info">
-                <span className="info-icon">ℹ️</span>
+                <Info size={16} color="#06B6D4" style={{ marginRight: '8px', flexShrink: 0 }} />
                 <span>
                     {data.goal.remaining_minutes > 0
-                        ? `${data.goal.remaining_minutes} more minutes to reach your weekly goal!`
-                        : `You've exceeded your goal by ${data.goal.current_minutes - data.goal.target_minutes} minutes! 🎉`
+                        ? t('{n} more minutes to reach your weekly goal!').replace('{n}', data.goal.remaining_minutes)
+                        : t('You\'ve exceeded your goal by {n} minutes! 🎉').replace('{n}', data.goal.current_minutes - data.goal.target_minutes)
                     }
                 </span>
             </div>
