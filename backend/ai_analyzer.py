@@ -41,8 +41,8 @@ def initialize_gemini():
         logger.info("google.generativeai imported successfully")
         
         genai.configure(api_key=GEMINI_API_KEY)
-        gemini_model = genai.GenerativeModel('gemini-2.5-flash')
-        logger.info("Gemini AI initialized successfully with model gemini-2.5-flash")
+        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        logger.info("Gemini AI initialized successfully with model gemini-1.5-flash")
         return gemini_model
     except ImportError as ie:
         logger.error(f"ImportError - google.generativeai not found: {ie}")
@@ -1111,30 +1111,44 @@ Return a JSON object with this exact structure (no markdown, just raw JSON):
 If no medications can be detected, return:
 {"medications": [], "error": "Could not detect medications from this image"}"""
 
-        response = gemini_model.generate_content([prompt, image_part])
-        response_text = response.text.strip()
+        # Retry logic with exponential backoff
+        import time
+        max_retries = 3
+        last_error = None
         
-        # Clean up response
-        if response_text.startswith("```json"):
-            response_text = response_text[7:]
-        if response_text.startswith("```"):
-            response_text = response_text[3:]
-        if response_text.endswith("```"):
-            response_text = response_text[:-3]
+        for attempt in range(max_retries):
+            try:
+                response = gemini_model.generate_content([prompt, image_part])
+                response_text = response.text.strip()
+                
+                # Clean up response
+                if response_text.startswith("```json"):
+                    response_text = response_text[7:]
+                if response_text.startswith("```"):
+                    response_text = response_text[3:]
+                if response_text.endswith("```"):
+                    response_text = response_text[:-3]
+                
+                result = json.loads(response_text.strip())
+                logger.info(f"Prescription analysis detected {len(result.get('medications', []))} medications")
+                return result
+                
+            except Exception as e:
+                last_error = e
+                error_str = str(e).lower()
+                if "429" in str(e) or "quota" in error_str or "exceeded" in error_str or "rate" in error_str:
+                    if attempt < max_retries - 1:
+                        wait_time = (2 ** attempt) * 2  # 2, 4, 8 seconds
+                        logger.warning(f"Rate limit hit, waiting {wait_time}s before retry {attempt + 2}/{max_retries}")
+                        time.sleep(wait_time)
+                        continue
+                break
         
-        result = json.loads(response_text.strip())
-        logger.info(f"Prescription analysis detected {len(result.get('medications', []))} medications")
-        return result
-        
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse prescription analysis response: {e}")
-        return {"medications": [], "error": "Failed to parse AI response"}
-    except Exception as e:
-        error_str = str(e).lower()
-        logger.error(f"Prescription analysis failed: {type(e).__name__}: {e}")
-        # Check for quota/rate limit errors
-        if "429" in str(e) or "quota" in error_str or "exceeded" in error_str or "rate" in error_str:
-            return {"medications": [], "error": "AI service is busy. Please wait a moment and try again."}
+        # All retries failed
+        error_str = str(last_error).lower() if last_error else ""
+        logger.error(f"Prescription analysis failed after retries: {last_error}")
+        if "429" in str(last_error) or "quota" in error_str or "exceeded" in error_str:
+            return {"medications": [], "error": "AI quota exhausted. Please try again in a few minutes."}
         return {"medications": [], "error": "Analysis failed. Please try again."}
 
 
@@ -1217,29 +1231,43 @@ Return a JSON object with this exact structure (no markdown, just raw JSON):
 If no food can be detected, return:
 {{"detected_foods": [], "error": "Could not detect food items from this image"}}"""
 
-        response = gemini_model.generate_content([prompt, image_part])
-        response_text = response.text.strip()
+        # Retry logic with exponential backoff
+        import time
+        max_retries = 3
+        last_error = None
         
-        # Clean up response
-        if response_text.startswith("```json"):
-            response_text = response_text[7:]
-        if response_text.startswith("```"):
-            response_text = response_text[3:]
-        if response_text.endswith("```"):
-            response_text = response_text[:-3]
+        for attempt in range(max_retries):
+            try:
+                response = gemini_model.generate_content([prompt, image_part])
+                response_text = response.text.strip()
+                
+                # Clean up response
+                if response_text.startswith("```json"):
+                    response_text = response_text[7:]
+                if response_text.startswith("```"):
+                    response_text = response_text[3:]
+                if response_text.endswith("```"):
+                    response_text = response_text[:-3]
+                
+                result = json.loads(response_text.strip())
+                logger.info(f"Food image analysis detected {len(result.get('detected_foods', []))} food items")
+                return result
+                
+            except Exception as e:
+                last_error = e
+                error_str = str(e).lower()
+                if "429" in str(e) or "quota" in error_str or "exceeded" in error_str or "rate" in error_str:
+                    if attempt < max_retries - 1:
+                        wait_time = (2 ** attempt) * 2  # 2, 4, 8 seconds
+                        logger.warning(f"Rate limit hit, waiting {wait_time}s before retry {attempt + 2}/{max_retries}")
+                        time.sleep(wait_time)
+                        continue
+                break
         
-        result = json.loads(response_text.strip())
-        logger.info(f"Food image analysis detected {len(result.get('detected_foods', []))} food items")
-        return result
-        
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse food image analysis response: {e}")
-        return {"detected_foods": [], "error": "Failed to parse AI response"}
-    except Exception as e:
-        error_str = str(e).lower()
-        logger.error(f"Food image analysis failed: {type(e).__name__}: {e}")
-        # Check for quota/rate limit errors
-        if "429" in str(e) or "quota" in error_str or "exceeded" in error_str or "rate" in error_str:
-            return {"detected_foods": [], "error": "AI service is busy. Please wait a moment and try again."}
+        # All retries failed
+        error_str = str(last_error).lower() if last_error else ""
+        logger.error(f"Food image analysis failed after retries: {last_error}")
+        if "429" in str(last_error) or "quota" in error_str or "exceeded" in error_str:
+            return {"detected_foods": [], "error": "AI quota exhausted. Please try again in a few minutes."}
         return {"detected_foods": [], "error": "Analysis failed. Please try again."}
 
