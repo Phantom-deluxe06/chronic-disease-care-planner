@@ -313,14 +313,14 @@ const DiabetesDashboard = () => {
                 return (
                     <div className="tab-content">
                         <div className="section-intro">
-                            <h3>🍽️ Food & Diet Tracking</h3>
-                            <p>Track your calories, macros, and get AI-powered nutritional analysis.</p>
+                            <h3>🍽️ {t('Food & Diet Tracking')}</h3>
+                            <p>{t('Track your calories, macros, and get AI-powered nutritional analysis.')}</p>
                             <div className="food-action-buttons">
                                 <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
-                                    + Log a Meal
+                                    + {t('Log a Meal')}
                                 </button>
                                 <button className="btn-secondary scan-food-btn" onClick={() => setShowFoodImageModal(true)}>
-                                    📷 Scan Food Plate
+                                    📷 {t('Scan Food Plate')}
                                 </button>
                             </div>
                         </div>
@@ -382,12 +382,12 @@ const DiabetesDashboard = () => {
                     <div className="header-title">
                         <span className="disease-icon">🩸</span>
                         <div>
-                            <h1>Diabetes Care</h1>
-                            <p>Track your blood sugar and manage your daily routine</p>
+                            <h1>{t('Diabetes Care')}</h1>
+                            <p>{t('Track your blood sugar and manage your daily routine')}</p>
                         </div>
                     </div>
                     <div className="header-date">
-                        {new Date().toLocaleDateString('en-US', {
+                        {new Date().toLocaleDateString(language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-US', {
                             weekday: 'long',
                             month: 'long',
                             day: 'numeric'
@@ -401,43 +401,43 @@ const DiabetesDashboard = () => {
                         className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        📊 Overview
+                        📊 {t('Overview')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'food' ? 'active' : ''}`}
                         onClick={() => setActiveTab('food')}
                     >
-                        🍽️ Food & Diet
+                        🍽️ {t('Food & Diet')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'exercise' ? 'active' : ''}`}
                         onClick={() => setActiveTab('exercise')}
                     >
-                        🏃 Exercise
+                        🏃 {t('Exercise')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'medications' ? 'active' : ''}`}
                         onClick={() => setActiveTab('medications')}
                     >
-                        💊 Medications
+                        💊 {t('Medications')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'health' ? 'active' : ''}`}
                         onClick={() => setActiveTab('health')}
                     >
-                        📈 Health Monitor
+                        📈 {t('Health Monitor')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'preventive' ? 'active' : ''}`}
                         onClick={() => setActiveTab('preventive')}
                     >
-                        🛡️ Preventive Care and Tips
+                        🛡️ {t('Preventive Care and Tips')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
                         onClick={() => setActiveTab('summary')}
                     >
-                        🤖 AI Summary
+                        🤖 {t('AI Summary')}
                     </button>
                 </div>
 
