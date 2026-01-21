@@ -1,6 +1,10 @@
 /**
  * Water Tracker Component
+<<<<<<< HEAD
  * Visual water intake tracking with animated water bottle
+=======
+ * Visual water intake tracking with glass icons
+>>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -57,13 +61,19 @@ const WaterTracker = ({ token }) => {
         }
     };
 
+<<<<<<< HEAD
     const fillPercentage = Math.min(waterData.percentage, 100);
     const isGoalReached = waterData.percentage >= 100;
+=======
+    const glassesTarget = 10; // 10 glasses of 250ml = 2.5L
+    const glassesCompleted = Math.min(Math.ceil(waterData.total_ml / 250), glassesTarget);
+>>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
 
     return (
         <div className="water-tracker-card">
             <div className="water-header">
                 <h3>💧 Water Intake</h3>
+<<<<<<< HEAD
             </div>
 
             {/* Water Bottle Visualization */}
@@ -119,6 +129,32 @@ const WaterTracker = ({ token }) => {
             </div>
 
             {/* Quick add buttons */}
+=======
+                <span className="water-target">{waterData.total_ml}ml / {waterData.target_ml}ml</span>
+            </div>
+
+            <div className="water-progress-bar">
+                <div
+                    className="water-progress-fill"
+                    style={{ width: `${Math.min(waterData.percentage, 100)}%` }}
+                />
+            </div>
+
+            <div className="water-glasses">
+                {[...Array(glassesTarget)].map((_, i) => (
+                    <button
+                        key={i}
+                        className={`water-glass ${i < glassesCompleted ? 'filled' : ''}`}
+                        onClick={() => logWater(250)}
+                        disabled={loading}
+                        title="Click to add a glass (250ml)"
+                    >
+                        🥤
+                    </button>
+                ))}
+            </div>
+
+>>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
             <div className="water-actions">
                 <button
                     className="water-btn small"
@@ -132,14 +168,22 @@ const WaterTracker = ({ token }) => {
                     onClick={() => logWater(250)}
                     disabled={loading}
                 >
+<<<<<<< HEAD
                     +250ml
+=======
+                    +250ml (Glass)
+>>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
                 </button>
                 <button
                     className="water-btn large"
                     onClick={() => logWater(500)}
                     disabled={loading}
                 >
+<<<<<<< HEAD
                     +500ml
+=======
+                    +500ml (Bottle)
+>>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
                 </button>
             </div>
 
@@ -149,7 +193,11 @@ const WaterTracker = ({ token }) => {
                 </div>
             )}
 
+<<<<<<< HEAD
             {isGoalReached && (
+=======
+            {waterData.percentage >= 100 && (
+>>>>>>> 5057026090bd6b1842a66a1458f403f4aa33b0fa
                 <div className="water-success">
                     ✅ Great job! You've reached your daily water goal!
                 </div>
