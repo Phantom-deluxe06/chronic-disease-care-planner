@@ -341,51 +341,8 @@ const DiabetesDashboard = () => {
             {/* Mobile Navigation */}
             <MobileNav user={user} onLogout={handleLogout} />
 
-            {/* Sidebar */}
-            <aside className="dashboard-sidebar">
-                <div className="sidebar-brand">
-                    <img src="/logo192.png" alt="Health Buddy" className="brand-logo-img" />
-                    <span className="brand-text">HealthBuddy</span>
-                </div>
-
-                <nav className="sidebar-nav">
-                    <Link to="/home" className="nav-link">
-                        <span className="nav-icon">🏠</span>
-                        <span>Overview</span>
-                    </Link>
-                    <Link to="/dashboard/diabetes" className="nav-link active">
-                        <span className="nav-icon">🩸</span>
-                        <span>Diabetes</span>
-                    </Link>
-                    <Link to="/dashboard/hypertension" className="nav-link">
-                        <span className="nav-icon">💓</span>
-                        <span>Hypertension</span>
-                    </Link>
-                    <Link to="/logs" className="nav-link">
-                        <span className="nav-icon">📊</span>
-                        <span>Health Logs</span>
-                    </Link>
-                    <Link to="/reports" className="nav-link">
-                        <span className="nav-icon">📈</span>
-                        <span>Reports</span>
-                    </Link>
-                    <Link to="/settings" className="nav-link">
-                        <span className="nav-icon">⚙️</span>
-                        <span>Settings</span>
-                    </Link>
-                </nav>
-
-                <div className="sidebar-user">
-                    <div className="user-avatar">👤</div>
-                    <div className="user-info">
-                        <span className="user-name">{user?.name || 'User'}</span>
-                        <span className="user-email">{user?.email}</span>
-                    </div>
-                    <button className="logout-btn" onClick={handleLogout} title="Sign Out">
-                        🚪 Logout
-                    </button>
-                </div>
-            </aside>
+            {/* Sidebar Rail */}
+            <SidebarRail user={user} />
 
             {/* Main Content */}
             <main className="dashboard-main home-main">
