@@ -166,7 +166,7 @@ const DiabetesDashboard = () => {
                     <div className="dashboard-grid">
                         {/* Progress Card */}
                         <div className="dash-card progress-card">
-                            <h3>Today's Progress</h3>
+                            <h3>{t("Today's Progress")}</h3>
                             <div className="progress-circle">
                                 <svg viewBox="0 0 100 100">
                                     <circle className="progress-bg" cx="50" cy="50" r="40" />
@@ -180,7 +180,7 @@ const DiabetesDashboard = () => {
                                 </svg>
                                 <span className="progress-text">{progress}%</span>
                             </div>
-                            <p className="progress-status">{completedTasks} of {carePlan.length} tasks done</p>
+                            <p className="progress-status">{completedTasks} {t('of')} {carePlan.length} {t('tasks done')}</p>
                         </div>
 
                         {/* Water Tracker */}
@@ -188,7 +188,7 @@ const DiabetesDashboard = () => {
 
                         {/* Sugar Readings */}
                         <div className="dash-card readings-card">
-                            <h3>Today's Sugar Readings</h3>
+                            <h3>{t("Today's Sugar Readings")}</h3>
                             <div className="readings-list">
                                 {sugarLogs.map((log, i) => (
                                     <div key={i} className={`reading-item ${log.status}`}>
@@ -199,33 +199,33 @@ const DiabetesDashboard = () => {
                                 ))}
                             </div>
                             {sugarLogs.length === 0 && (
-                                <p className="no-data">No readings yet today. Log your first reading!</p>
+                                <p className="no-data">{t('No readings yet today. Log your first reading!')}</p>
                             )}
-                            <button className="add-reading-btn" onClick={() => openLogModal('glucose')}>+ Log Glucose</button>
+                            <button className="add-reading-btn" onClick={() => openLogModal('glucose')}>+ {t('Log Glucose')}</button>
                         </div>
 
                         {/* Quick Actions */}
                         <div className="dash-card quick-actions-card">
-                            <h3>Quick Actions</h3>
+                            <h3>{t('Quick Actions')}</h3>
                             <div className="quick-actions-grid">
                                 <button className="quick-action" onClick={() => openLogModal('glucose')}>
-                                    🩸 Log Glucose
+                                    🩸 {t('Log Glucose')}
                                 </button>
                                 <button className="quick-action" onClick={() => setShowFoodModal(true)}>
-                                    🍽️ Log Food
+                                    🍽️ {t('Log Food')}
                                 </button>
                                 <button className="quick-action" onClick={() => openLogModal('activity')}>
-                                    🏃 Log Activity
+                                    🏃 {t('Log Activity')}
                                 </button>
                                 <button className="quick-action" onClick={() => openLogModal('bp')}>
-                                    💓 Log BP
+                                    💓 {t('Log BP')}
                                 </button>
                             </div>
                         </div>
 
                         {/* Care Plan */}
                         <div className="dash-card care-plan-card">
-                            <h3>Today's Care Plan</h3>
+                            <h3>{t("Today's Care Plan")}</h3>
                             <div className="care-plan-list">
                                 {carePlan.slice(0, 5).map((task, i) => (
                                     <div key={i} className={`care-task ${task.done ? 'done' : ''}`}>
@@ -242,7 +242,7 @@ const DiabetesDashboard = () => {
 
                         {/* Tips */}
                         <div className="dash-card tips-card">
-                            <h3>💡 Diabetes Tips</h3>
+                            <h3>💡 {t('Diabetes Tips')}</h3>
                             <ul className="tips-list">
                                 {tips.map((tip, i) => (
                                     <li key={i}>{tip}</li>
@@ -252,19 +252,19 @@ const DiabetesDashboard = () => {
 
                         {/* Quick Stats */}
                         <div className="dash-card stats-card">
-                            <h3>Weekly Overview</h3>
+                            <h3>{t('Weekly Overview')}</h3>
                             <div className="quick-stats">
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.avg_value ? Math.round(weeklyStats.avg_value) : '--'}</span>
-                                    <span className="stat-label">Avg Glucose</span>
+                                    <span className="stat-label">{t('Avg Glucose')}</span>
                                 </div>
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.min_value || '--'}</span>
-                                    <span className="stat-label">Min</span>
+                                    <span className="stat-label">{t('Min')}</span>
                                 </div>
                                 <div className="stat">
                                     <span className="stat-value">{weeklyStats?.max_value || '--'}</span>
-                                    <span className="stat-label">Max</span>
+                                    <span className="stat-label">{t('Max')}</span>
                                 </div>
                             </div>
                             {trends?.insights && trends.insights.length > 0 && (
