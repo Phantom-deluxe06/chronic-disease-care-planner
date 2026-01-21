@@ -4159,9 +4159,9 @@ body {
 
 .water-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .water-header h3 {
@@ -4169,58 +4169,94 @@ body {
   font-weight: 600;
 }
 
-.water-target {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.water-progress-bar {
-  height: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  margin-bottom: var(--spacing-md);
-}
-
-.water-progress-fill {
-  height: 100%;
-  background: white;
-  border-radius: var(--radius-full);
-  transition: width 0.3s ease;
-}
-
-.water-glasses {
+/* Water Bottle Container */
+.water-bottle-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
+  flex-direction: column;
+  align-items: center;
   margin-bottom: var(--spacing-md);
 }
 
-.water-glass {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-md);
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0.5;
+.water-bottle {
+  width: 120px;
+  height: 200px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
 }
 
-.water-glass.filled {
-  background: rgba(255, 255, 255, 0.9);
-  opacity: 1;
+/* Bottle cap styling */
+.bottle-cap {
+  fill: rgba(255, 255, 255, 0.9);
 }
 
-.water-glass:hover {
-  transform: scale(1.1);
+/* Bottle outline */
+.bottle-outline {
+  stroke: rgba(255, 255, 255, 0.8);
+  fill: rgba(255, 255, 255, 0.1);
 }
 
+/* Water fill styling */
+.water-fill {
+  fill: url(#waterGradient);
+  fill: rgba(30, 144, 255, 0.85);
+  transition: y 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+.water-fill.goal-reached {
+  fill: rgba(34, 197, 94, 0.9);
+}
+
+/* Wave animation */
+.wave-container {
+  transition: transform 0.5s ease-in-out;
+}
+
+.water-wave {
+  fill: rgba(30, 144, 255, 0.7);
+  animation: wave 2s ease-in-out infinite;
+}
+
+.water-wave.goal-reached {
+  fill: rgba(34, 197, 94, 0.7);
+}
+
+@keyframes wave {
+  0%, 100% {
+    d: path("M 20 5 Q 30 0 40 5 T 60 5 T 80 5 L 80 15 L 20 15 Z");
+  }
+  50% {
+    d: path("M 20 5 Q 30 10 40 5 T 60 5 T 80 5 L 80 15 L 20 15 Z");
+  }
+}
+
+/* Bottle highlight for 3D effect */
+.bottle-highlight {
+  fill: rgba(255, 255, 255, 0.2);
+}
+
+/* Water level text */
+.water-level-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-sm);
+}
+
+.current-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.target-amount {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Water action buttons */
 .water-actions {
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .water-btn {
@@ -4230,14 +4266,31 @@ body {
   border-radius: var(--radius-md);
   color: white;
   font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.water-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+.water-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
 }
 
+.water-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.water-btn.small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.8rem;
+}
+
+.water-btn.large {
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+/* Reminder and success messages */
 .water-reminder,
 .water-success {
   margin-top: var(--spacing-md);
@@ -4245,6 +4298,21 @@ body {
   background: rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-md);
   font-size: 0.85rem;
+  text-align: center;
+}
+
+.water-success {
+  background: rgba(34, 197, 94, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* ==================== FOOD ANALYSIS MODAL ==================== */
