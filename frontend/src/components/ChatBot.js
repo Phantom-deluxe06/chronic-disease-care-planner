@@ -1,12 +1,13 @@
 /**
  * Health Buddy AI Chatbot Component
  * A floating chat popup for AI-powered health assistance
+ * Includes Text-to-Speech for accessibility
  */
 
 import { useState, useRef, useEffect } from 'react';
 import { apiUrl } from '../config/api';
 import {
-    FiMessageCircle, FiX, FiTrash2, FiSend, FiAlertTriangle
+    FiMessageCircle, FiX, FiTrash2, FiSend, FiAlertTriangle, FiVolume2, FiVolumeX
 } from 'react-icons/fi';
 import { RiRobot2Line } from 'react-icons/ri';
 
@@ -16,8 +17,40 @@ const ChatBot = () => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
+    const [speakingIndex, setSpeakingIndex] = useState(null);
+    const [autoSpeak, setAutoSpeak] = useState(false);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+
+    // Text-to-Speech function
+    const speakMessage = (text, index) => {
+        if (!window.speechSynthesis) return;
+
+        // Stop any ongoing speech
+        window.speechSynthesis.cancel();
+
+        if (speakingIndex === index) {
+            setSpeakingIndex(null);
+            return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.lang = 'en-US';
+
+        utterance.onstart = () => setSpeakingIndex(index);
+        utterance.onend = () => setSpeakingIndex(null);
+        utterance.onerror = () => setSpeakingIndex(null);
+
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const stopSpeaking = () => {
+        window.speechSynthesis.cancel();
+        setSpeakingIndex(null);
+    };
+
 
     // Scroll to bottom when messages change
     const scrollToBottom = () => {
@@ -208,9 +241,19 @@ const ChatBot = () => {
                                 )}
                                 <div className="message-bubble">
                                     <p>{msg.content}</p>
+                                    {msg.role === 'assistant' && (
+                                        <button
+                                            className={`message-speak-btn ${speakingIndex === index ? 'speaking' : ''}`}
+                                            onClick={() => speakMessage(msg.content, index)}
+                                            title={speakingIndex === index ? "Stop" : "Listen"}
+                                        >
+                                            {speakingIndex === index ? <FiVolumeX /> : <FiVolume2 />}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))}
+
 
                         {isLoading && (
                             <div className="chatbot-message assistant">

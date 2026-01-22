@@ -1,12 +1,13 @@
 /**
  * Medication Manager Component
  * Manages doctor-prescribed medications with intake tracking
+ * Includes Text-to-Speech for medication reminders
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Plus, X, Trash2, Upload, Check, Circle, AlertCircle, Pill, Clock } from 'lucide-react';
+import { Plus, X, Trash2, Upload, Check, Circle, AlertCircle, Pill, Clock, Volume2, VolumeX } from 'lucide-react';
 import PrescriptionUploadModal from './PrescriptionUploadModal';
 
 const MedicationManager = ({ token }) => {
@@ -14,7 +15,47 @@ const MedicationManager = ({ token }) => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
     const { t } = useLanguage();
+
+    // Text-to-Speech for medication reminders
+    const speakMedications = () => {
+        if (!window.speechSynthesis || medications.length === 0) return;
+
+        // Stop if already speaking
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            setIsSpeaking(false);
+            return;
+        }
+
+        let speechText = `You have ${medications.length} medication${medications.length > 1 ? 's' : ''} to track today. `;
+
+        medications.forEach((med, index) => {
+            speechText += `${index + 1}. ${med.name}, ${med.dosage}. `;
+            if (med.today_status && med.today_status.length > 0) {
+                const pending = med.today_status.filter(s => !s.taken);
+                const taken = med.today_status.filter(s => s.taken);
+                if (taken.length > 0) {
+                    speechText += `Taken at ${taken.map(s => s.time).join(' and ')}. `;
+                }
+                if (pending.length > 0) {
+                    speechText += `Pending at ${pending.map(s => s.time).join(' and ')}. `;
+                }
+            }
+        });
+
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.lang = 'en-US';
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        window.speechSynthesis.speak(utterance);
+    };
 
     // New medication form
     const [newMed, setNewMed] = useState({
@@ -24,6 +65,7 @@ const MedicationManager = ({ token }) => {
         times_of_day: ['08:00'],
         notes: ''
     });
+
 
     const fetchMedications = useCallback(async () => {
         try {
@@ -164,6 +206,15 @@ const MedicationManager = ({ token }) => {
             <div className="med-header">
                 <h3><Pill size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Medications')}</h3>
                 <div className="med-header-buttons">
+                    {medications.length > 0 && (
+                        <button
+                            className={`speak-meds-btn ${isSpeaking ? 'speaking' : ''}`}
+                            onClick={speakMedications}
+                            title={isSpeaking ? t('Stop') : t('Read all medications')}
+                        >
+                            {isSpeaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                        </button>
+                    )}
                     <button
                         className="upload-prescription-btn"
                         onClick={() => setShowPrescriptionModal(true)}
@@ -178,6 +229,7 @@ const MedicationManager = ({ token }) => {
                     </button>
                 </div>
             </div>
+
 
             <div className="med-warning">
                 <AlertCircle size={16} style={{ marginRight: '6px' }} />

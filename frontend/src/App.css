@@ -7939,6 +7939,76 @@ body {
   white-space: pre-wrap;
 }
 
+/* Message Speak Button */
+.message-speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: var(--primary-100);
+  color: var(--primary-600);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.message-speak-btn:hover {
+  background: var(--primary-200);
+  transform: scale(1.1);
+}
+
+.message-speak-btn.speaking {
+  background: #fecaca;
+  color: #dc2626;
+  animation: pulse-speak 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-speak {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Medication Speak Button */
+.speak-meds-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.speak-meds-btn:hover {
+  background: rgba(139, 92, 246, 0.25);
+  transform: scale(1.05);
+}
+
+.speak-meds-btn.speaking {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  animation: pulse-speak 1.5s ease-in-out infinite;
+}
+
+
 /* Loading Animation */
 .message-bubble.loading {
   padding: 16px 20px;
