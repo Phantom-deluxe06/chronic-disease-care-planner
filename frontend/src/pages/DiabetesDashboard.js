@@ -18,6 +18,7 @@ import MobileNav from '../components/MobileNav';
 import NutritionDashboard from '../components/NutritionDashboard';
 import WorkoutAnalytics from '../components/WorkoutAnalytics';
 import SidebarRail from '../components/SidebarRail';
+import SOSAlert from '../components/SOSAlert';
 import { useLanguage } from '../context/LanguageContext';
 import {
     Droplet, Utensils, Activity, HeartPulse,
@@ -45,6 +46,8 @@ const DiabetesDashboard = () => {
     const [weeklyStats, setWeeklyStats] = useState(null);
     const [trends, setTrends] = useState(null);
     const [alert, setAlert] = useState(null);
+    const [sosAlert, setSosAlert] = useState(null);
+    const [emergencyContacts, setEmergencyContacts] = useState([]);
 
     const token = localStorage.getItem('token');
 
@@ -118,6 +121,21 @@ const DiabetesDashboard = () => {
         }
     }, [token]);
 
+    // Fetch emergency contacts for SOS
+    const fetchEmergencyContacts = useCallback(async () => {
+        try {
+            const response = await fetch(apiUrl('/emergency-contacts'), {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setEmergencyContacts(data.contacts || []);
+            }
+        } catch (err) {
+            console.error('Failed to fetch emergency contacts:', err);
+        }
+    }, [token]);
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
 
@@ -131,9 +149,10 @@ const DiabetesDashboard = () => {
         Promise.all([
             fetchGlucoseLogs(),
             fetchCarePlan(),
-            fetchTrends()
+            fetchTrends(),
+            fetchEmergencyContacts()
         ]).finally(() => setLoading(false));
-    }, [navigate, token, fetchGlucoseLogs, fetchCarePlan, fetchTrends]);
+    }, [navigate, token, fetchGlucoseLogs, fetchCarePlan, fetchTrends, fetchEmergencyContacts]);
 
     // Translate care plan and tips when language changes
     useEffect(() => {
@@ -181,6 +200,10 @@ const DiabetesDashboard = () => {
         fetchTrends();
         if (data.alert) {
             setAlert(data.alert);
+        }
+        // Check for SOS alert from backend
+        if (data.sos_alert) {
+            setSosAlert(data.sos_alert);
         }
     };
 
@@ -503,6 +526,14 @@ const DiabetesDashboard = () => {
                 onClose={() => setShowFoodImageModal(false)}
                 token={token}
                 condition="diabetes"
+            />
+
+            {/* SOS Emergency Alert */}
+            <SOSAlert
+                isOpen={!!sosAlert}
+                onClose={() => setSosAlert(null)}
+                alertData={sosAlert}
+                emergencyContacts={emergencyContacts}
             />
         </div>
     );

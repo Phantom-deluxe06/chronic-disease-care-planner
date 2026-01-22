@@ -71,7 +71,7 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
 
         switch (logType) {
             case 'glucose':
-                endpoint = '/logs/glucose';
+                endpoint = '/logs/glucose-sos';
                 body = {
                     value: parseFloat(glucoseValue),
                     reading_type: readingType,
@@ -131,13 +131,17 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                 setAlert(data.alert);
             }
 
-            // Call success callback
+            // Call success callback with SOS alert data if present
             if (onSuccess) {
-                onSuccess(data);
+                onSuccess({
+                    ...data,
+                    alert: data.alert,
+                    sos_alert: data.sos_alert?.trigger ? data.sos_alert : null
+                });
             }
 
             // Close modal if no alert
-            if (!data.alert) {
+            if (!data.alert && !(data.sos_alert?.trigger)) {
                 handleClose();
             }
         } catch (err) {
