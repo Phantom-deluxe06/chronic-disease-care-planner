@@ -758,7 +758,7 @@ Format as JSON: {{"insight": "...", "suggestions": ["..."]}}
 Keep it concise and encouraging."""
 
     try:
-        response = gemini_model.generate_content(prompt)
+        response = gemini_client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
         response_text = response.text.strip()
         
         # Try to parse JSON
@@ -1198,7 +1198,7 @@ Provide a JSON response with this exact structure (no markdown, just raw JSON):
 If some data is missing, provide general recommendations for someone with {', '.join(diseases) if diseases else 'chronic conditions'}.
 Keep recommendations practical and actionable. Maximum 3 items per array."""
 
-        response = gemini_model.generate_content(prompt)
+        response = gemini_client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
         response_text = response.text.strip()
         
         # Clean up response
