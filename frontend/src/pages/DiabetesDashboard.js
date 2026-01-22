@@ -21,7 +21,7 @@ import SidebarRail from '../components/SidebarRail';
 import SOSAlert from '../components/SOSAlert';
 import { useLanguage } from '../context/LanguageContext';
 import {
-    Utensils,
+    Droplet, Utensils, Activity, HeartPulse,
     LayoutDashboard, Dumbbell, Pill,
     Monitor, ShieldCheck, Brain
 } from 'lucide-react';

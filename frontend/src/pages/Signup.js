@@ -62,10 +62,7 @@ const Signup = () => {
         });
     };
 
-    // Open modal to add health info for a disease
-    const openHealthInfoModal = (diseaseId) => {
-        setActiveModal(diseaseId);
-    };
+
 
     const handleHealthDataSave = (disease, data) => {
         setHealthData(prev => ({ ...prev, [disease]: data }));
