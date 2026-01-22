@@ -62,7 +62,64 @@ const FoodImageAnalysisModal = ({ isOpen, onClose, onSuccess, token, condition =
                 setError(data.error);
             } else if (data.detected_foods && data.detected_foods.length > 0) {
                 setAnalysis(data);
-                if (onSuccess) onSuccess(data);
+
+                // Check for SOS alert based on AI-detected nutrition values
+                let sosAlert = null;
+                const nutrition = data.total_nutrition || {};
+                const carbs = nutrition.carbohydrates_g || 0;
+                const sugar = nutrition.sugar_g || 0;
+                const calories = nutrition.calories || 0;
+                const gi = nutrition.glycemic_index || 0;
+                const fiber = nutrition.fiber_g || 0;
+
+                // HYPERGLYCEMIA RISK - High carbs/sugar alerts
+                if (carbs > 100 || sugar > 50) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'severe',
+                        type: 'high_carbs',
+                        message: `🚨 HYPERGLYCEMIA RISK! Very high carb/sugar meal detected!\n\n📊 Carbs: ${carbs}g | Sugar: ${sugar}g | Calories: ${calories} kcal`,
+                        action: '⚠️ IMMEDIATE ACTIONS:\n• Monitor blood sugar every 30 minutes for 2-3 hours\n• Take a 15-20 minute walk after eating\n• Drink plenty of water\n• Avoid any additional carbs or sweets\n• Contact your doctor if blood sugar exceeds 300 mg/dL'
+                    };
+                } else if (carbs > 60 || sugar > 30 || (gi > 70 && carbs > 40)) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'moderate_carbs',
+                        message: `⚠️ Elevated Blood Sugar Risk!\n\n📊 Carbs: ${carbs}g | Sugar: ${sugar}g | GI: ${gi > 0 ? gi : 'N/A'}`,
+                        action: '📋 RECOMMENDED ACTIONS:\n• Check blood sugar 1-2 hours after eating\n• Stay hydrated - drink water\n• Plan a light 10-15 minute walk\n• Pair with protein in next meal'
+                    };
+                } else if (calories > 1000) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'high_calories',
+                        message: `⚠️ High Calorie Meal: ${calories} kcal\n\n📊 Carbs: ${carbs}g | Sugar: ${sugar}g`,
+                        action: '📋 RECOMMENDATIONS:\n• Monitor blood sugar after 1-2 hours\n• Consider smaller portions for next meals\n• Stay active - take a walk'
+                    };
+                }
+                // HYPOGLYCEMIA RISK - Very low calorie/carb meals
+                else if (calories < 100 && carbs < 15) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'low_intake',
+                        message: `⚠️ HYPOGLYCEMIA RISK! Very low calorie meal detected!\n\n📊 Calories: ${calories} kcal | Carbs: ${carbs}g`,
+                        action: '📋 CAUTION:\n• This meal may not sustain your blood sugar levels\n• Monitor for symptoms: shakiness, sweating, dizziness\n• Have a balanced snack ready if needed\n• Check blood sugar in 1 hour'
+                    };
+                }
+                // High GI warning (even if carbs are moderate)
+                else if (gi > 70 && carbs > 30 && fiber < 3) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'high_gi',
+                        message: `⚠️ High Glycemic Index Meal!\n\n📊 GI: ${gi} | Carbs: ${carbs}g | Fiber: ${fiber}g`,
+                        action: '📋 TIPS:\n• This food may cause rapid blood sugar spike\n• Add fiber-rich foods to slow absorption\n• Consider portion control\n• Check blood sugar after 1 hour'
+                    };
+                }
+
+                if (onSuccess) onSuccess({ ...data, sos_alert: sosAlert });
             } else {
                 setError('No food detected. Please try a clearer image.');
             }

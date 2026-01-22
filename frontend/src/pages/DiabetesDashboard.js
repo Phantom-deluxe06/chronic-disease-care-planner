@@ -524,6 +524,7 @@ const DiabetesDashboard = () => {
             <FoodImageAnalysisModal
                 isOpen={showFoodImageModal}
                 onClose={() => setShowFoodImageModal(false)}
+                onSuccess={handleLogSuccess}
                 token={token}
                 condition="diabetes"
             />

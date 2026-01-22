@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 
-const StravaConnect = ({ token }) => {
+const StravaConnect = ({ token, onSosAlert }) => {
     const [status, setStatus] = useState({
         connected: false,
         athleteName: '',
@@ -109,6 +109,9 @@ const StravaConnect = ({ token }) => {
             if (response.ok) {
                 const data = await response.json();
                 setMessage({ type: 'success', text: `Synced ${data.synced_count} activities from Strava!` });
+
+                // After sync, check activities for hypoglycemia risk
+                checkStravaActivitiesForSOS();
             } else {
                 setMessage({ type: 'error', text: 'Failed to sync activities.' });
             }
@@ -117,6 +120,38 @@ const StravaConnect = ({ token }) => {
             setMessage({ type: 'error', text: 'Sync failed. Please try again.' });
         } finally {
             setSyncing(false);
+        }
+    };
+
+    const checkStravaActivitiesForSOS = async () => {
+        try {
+            const response = await fetch(apiUrl('/strava/activities?days=1'), {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const activities = data.activities || [];
+
+                // Check for extended exercise (hypoglycemia risk)
+                const longWorkouts = activities.filter(a => {
+                    const minutes = (a.moving_time || 0) / 60;
+                    return minutes > 90;
+                });
+
+                if (longWorkouts.length > 0 && onSosAlert) {
+                    const workout = longWorkouts[0];
+                    const minutes = Math.round((workout.moving_time || 0) / 60);
+                    onSosAlert({
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'strava_exercise',
+                        message: `⚠️ Extended workout detected from Strava: ${workout.name || workout.activity_type} (${minutes} min). Risk of hypoglycemia!`,
+                        action: 'Check your blood sugar now. Have fast-acting carbs available. Monitor for symptoms: shakiness, sweating, confusion.'
+                    });
+                }
+            }
+        } catch (err) {
+            console.error('Failed to check Strava activities for SOS:', err);
         }
     };
 
