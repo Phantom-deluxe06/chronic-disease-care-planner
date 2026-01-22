@@ -1260,9 +1260,6 @@ def analyze_prescription_image(image_data: bytes) -> Optional[Dict[str, Any]]:
             return None
     
     try:
-        import google.generativeai as genai
-        import base64
-        
         # Detect image format from bytes
         mime_type = "image/jpeg"  # Default
         if image_data[:4] == b'\x89PNG':
@@ -1276,13 +1273,11 @@ def analyze_prescription_image(image_data: bytes) -> Optional[Dict[str, Any]]:
         
         logger.info(f"Prescription image size: {len(image_data)} bytes, detected mime_type: {mime_type}")
         
-        # Create image part for vision model - using inline_data format
-        image_part = {
-            "inline_data": {
-                "mime_type": mime_type,
-                "data": base64.b64encode(image_data).decode('utf-8')
-            }
-        }
+        # Create image part for vision model
+        image_part = types.Part.from_bytes(
+            data=image_data,
+            mime_type=mime_type
+        )
         
         prompt = """You are a specialized medical OCR agent for the 'Health Buddy' app.
 
