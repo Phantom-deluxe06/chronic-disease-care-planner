@@ -190,6 +190,14 @@ const tamilTranslations = {
     'Export as PDF': 'PDF ஆக ஏற்றுமதி செய்',
     'Export as CSV': 'CSV ஆக ஏற்றுமதி செய்',
     'Avg BP': 'சராசரி BP',
+
+    // Motivational Messages
+    "Let's start your healthy day!": 'உங்கள் ஆரோக்கியமான நாளைத் தொடங்குவோம்!',
+    "Great start! Keep going!": 'சிறந்த தொடக்கம்! தொடருங்கள்!',
+    "You're on fire! Almost there!": 'நீங்கள் அருமையாக செய்கிறீர்கள்! கிட்டத்தட்ட முடிந்தது!',
+    "Amazing! All tasks completed!": 'அற்புதம்! அனைத்து பணிகளும் முடிந்தன!',
+    'Next task': 'அடுத்த பணி',
+    'All done!': 'எல்லாம் முடிந்தது!',
 };
 
 // Hardcoded Hindi translations
