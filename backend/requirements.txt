@@ -4,6 +4,6 @@ python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
 email-validator
-google-generativeai
+google-genai
 python-dotenv
 httpx

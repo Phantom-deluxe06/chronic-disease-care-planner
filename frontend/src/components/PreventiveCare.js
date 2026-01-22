@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Shield, Bell, Plane, CheckCircle2, X, Clipboard, Info, Heart, Moon, Zap, Star } from 'lucide-react';
+import { Shield, Bell, Plane, CheckCircle2, X, Clipboard, Info, Heart, Moon, Zap, Star, AlertCircle } from 'lucide-react';
 
 const PreventiveCare = ({ token, tips = [] }) => {
     const [reminders, setReminders] = useState(null);

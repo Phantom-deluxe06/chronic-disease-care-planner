@@ -19,11 +19,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-gemini_model = None
+gemini_client = None
 
 def initialize_gemini():
-    """Initialize Gemini AI model"""
-    global gemini_model
+    """Initialize Gemini AI client"""
+    global gemini_client
     
     # Debug: Log Python info
     import sys
@@ -35,26 +35,17 @@ def initialize_gemini():
         return None
     
     try:
-        # Try importing the package
-        logger.info("Attempting to import google.generativeai...")
-        import google.generativeai as genai
-        logger.info("google.generativeai imported successfully")
+        # Try importing the new package
+        logger.info("Attempting to import google.genai...")
+        from google import genai
+        logger.info("google.genai imported successfully")
         
-        genai.configure(api_key=GEMINI_API_KEY)
-        # Using gemini-2.0-flash (gemini-1.5 models are deprecated)
-        gemini_model = genai.GenerativeModel('models/gemini-2.0-flash')
-        logger.info("Gemini AI initialized successfully with model gemini-2.0-flash")
-        return gemini_model
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+        logger.info("Gemini AI client initialized successfully")
+        return gemini_client
     except ImportError as ie:
-        logger.error(f"ImportError - google.generativeai not found: {ie}")
-        logger.error("Install with: pip install google-generativeai")
-        # Try to show what's installed
-        try:
-            import pkg_resources
-            installed = [f"{p.key}=={p.version}" for p in pkg_resources.working_set if 'google' in p.key.lower()]
-            logger.info(f"Installed google packages: {installed}")
-        except:
-            pass
+        logger.error(f"ImportError - google-genai not found: {ie}")
+        logger.error("Install with: pip install google-genai")
         return None
     except Exception as e:
         logger.error(f"Failed to initialize Gemini AI: {type(e).__name__}: {e}")
@@ -69,12 +60,12 @@ def analyze_food_with_gemini(food_description: str, quantity: str, condition: st
     Use Gemini AI to analyze food for nutritional content.
     Returns structured JSON with nutrition info, health recommendations, and portion advice.
     """
-    global gemini_model
+    global gemini_client
     
-    if not gemini_model:
+    if not gemini_client:
         # Try to reinitialize
         initialize_gemini()
-        if not gemini_model:
+        if not gemini_client:
             return None
     
     if condition == "diabetes":
@@ -719,11 +710,11 @@ def analyze_bp_week(bp_logs: list) -> Dict[str, Any]:
 def generate_ai_weekly_insight(diet: Dict, exercise: Dict, medication: Dict,
                                 glucose: Dict, bp: Dict, strava_activities: list) -> Dict[str, Any]:
     """Generate AI-powered weekly insight using Gemini, correlating exercise with health metrics"""
-    global gemini_model
+    global gemini_client
     
-    if not gemini_model:
+    if not gemini_client:
         initialize_gemini()
-        if not gemini_model:
+        if not gemini_client:
             return {"suggestions": [], "insight": ""}
     
     # Build activity summary for AI
