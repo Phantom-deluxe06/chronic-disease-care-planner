@@ -6,6 +6,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import LanguageSelector from '../components/LanguageSelector';
 
 const Landing = () => {
     const { t } = useLanguage();
@@ -110,6 +111,11 @@ const Landing = () => {
 
     return (
         <div className="landing-page">
+            {/* Language Selector - Top Right */}
+            <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
+                <LanguageSelector />
+            </div>
+
             {/* Marquee Disclaimer */}
             <div className="marquee-container">
                 <div className="marquee-content">

@@ -11,6 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import DiseaseModal from '../components/DiseaseModal';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
+import LanguageSelector from '../components/LanguageSelector';
 import { User, Mail, Lock, Eye, EyeOff, Calendar, UserRound, ClipboardCheck, Layout, Bell, Activity, Heart, CheckCircle2, ArrowRight } from 'lucide-react';
 
 const Signup = () => {
@@ -144,6 +145,11 @@ const Signup = () => {
 
     return (
         <div className="auth-page-dark">
+            {/* Language Selector - Top Right */}
+            <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
+                <LanguageSelector />
+            </div>
+
             {/* Background Elements */}
             <div className="auth-bg-glow"></div>
 

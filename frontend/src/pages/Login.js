@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
+import LanguageSelector from '../components/LanguageSelector';
 import { Mail, Lock, Eye, EyeOff, Layout, LogIn, User, Home, BarChart3, ClipboardList, TrendingUp, Settings } from 'lucide-react';
 
 const Login = () => {
@@ -68,6 +69,11 @@ const Login = () => {
 
     return (
         <div className="auth-page-dark">
+            {/* Language Selector - Top Right */}
+            <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
+                <LanguageSelector />
+            </div>
+
             {/* Background Elements */}
             <div className="auth-bg-glow"></div>
 
