@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Mail, Lock, Eye, EyeOff, Layout, LogIn, User } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Layout, LogIn, User, Home, BarChart3, ClipboardList, TrendingUp, Settings } from 'lucide-react';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -82,19 +82,19 @@ const Login = () => {
 
                         <div className="preview-nav">
                             <div className="preview-nav-item active">
-                                <span>🏠</span> {t('Home')}
+                                <Home size={16} /> {t('Home')}
                             </div>
                             <div className="preview-nav-item">
-                                <span>📊</span> {t('Health Logs')}
+                                <BarChart3 size={16} /> {t('Health Logs')}
                             </div>
                             <div className="preview-nav-item">
-                                <span>📋</span> {t('Care Plan')}
+                                <ClipboardList size={16} /> {t('Care Plan')}
                             </div>
                             <div className="preview-nav-item">
-                                <span>📈</span> {t('Reports')}
+                                <TrendingUp size={16} /> {t('Reports')}
                             </div>
                             <div className="preview-nav-item">
-                                <span>⚙️</span> {t('Settings')}
+                                <Settings size={16} /> {t('Settings')}
                             </div>
                         </div>
 

@@ -5040,6 +5040,184 @@ body {
   margin-bottom: var(--spacing-lg);
 }
 
+/* Diabetes Tips Section */
+.diabetes-tips-section {
+  background: rgba(6, 182, 212, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-left: 3px solid var(--primary-500);
+}
+
+.diabetes-tips-section h4 {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.diabetes-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.diabetes-tips-list li {
+  color: var(--gray-300);
+  font-size: 0.85rem;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-left: var(--spacing-md);
+  position: relative;
+}
+
+.diabetes-tips-list li::before {
+  content: '💡';
+  position: absolute;
+  left: 0;
+  font-size: 0.8rem;
+}
+
+.diabetes-tips-list li:last-child {
+  border-bottom: none;
+}
+
+/* Hypertension Preventive Care Additional Styles */
+.hypertension-preventive {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bp-tips-section {
+  border-left-color: #EF4444;
+}
+
+/* BP Categories Section */
+.bp-categories-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.bp-categories-section h4 {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.bp-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.bp-category-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  border-left: 4px solid;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.category-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.category-values {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+}
+
+/* Daily Checklist Section */
+.daily-checklist-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.daily-checklist-section h4 {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.checklist-card {
+  display: flex;
+  gap: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  align-items: flex-start;
+}
+
+.checklist-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.checklist-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checklist-time {
+  font-size: 0.75rem;
+  color: var(--primary-400);
+  font-weight: 600;
+}
+
+.checklist-task {
+  font-size: 0.85rem;
+  color: var(--gray-300);
+}
+
+/* Warning Signs Section */
+.warning-signs-section {
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  border-left: 3px solid #EF4444;
+}
+
+.warning-signs-section h4 {
+  color: #FCA5A5;
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.warning-content p {
+  color: var(--gray-300);
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.warning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.warning-list li {
+  color: var(--gray-300);
+  font-size: 0.85rem;
+  padding: var(--spacing-xs) 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bp-categories-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .daily-reminders h4 {
   color: white;
   font-size: 0.95rem;

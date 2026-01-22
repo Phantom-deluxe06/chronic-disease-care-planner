@@ -17,6 +17,7 @@ import MobileNav from '../components/MobileNav';
 import NutritionDashboard from '../components/NutritionDashboard';
 import WorkoutAnalytics from '../components/WorkoutAnalytics';
 import SidebarRail from '../components/SidebarRail';
+import HypertensionPreventiveCare from '../components/HypertensionPreventiveCare';
 import {
     HeartPulse,
     LayoutDashboard,
@@ -25,7 +26,10 @@ import {
     Pill,
     Wind,
     Bot,
-    AlertTriangle
+    AlertTriangle,
+    ShieldCheck,
+    Camera,
+    Salad
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -273,16 +277,16 @@ const HypertensionDashboard = () => {
                             <h3>{t('Quick Actions')}</h3>
                             <div className="quick-actions-grid">
                                 <button className="quick-action" onClick={() => setShowBPModal(true)}>
-                                    💓 {t('Log BP')}
+                                    <HeartPulse size={16} /> {t('Log BP')}
                                 </button>
                                 <button className="quick-action" onClick={() => setShowFoodModal(true)}>
-                                    🍽️ {t('Log Food')}
+                                    <Utensils size={16} /> {t('Log Food')}
                                 </button>
                                 <button className="quick-action" onClick={() => setActiveTab('exercise')}>
-                                    🏃 {t('Log Activity')}
+                                    <Activity size={16} /> {t('Log Activity')}
                                 </button>
                                 <button className="quick-action" onClick={() => setActiveTab('stress')}>
-                                    🧘 {t('Stress Check-in')}
+                                    <Wind size={16} /> {t('Stress Check-in')}
                                 </button>
                             </div>
                         </div>
@@ -306,15 +310,6 @@ const HypertensionDashboard = () => {
                             </div>
                         </div>
 
-                        {/* Tips */}
-                        <div className="dash-card tips-card">
-                            <h3>💡 {t('Blood Pressure Tips')}</h3>
-                            <ul className="tips-list">
-                                {(translatedTips.length > 0 ? translatedTips : tips).map((tip, i) => (
-                                    <li key={i}>{tip}</li>
-                                ))}
-                            </ul>
-                        </div>
 
                         {/* Quick Stats */}
                         <div className="dash-card stats-card">
@@ -343,27 +338,27 @@ const HypertensionDashboard = () => {
                 return (
                     <div className="tab-content">
                         <div className="section-intro">
-                            <h3>🥗 {t('DASH Diet Tracking')}</h3>
+                            <h3><Salad size={20} style={{ display: 'inline', marginRight: '8px' }} /> {t('DASH Diet Tracking')}</h3>
                             <p>{t('Track your sodium intake and macros for heart-healthy eating.')}</p>
                             <div className="food-action-buttons">
                                 <button className="btn-primary" onClick={() => setShowFoodModal(true)}>
                                     + {t('Log a Meal')}
                                 </button>
                                 <button className="btn-secondary scan-food-btn" onClick={() => setShowFoodImageModal(true)}>
-                                    📷 {t('Scan Food Plate')}
+                                    <Camera size={16} style={{ marginRight: '6px' }} /> {t('Scan Food Plate')}
                                 </button>
                             </div>
                         </div>
                         <NutritionDashboard token={token} />
                         <div className="dash-tips">
-                            <h4>🍽️ DASH Diet Principles</h4>
+                            <h4><Utensils size={18} style={{ display: 'inline', marginRight: '8px' }} /> DASH Diet Principles</h4>
                             <ul>
-                                <li>🧂 Limit sodium to &lt;2,300mg/day (ideally &lt;1,500mg)</li>
-                                <li>🍌 Eat potassium-rich foods: bananas, oranges, spinach</li>
-                                <li>🥬 Increase fruits and vegetables (4-5 servings each)</li>
-                                <li>🍞 Choose whole grains over refined</li>
-                                <li>🥛 Include low-fat dairy products</li>
-                                <li>🍖 Limit saturated fats and red meat</li>
+                                <li>• Limit sodium to &lt;2,300mg/day (ideally &lt;1,500mg)</li>
+                                <li>• Eat potassium-rich foods: bananas, oranges, spinach</li>
+                                <li>• Increase fruits and vegetables (4-5 servings each)</li>
+                                <li>• Choose whole grains over refined</li>
+                                <li>• Include low-fat dairy products</li>
+                                <li>• Limit saturated fats and red meat</li>
                             </ul>
                         </div>
                     </div>
@@ -374,14 +369,14 @@ const HypertensionDashboard = () => {
                     <div className="tab-content">
                         <WorkoutAnalytics token={token} />
                         <div className="exercise-bp-info">
-                            <h4>🫀 Exercise & Blood Pressure</h4>
+                            <h4><HeartPulse size={18} style={{ display: 'inline', marginRight: '8px' }} /> Exercise & Blood Pressure</h4>
                             <p>Regular physical activity helps lower blood pressure by making your heart stronger.
                                 A stronger heart can pump more blood with less effort, reducing pressure on arteries.</p>
                             <ul>
-                                <li>✅ Aim for 150 minutes/week of moderate activity (AHA recommendation)</li>
-                                <li>✅ Walking, swimming, and cycling are excellent choices</li>
-                                <li>⚠️ Avoid heavy weightlifting which can spike BP</li>
-                                <li>⚠️ Stop if you feel dizzy or short of breath</li>
+                                <li>• Aim for 150 minutes/week of moderate activity (AHA recommendation)</li>
+                                <li>• Walking, swimming, and cycling are excellent choices</li>
+                                <li>• Avoid heavy weightlifting which can spike BP</li>
+                                <li>• Stop if you feel dizzy or short of breath</li>
                             </ul>
                         </div>
                     </div>
@@ -392,7 +387,7 @@ const HypertensionDashboard = () => {
                     <div className="tab-content">
                         <MedicationManager token={token} />
                         <div className="med-bp-info">
-                            <h4>💊 Antihypertensive Medications</h4>
+                            <h4><Pill size={18} style={{ display: 'inline', marginRight: '8px' }} /> Antihypertensive Medications</h4>
                             <p>Common BP medications include:</p>
                             <ul>
                                 <li><strong>ACE Inhibitors</strong> - Lisinopril, Enalapril</li>
@@ -419,6 +414,13 @@ const HypertensionDashboard = () => {
                 return (
                     <div className="tab-content">
                         <WeeklySummaryBP token={token} />
+                    </div>
+                );
+
+            case 'preventive':
+                return (
+                    <div className="tab-content">
+                        <HypertensionPreventiveCare token={token} tips={translatedTips.length > 0 ? translatedTips : tips} />
                     </div>
                 );
 
@@ -485,6 +487,12 @@ const HypertensionDashboard = () => {
                         onClick={() => setActiveTab('stress')}
                     >
                         <Wind size={18} strokeWidth={2} /> {t('Stress & Lifestyle')}
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'preventive' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('preventive')}
+                    >
+                        <ShieldCheck size={18} strokeWidth={2} /> {t('Preventive Care and Tips')}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}

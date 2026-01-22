@@ -36,7 +36,7 @@ const Signup = () => {
 
     // Only Diabetes and Hypertension now
     const diseases = [
-        { id: 'diabetes', label: t('Diabetes (Sugar)'), icon: <Activity size={20} />, color: '#f59e0b' },
+        { id: 'diabetes', label: t('Type 2 Diabetes'), icon: <Activity size={20} />, color: '#f59e0b' },
         { id: 'hypertension', label: t('Hypertension (BP)'), icon: <Heart size={20} />, color: '#8b5cf6' },
     ];
 
@@ -111,13 +111,6 @@ const Signup = () => {
             return;
         }
 
-        // Check if health data is collected for all selected diseases
-        for (const disease of selectedDiseases) {
-            if (!healthData[disease] || Object.keys(healthData[disease]).length === 0) {
-                setError(t('Please add health information for {disease}').replace('{disease}', diseases.find(d => d.id === disease)?.label));
-                return;
-            }
-        }
 
         setLoading(true);
 
@@ -322,16 +315,6 @@ const Signup = () => {
                                                 <span className="condition-check"><CheckCircle2 size={16} /></span>
                                             )}
                                         </div>
-
-                                        {selectedDiseases.includes(disease.id) && (
-                                            <button
-                                                type="button"
-                                                className={`add-info-btn ${healthData[disease.id] ? 'completed' : ''}`}
-                                                onClick={() => openHealthInfoModal(disease.id)}
-                                            >
-                                                {healthData[disease.id] ? <><CheckCircle2 size={14} style={{ marginRight: '6px' }} /> {t('✓ Info Added - Edit')}</> : <>{t('+ Add Health Info')}</>}
-                                            </button>
-                                        )}
                                     </div>
                                 ))}
                             </div>

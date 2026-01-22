@@ -8,7 +8,7 @@ import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
 import { Shield, Bell, Plane, CheckCircle2, X, Clipboard, ExternalLink, Info, AlertCircle, Heart, Moon, Zap, Star } from 'lucide-react';
 
-const PreventiveCare = ({ token }) => {
+const PreventiveCare = ({ token, tips = [] }) => {
     const [reminders, setReminders] = useState(null);
     const [travelChecklist, setTravelChecklist] = useState(null);
     const [showTravelModal, setShowTravelModal] = useState(false);
@@ -114,8 +114,20 @@ const PreventiveCare = ({ token }) => {
     return (
         <div className="preventive-care">
             <div className="care-header">
-                <h3><Shield size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Preventive Care')}</h3>
+                <h3><Shield size={20} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Preventive Care and Tips')}</h3>
             </div>
+
+            {/* Diabetes Tips */}
+            {tips && tips.length > 0 && (
+                <div className="diabetes-tips-section">
+                    <h4><Info size={18} color="#06B6D4" style={{ display: 'inline', marginRight: '8px' }} /> {t('Diabetes Tips')}</h4>
+                    <ul className="diabetes-tips-list">
+                        {tips.map((tip, i) => (
+                            <li key={i}>{tip}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             {/* Daily Reminders */}
             {reminders && (
@@ -215,6 +227,22 @@ const PreventiveCare = ({ token }) => {
                             </div>
                         </div>
                     ))}
+                </div>
+            </div>
+
+            {/* Warning Signs */}
+            <div className="warning-signs-section">
+                <h4><AlertCircle size={18} color="#EF4444" style={{ display: 'inline', marginRight: '8px' }} /> {t('When to Seek Emergency Care')}</h4>
+                <div className="warning-content">
+                    <p>{t('Seek immediate medical attention if you experience:')}</p>
+                    <ul className="warning-list">
+                        <li>🚨 {t('Blood sugar below 54 mg/dL (severe hypoglycemia)')}</li>
+                        <li>🚨 {t('Blood sugar above 300 mg/dL that won\'t come down')}</li>
+                        <li>🚨 {t('Confusion, difficulty speaking, or loss of consciousness')}</li>
+                        <li>🚨 {t('Fruity breath odor (sign of diabetic ketoacidosis)')}</li>
+                        <li>🚨 {t('Excessive thirst with frequent urination and nausea')}</li>
+                        <li>🚨 {t('Rapid heartbeat or difficulty breathing')}</li>
+                    </ul>
                 </div>
             </div>
         </div>

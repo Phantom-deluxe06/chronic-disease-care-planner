@@ -263,16 +263,16 @@ const DiabetesDashboard = () => {
                             <h3>{t('Quick Actions')}</h3>
                             <div className="quick-actions-grid">
                                 <button className="quick-action" onClick={() => openLogModal('glucose')}>
-                                    🩸 {t('Log Glucose')}
+                                    <Droplet size={16} /> {t('Log Glucose')}
                                 </button>
                                 <button className="quick-action" onClick={() => setShowFoodModal(true)}>
-                                    🍽️ {t('Log Food')}
+                                    <Utensils size={16} /> {t('Log Food')}
                                 </button>
                                 <button className="quick-action" onClick={() => openLogModal('activity')}>
-                                    🏃 {t('Log Activity')}
+                                    <Activity size={16} /> {t('Log Activity')}
                                 </button>
                                 <button className="quick-action" onClick={() => openLogModal('bp')}>
-                                    💓 {t('Log BP')}
+                                    <HeartPulse size={16} /> {t('Log BP')}
                                 </button>
                             </div>
                         </div>
@@ -294,15 +294,6 @@ const DiabetesDashboard = () => {
                             </div>
                         </div>
 
-                        {/* Tips */}
-                        <div className="dash-card tips-card">
-                            <h3>💡 {t('Diabetes Tips')}</h3>
-                            <ul className="tips-list">
-                                {translatedTips.map((tip, i) => (
-                                    <li key={i}>{tip}</li>
-                                ))}
-                            </ul>
-                        </div>
 
                         {/* Quick Stats */}
                         <div className="dash-card stats-card">
@@ -374,7 +365,7 @@ const DiabetesDashboard = () => {
             case 'preventive':
                 return (
                     <div className="tab-content">
-                        <PreventiveCare token={token} />
+                        <PreventiveCare token={token} tips={translatedTips} />
                     </div>
                 );
 
@@ -402,7 +393,7 @@ const DiabetesDashboard = () => {
             <main className="dashboard-main home-main">
                 <header className="dashboard-header">
                     <div className="header-title">
-                        <span className="disease-icon">🩸</span>
+                        <span className="disease-icon"><Droplet size={32} color="#06B6D4" strokeWidth={2} /></span>
                         <div>
                             <h1>{t('Diabetes Care')}</h1>
                             <p>{t('Track your blood sugar and manage your daily routine')}</p>
