@@ -1305,7 +1305,7 @@ If no medications can be detected, return:
         
         for attempt in range(max_retries):
             try:
-                response = gemini_model.generate_content([prompt, image_part])
+                response = gemini_client.models.generate_content(model='gemini-2.0-flash', contents=[prompt, image_part])
                 response_text = response.text.strip()
                 
                 # Clean up response
@@ -1428,7 +1428,7 @@ If no food can be detected, return:
         
         for attempt in range(max_retries):
             try:
-                response = gemini_model.generate_content([prompt, image_part])
+                response = gemini_client.models.generate_content(model='gemini-2.0-flash', contents=[prompt, image_part])
                 response_text = response.text.strip()
                 
                 # Clean up response
