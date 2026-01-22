@@ -8,23 +8,35 @@
 // For a real device on the same network, use your computer's local IP address
 
 const getApiBaseUrl = () => {
+    // Production backend URL
+    const PRODUCTION_BACKEND = 'https://healthbuddy-backend-fdum.onrender.com';
+
     // Multiple checks to detect if running in Capacitor/native app
-    const isCapacitor = window.Capacitor !== undefined;
-    const isNativeApp = navigator.userAgent.includes('CapacitorApp') ||
+    const isCapacitor = typeof window !== 'undefined' && window.Capacitor !== undefined;
+    const isNativeApp = typeof navigator !== 'undefined' && (
+        navigator.userAgent.includes('CapacitorApp') ||
+        navigator.userAgent.includes('Android') ||
+        navigator.userAgent.includes('wv') // WebView indicator
+    );
+    const isFileProtocol = typeof document !== 'undefined' && (
         document.URL.startsWith('capacitor://') ||
         document.URL.startsWith('ionic://') ||
-        document.URL.startsWith('file://');
+        document.URL.startsWith('file://')
+    );
 
-    // Check if running in production (Vercel)
-    const isProduction = window.location.hostname !== 'localhost' &&
+    // Check if running in production (Vercel or any non-localhost)
+    const isProduction = typeof window !== 'undefined' &&
+        window.location.hostname !== 'localhost' &&
         window.location.hostname !== '127.0.0.1';
 
-    // Always use deployed backend for native apps and production
-    if (isCapacitor || isNativeApp || isProduction) {
-        return 'https://healthbuddy-backend-fdum.onrender.com';
+    // Always use deployed backend for native apps, file protocol, or production
+    if (isCapacitor || isNativeApp || isFileProtocol || isProduction) {
+        console.log('[API Config] Using production backend:', PRODUCTION_BACKEND);
+        return PRODUCTION_BACKEND;
     }
 
     // Local development only
+    console.log('[API Config] Using local backend: http://localhost:8000');
     return 'http://localhost:8000';
 };
 
