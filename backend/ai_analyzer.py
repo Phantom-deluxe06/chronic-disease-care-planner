@@ -1146,9 +1146,9 @@ def generate_health_insights(user_id: int, diseases: list, health_data: list,
     """
     Generate personalized AI health insights based on user's health data.
     """
-    global gemini_model
+    global gemini_client
     
-    if not gemini_model:
+    if not gemini_client:
         return {
             "overall_status": "Your health data looks stable. Continue monitoring regularly.",
             "recommendations": [
@@ -1245,12 +1245,12 @@ def analyze_prescription_image(image_data: bytes) -> Optional[Dict[str, Any]]:
     Returns:
         Dictionary with detected medications or None if analysis fails
     """
-    global gemini_model
+    global gemini_client
     
-    if not gemini_model:
+    if not gemini_client:
         initialize_gemini()
-        if not gemini_model:
-            logger.error("Gemini model not initialized for prescription analysis")
+        if not gemini_client:
+            logger.error("Gemini client not initialized for prescription analysis")
             return None
     
     try:
@@ -1354,11 +1354,11 @@ def analyze_food_image(image_data: bytes, condition: str = "diabetes") -> Option
     Returns:
         Dictionary with nutritional analysis or None if analysis fails
     """
-    global gemini_model
+    global gemini_client
     
-    if not gemini_model:
+    if not gemini_client:
         initialize_gemini()
-        if not gemini_model:
+        if not gemini_client:
             return None
     
     try:
