@@ -1,11 +1,12 @@
 /**
  * Food Image Analysis Modal Component
  * Allows users to upload food plate images for AI-powered nutritional analysis
+ * Includes Text-to-Speech for accessibility
  */
 
 import { useState, useRef } from 'react';
 import { FiCamera, FiAlertCircle } from 'react-icons/fi';
-import { MdRestaurant, MdLocalFireDepartment } from 'react-icons/md';
+import { MdRestaurant, MdLocalFireDepartment, MdVolumeUp, MdVolumeOff } from 'react-icons/md';
 import { apiUrl } from '../config/api';
 import './FoodImageAnalysisModal.css';
 
@@ -14,7 +15,72 @@ const FoodImageAnalysisModal = ({ isOpen, onClose, onSuccess, token, condition =
     const [error, setError] = useState('');
     const [preview, setPreview] = useState(null);
     const [analysis, setAnalysis] = useState(null);
+    const [isSpeaking, setIsSpeaking] = useState(false);
     const fileInputRef = useRef(null);
+
+    // Text-to-Speech function
+    const speakResults = (analysisData) => {
+        if (!analysisData || !window.speechSynthesis) return;
+
+        // Stop any ongoing speech
+        window.speechSynthesis.cancel();
+
+        const nutrition = analysisData.total_nutrition || {};
+        const foods = analysisData.detected_foods || [];
+        const assessment = analysisData.health_assessment || {};
+
+        // Build the speech text
+        let speechText = `Food Analysis Complete. `;
+
+        // Detected foods
+        if (foods.length > 0) {
+            speechText += `I detected ${foods.length} food items: ${foods.map(f => f.name).join(', ')}. `;
+        }
+
+        // Nutrition summary
+        speechText += `This meal contains ${nutrition.calories || 0} calories, `;
+        speechText += `${nutrition.carbohydrates_g || 0} grams of carbohydrates, `;
+        speechText += `${nutrition.protein_g || 0} grams of protein, `;
+        speechText += `${nutrition.fat_g || 0} grams of fat, `;
+        speechText += `and ${nutrition.sugar_g || 0} grams of sugar. `;
+
+        if (nutrition.sodium_mg) {
+            speechText += `Sodium content is ${nutrition.sodium_mg} milligrams. `;
+        }
+
+        // Health rating
+        if (assessment.rating) {
+            speechText += `Health rating: ${assessment.rating}. `;
+            if (assessment.suitable_for_condition) {
+                speechText += `This meal is suitable for your condition. `;
+            } else {
+                speechText += `Caution: This meal requires attention. `;
+            }
+        }
+
+        // Concerns
+        if (assessment.concerns && assessment.concerns.length > 0) {
+            speechText += `Concerns: ${assessment.concerns.join('. ')}. `;
+        }
+
+        // Create and speak
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.lang = 'en-US';
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const stopSpeaking = () => {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+    };
+
 
     const handleFileSelect = async (e) => {
         const file = e.target.files[0];
@@ -319,10 +385,19 @@ const FoodImageAnalysisModal = ({ isOpen, onClose, onSuccess, token, condition =
                         )}
 
                         <div className="modal-actions">
+                            <button
+                                className={`btn-speak ${isSpeaking ? 'speaking' : ''}`}
+                                onClick={() => isSpeaking ? stopSpeaking() : speakResults(analysis)}
+                                title={isSpeaking ? "Stop Speaking" : "Speak Results"}
+                            >
+                                {isSpeaking ? <MdVolumeOff /> : <MdVolumeUp />}
+                                {isSpeaking ? 'Stop' : 'Speak'}
+                            </button>
                             <button className="btn-submit" onClick={handleClose}>
                                 Done
                             </button>
                         </div>
+
                     </div>
                 )}
 
