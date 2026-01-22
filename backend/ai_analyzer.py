@@ -995,11 +995,11 @@ def chat_with_health_buddy(
     Returns:
         Dict with response, suggestions, and metadata
     """
-    global gemini_model
+    global gemini_client
     
-    if not gemini_model:
+    if not gemini_client:
         initialize_gemini()
-        if not gemini_model:
+        if not gemini_client:
             return {
                 "response": "I'm sorry, the AI service is currently unavailable. Please try again later.",
                 "success": False,
@@ -1054,7 +1054,10 @@ User's message: {message}
 Respond naturally and helpfully:"""
 
     try:
-        response = gemini_model.generate_content(system_prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=system_prompt
+        )
         response_text = response.text.strip()
         
         # Generate quick reply suggestions based on context
