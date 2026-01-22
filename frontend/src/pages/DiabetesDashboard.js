@@ -416,7 +416,7 @@ const DiabetesDashboard = () => {
     return (
         <div className="disease-dashboard diabetes-theme">
             {/* Mobile Navigation */}
-            <MobileNav user={user} onLogout={handleLogout} />
+            <MobileNav user={user} onLogout={handleLogout} onScanClick={() => setShowFoodImageModal(true)} />
 
             {/* Sidebar Rail */}
             <SidebarRail user={user} />

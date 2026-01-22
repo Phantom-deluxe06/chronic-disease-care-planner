@@ -8,8 +8,14 @@
 // For a real device on the same network, use your computer's local IP address
 
 const getApiBaseUrl = () => {
-    // Production backend URL
+    // LOCAL TESTING: Use 10.0.2.2 for Android emulator (routes to host machine)
+    // PRODUCTION: Use the deployed backend URL
+    const LOCAL_BACKEND = 'http://10.0.2.2:8000';
     const PRODUCTION_BACKEND = 'https://healthbuddy-backend-fdum.onrender.com';
+
+    // For emulator testing, use LOCAL_BACKEND
+    // For production/real device, use PRODUCTION_BACKEND
+    const ACTIVE_BACKEND = PRODUCTION_BACKEND; // Using production for real phone
 
     // Multiple checks to detect if running in Capacitor/native app
     const isCapacitor = typeof window !== 'undefined' && window.Capacitor !== undefined;
@@ -29,13 +35,13 @@ const getApiBaseUrl = () => {
         window.location.hostname !== 'localhost' &&
         window.location.hostname !== '127.0.0.1';
 
-    // Always use deployed backend for native apps, file protocol, or production
+    // Use configured backend for native apps, file protocol, or production
     if (isCapacitor || isNativeApp || isFileProtocol || isProduction) {
-        console.log('[API Config] Using production backend:', PRODUCTION_BACKEND);
-        return PRODUCTION_BACKEND;
+        console.log('[API Config] Using backend:', ACTIVE_BACKEND);
+        return ACTIVE_BACKEND;
     }
 
-    // Local development only
+    // Local web development only
     console.log('[API Config] Using local backend: http://localhost:8000');
     return 'http://localhost:8000';
 };
