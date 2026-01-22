@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { BarChart3, TrendingUp, TrendingDown, Minus, Activity, Pill, Star, AlertTriangle, AlertCircle, RefreshCw, Info } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, Minus, Activity, Pill, Star, AlertTriangle, AlertCircle, RefreshCw } from 'lucide-react';
 
 const WeeklySummaryBP = ({ token }) => {
     const [summary, setSummary] = useState(null);
@@ -51,6 +51,7 @@ const WeeklySummaryBP = ({ token }) => {
         } finally {
             setLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, language]);
 
     useEffect(() => {

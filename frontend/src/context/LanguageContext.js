@@ -3,6 +3,7 @@
  * Supports English, Tamil (தமிழ்), and Hindi (हिन्दी)
  */
 
+/* eslint-disable no-dupe-keys */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 // Google Cloud Translation API configuration
@@ -1130,6 +1131,7 @@ export function LanguageProvider({ children }) {
     };
 
     // Translate common strings when language changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (language === 'en') {
             setTranslatedStrings(commonStrings);

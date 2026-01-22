@@ -3,7 +3,7 @@
  * AI-assisted food logging with nutritional analysis
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './LogEntryModal.css';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';

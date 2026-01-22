@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Wind, Moon, Sun, Smile, Meh, Frown, MoreHorizontal, CheckCircle2, AlertCircle, Info, Zap, Clock, Star, BarChart3, TrendingUp } from 'lucide-react';
+import { Wind, Moon, Smile, Meh, Frown, AlertCircle, Info, Zap, Star, BarChart3 } from 'lucide-react';
 
 const StressTracker = ({ token }) => {
     const [stressLevel, setStressLevel] = useState(null);

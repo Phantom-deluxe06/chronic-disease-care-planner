@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Activity, Plus, X, Info, Star, Clock, Calendar, Database, Shield, HeartPulse, RefreshCw, Cpu, CheckCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
+import { Plus, X, Info, Star, Clock, Calendar, Shield, HeartPulse, RefreshCw, Cpu, CheckCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
 
 const HealthMonitor = ({ token }) => {
     const [hba1cData, setHba1cData] = useState(null);

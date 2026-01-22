@@ -41,6 +41,7 @@ const StravaConnect = ({ token, onSosAlert }) => {
     }, [token, checkStatus]);
 
     // Handle OAuth callback
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');

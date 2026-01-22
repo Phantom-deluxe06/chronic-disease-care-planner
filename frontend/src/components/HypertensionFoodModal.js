@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { X, Search, Utensils, Zap, CheckCircle, AlertTriangle, Info, BarChart3 } from 'lucide-react';
+import { X, Search, Utensils, CheckCircle, AlertTriangle, Info, BarChart3 } from 'lucide-react';
 import './LogEntryModal.css';
 
 const HypertensionFoodModal = ({ isOpen, onClose, onSuccess, token }) => {
