@@ -30,7 +30,7 @@ const Home = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { t, isTranslating, language } = useLanguage();
+    const { t, language } = useLanguage();
 
     useEffect(() => {
         const token = localStorage.getItem('token');

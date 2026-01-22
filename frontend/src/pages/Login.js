@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Mail, Lock, Eye, EyeOff, Layout, LogIn, User } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, LogIn, User } from 'lucide-react';
 
 const Login = () => {
     const navigate = useNavigate();

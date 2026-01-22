@@ -11,7 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import DiseaseModal from '../components/DiseaseModal';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { User, Mail, Lock, Eye, EyeOff, Calendar, UserRound, ClipboardCheck, Layout, Bell, Activity, Heart, CheckCircle2, Star, ArrowRight, ArrowLeft } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Calendar, UserRound, ClipboardCheck, Layout, Bell, Activity, Heart, CheckCircle2, ArrowRight } from 'lucide-react';
 
 const Signup = () => {
     const navigate = useNavigate();

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import LogEntryModal from '../components/LogEntryModal';
 import WaterTracker from '../components/WaterTracker';
@@ -21,8 +21,8 @@ import SidebarRail from '../components/SidebarRail';
 import SOSAlert from '../components/SOSAlert';
 import { useLanguage } from '../context/LanguageContext';
 import {
-    Droplet, Utensils, Activity, HeartPulse,
-    LayoutDashboard, Salad, Dumbbell, Pill,
+    Utensils,
+    LayoutDashboard, Dumbbell, Pill,
     Monitor, ShieldCheck, Brain
 } from 'lucide-react';
 
