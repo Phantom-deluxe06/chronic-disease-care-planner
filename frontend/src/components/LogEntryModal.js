@@ -68,12 +68,14 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
 
         let endpoint = '';
         let body = {};
+        let glucoseValueNum = 0;
 
         switch (logType) {
             case 'glucose':
-                endpoint = '/logs/glucose-sos';
+                endpoint = '/logs/glucose';
+                glucoseValueNum = parseFloat(glucoseValue);
                 body = {
-                    value: parseFloat(glucoseValue),
+                    value: glucoseValueNum,
                     reading_type: readingType,
                     notes: notes || null
                 };
@@ -131,17 +133,39 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                 setAlert(data.alert);
             }
 
+            // Check for SOS alert conditions (frontend check for critical glucose)
+            let sosAlert = null;
+            if (logType === 'glucose' && glucoseValueNum > 0) {
+                if (glucoseValueNum < 70) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'severe',
+                        type: 'low',
+                        message: `Critical LOW blood sugar: ${glucoseValueNum} mg/dL! This is a medical emergency.`,
+                        action: 'Consume 15-20g of fast-acting carbs immediately (glucose tablets, juice, or candy). Recheck in 15 minutes.'
+                    };
+                } else if (glucoseValueNum > 250) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'severe',
+                        type: 'high',
+                        message: `Critical HIGH blood sugar: ${glucoseValueNum} mg/dL! This requires immediate attention.`,
+                        action: 'Check for ketones if possible. Drink water, avoid carbs, and contact your healthcare provider immediately.'
+                    };
+                }
+            }
+
             // Call success callback with SOS alert data if present
             if (onSuccess) {
                 onSuccess({
                     ...data,
                     alert: data.alert,
-                    sos_alert: data.sos_alert?.trigger ? data.sos_alert : null
+                    sos_alert: sosAlert
                 });
             }
 
-            // Close modal if no alert
-            if (!data.alert && !(data.sos_alert?.trigger)) {
+            // Close modal if no alert and no SOS
+            if (!data.alert && !sosAlert) {
                 handleClose();
             }
         } catch (err) {
