@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { Shield, Bell, Plane, CheckCircle2, X, Clipboard, ExternalLink, Info, AlertCircle, Heart, Moon, Zap, Star } from 'lucide-react';
+import { Shield, Bell, Plane, CheckCircle2, X, Clipboard, Info, Heart, Moon, Zap, Star } from 'lucide-react';
 
 const PreventiveCare = ({ token }) => {
     const [reminders, setReminders] = useState(null);
@@ -66,6 +66,7 @@ const PreventiveCare = ({ token }) => {
         } catch (err) {
             console.error('Failed to fetch reminders:', err);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, language]);
 
     const fetchTravelChecklist = useCallback(async () => {
@@ -81,6 +82,7 @@ const PreventiveCare = ({ token }) => {
         } catch (err) {
             console.error('Failed to fetch travel checklist:', err);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, language]);
 
     useEffect(() => {

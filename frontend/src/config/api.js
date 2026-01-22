@@ -10,6 +10,7 @@
 const getApiBaseUrl = () => {
     // LOCAL TESTING: Use 10.0.2.2 for Android emulator (routes to host machine)
     // PRODUCTION: Use the deployed backend URL
+    // eslint-disable-next-line no-unused-vars
     const LOCAL_BACKEND = 'http://10.0.2.2:8000';
     const PRODUCTION_BACKEND = 'https://healthbuddy-backend-fdum.onrender.com';
 

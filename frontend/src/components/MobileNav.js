@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import BottomNavBar from './BottomNavBar';
-import { Home, Droplet, HeartPulse, ClipboardList, BarChart3, Settings, LogOut, X, Menu, User as UserIcon, Globe } from 'lucide-react';
+import { Home, Droplet, HeartPulse, ClipboardList, BarChart3, Settings, LogOut, X, Menu, User as UserIcon } from 'lucide-react';
 
 const MobileNav = ({ user, onLogout, onScanClick }) => {
     const [isOpen, setIsOpen] = useState(false);

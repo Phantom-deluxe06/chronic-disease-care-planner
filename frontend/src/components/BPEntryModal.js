@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
-import { X, HeartPulse, Save, AlertTriangle, CheckCircle, Info, ChevronRight } from 'lucide-react';
+import { X, HeartPulse, Save, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import './LogEntryModal.css';
 
 const BPEntryModal = ({ isOpen, onClose, onSuccess, token }) => {

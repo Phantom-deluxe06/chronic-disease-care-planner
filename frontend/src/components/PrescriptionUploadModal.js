@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Upload, X, Check, AlertCircle, Edit2, Plus, Info, Loader2 } from 'lucide-react';
+import { Upload, X, Check, AlertCircle, Edit2, Plus, Loader2 } from 'lucide-react';
 import { apiUrl } from '../config/api';
 import { useLanguage } from '../context/LanguageContext';
 import './PrescriptionUploadModal.css';

@@ -13,10 +13,10 @@ import {
 } from 'recharts';
 import {
     TrendingUp, PieChart as PieChartIcon,
-    Coffee, Sun, Moon, Star, Utensils, Zap, Droplet
+    Coffee, Sun, Moon, Star, Utensils, Zap
 } from 'lucide-react';
 import {
-    MdLocalFireDepartment, MdGrain,
+    MdGrain,
     MdEgg, MdWaterDrop
 } from 'react-icons/md';
 
@@ -57,6 +57,7 @@ const NutritionDashboard = ({ token }) => {
         } finally {
             setLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const processNutritionData = (logs) => {
