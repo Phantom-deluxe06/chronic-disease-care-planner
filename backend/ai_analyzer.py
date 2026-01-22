@@ -137,7 +137,10 @@ Return a JSON object with this exact structure (no markdown, just raw JSON):
 Focus heavily on sodium content. DASH diet limits sodium to <2300mg/day. Consider Indian foods if mentioned."""
 
     try:
-        response = gemini_model.generate_content(prompt)
+        response = gemini_client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=prompt
+        )
         response_text = response.text.strip()
         
         # Clean up response - remove markdown code blocks if present
