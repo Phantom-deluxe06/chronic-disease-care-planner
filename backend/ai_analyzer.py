@@ -13,6 +13,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+try:
+    from google import genai
+    from google.genai import types
+except ImportError:
+    logger.warning("google-genai not installed. Some features may not work.")
+
 # ==================== GEMINI AI CONFIGURATION ====================
 # Load environment variables from .env file if present
 from dotenv import load_dotenv
@@ -1362,14 +1368,11 @@ def analyze_food_image(image_data: bytes, condition: str = "diabetes") -> Option
             return None
     
     try:
-        import google.generativeai as genai
-        import base64
-        
         # Create image part for vision model
-        image_part = {
-            "mime_type": "image/jpeg",
-            "data": base64.b64encode(image_data).decode('utf-8')
-        }
+        image_part = types.Part.from_bytes(
+            data=image_data,
+            mime_type="image/jpeg"
+        )
         
         condition_context = ""
         if condition == "diabetes":
