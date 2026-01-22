@@ -33,10 +33,10 @@ const LanguageSelector = () => {
     useEffect(() => {
         if (isOpen && triggerRef.current) {
             const rect = triggerRef.current.getBoundingClientRect();
-            // Position dropdown to the right of the trigger, aligned to top
+            // Position dropdown to the LEFT of the trigger (changed from right)
             setDropdownStyle({
                 top: `${rect.top}px`,
-                left: `${rect.right + 8}px`, // 8px gap from trigger
+                right: `${window.innerWidth - rect.left + 8}px`, // 8px gap from trigger, aligned to left edge
             });
         }
     }, [isOpen]);
