@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Allow cleartext for local development -->
-    <base-config cleartextTrafficPermitted="true">
+    <!-- Base config: trust system certificates for HTTPS -->
+    <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <!-- Production: your deployed backend domain would go here -->
+    
+    <!-- Production: Render backend (HTTPS) -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">onrender.com</domain>
+        <domain includeSubdomains="true">healthbuddy-backend-fdum.onrender.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Local development: allow cleartext for localhost -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>

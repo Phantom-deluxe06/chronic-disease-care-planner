@@ -432,7 +432,7 @@ const HypertensionDashboard = () => {
     return (
         <div className="disease-dashboard hypertension-theme">
             {/* Mobile Navigation */}
-            <MobileNav user={user} onLogout={handleLogout} />
+            <MobileNav user={user} onLogout={handleLogout} onScanClick={() => setShowFoodImageModal(true)} />
 
             {/* Sidebar Rail */}
             <SidebarRail user={user} />

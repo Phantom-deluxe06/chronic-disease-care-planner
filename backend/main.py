@@ -47,10 +47,18 @@ app.add_middleware(
         "http://127.0.0.1:3002",
         "https://chronic-disease-care-planner.vercel.app",
         "https://*.vercel.app",  # Allow Vercel preview deployments
+        # Mobile app origins (Capacitor)
+        "capacitor://localhost",
+        "ionic://localhost",
+        "http://localhost",
+        "https://localhost",
+        "file://",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    # Allow requests with null origin (mobile apps)
+    allow_origin_regex=r"(capacitor|ionic|file|http|https)://.*",
 )
 
 # JWT Bearer token security

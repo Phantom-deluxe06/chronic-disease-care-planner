@@ -1,0 +1,254 @@
+/**
+ * SOS Alert Styles
+ * Emergency alert overlay with blinking animation
+ */
+
+.sos-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.sos-overlay.sos-severe {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(153, 27, 27, 0.95));
+    animation: sos-pulse 1s ease-in-out infinite;
+}
+
+.sos-overlay.sos-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95));
+}
+
+@keyframes sos-pulse {
+
+    0%,
+    100% {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(153, 27, 27, 0.95));
+    }
+
+    50% {
+        background: linear-gradient(135deg, rgba(248, 113, 113, 0.95), rgba(220, 38, 38, 0.95));
+    }
+}
+
+.sos-content {
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.sos-icon-container {
+    margin-bottom: 20px;
+}
+
+.sos-icon {
+    color: #ef4444;
+}
+
+.sos-icon-blink {
+    animation: icon-blink 0.5s ease-in-out infinite;
+}
+
+@keyframes icon-blink {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+}
+
+.sos-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.sos-message {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.sos-message p {
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.sos-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.sos-action svg {
+    color: #22c55e;
+    flex-shrink: 0;
+}
+
+.sos-action p {
+    color: #86efac;
+    margin: 0;
+    font-size: 1rem;
+    text-align: left;
+}
+
+.sos-contacts {
+    margin-bottom: 24px;
+}
+
+.sos-contacts h3 {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 12px;
+}
+
+.sos-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sos-contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sos-contact-btn:hover {
+    background: rgba(34, 197, 94, 0.25);
+    border-color: #22c55e;
+    transform: scale(1.02);
+}
+
+.sos-contact-btn svg {
+    color: #22c55e;
+    flex-shrink: 0;
+}
+
+.sos-contact-info {
+    flex: 1;
+    text-align: left;
+}
+
+.sos-contact-name {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.sos-contact-relation {
+    display: block;
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+
+.sos-contact-phone {
+    color: #22c55e;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.sos-buttons {
+    margin-bottom: 20px;
+}
+
+.sos-acknowledge-btn,
+.sos-dismiss-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.sos-acknowledge-btn {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+}
+
+.sos-acknowledge-btn:hover {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    transform: scale(1.05);
+}
+
+.sos-dismiss-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sos-dismiss-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.sos-disclaimer {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+    .sos-content {
+        padding: 24px;
+    }
+
+    .sos-title {
+        font-size: 1.5rem;
+    }
+
+    .sos-message p {
+        font-size: 1rem;
+    }
+
+    .sos-icon-container svg {
+        width: 60px;
+        height: 60px;
+    }
+}

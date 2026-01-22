@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import MobileNav from '../components/MobileNav';
 import StravaConnect from '../components/StravaConnect';
 import SidebarRail from '../components/SidebarRail';
+import EmergencyContacts from '../components/EmergencyContacts';
 import { useLanguage } from '../context/LanguageContext';
 import { Settings as SettingsIcon, User, Ruler, Link, Bell, AlertTriangle, LogOut } from 'lucide-react';
 
@@ -122,6 +123,9 @@ const Settings = () => {
                             <StravaConnect token={localStorage.getItem('token')} />
                         </div>
                     </div>
+
+                    {/* Emergency SOS Contacts */}
+                    <EmergencyContacts />
 
                     {/* Notification Settings */}
                     <div className="settings-card">

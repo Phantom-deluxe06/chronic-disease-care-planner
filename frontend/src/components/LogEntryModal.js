@@ -68,12 +68,14 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
 
         let endpoint = '';
         let body = {};
+        let glucoseValueNum = 0;
 
         switch (logType) {
             case 'glucose':
                 endpoint = '/logs/glucose';
+                glucoseValueNum = parseFloat(glucoseValue);
                 body = {
-                    value: parseFloat(glucoseValue),
+                    value: glucoseValueNum,
                     reading_type: readingType,
                     notes: notes || null
                 };
@@ -131,13 +133,87 @@ const LogEntryModal = ({ isOpen, onClose, logType, onSuccess }) => {
                 setAlert(data.alert);
             }
 
-            // Call success callback
-            if (onSuccess) {
-                onSuccess(data);
+            // Check for SOS alert conditions
+            let sosAlert = null;
+
+            // Glucose SOS - Critical blood sugar levels
+            if (logType === 'glucose' && glucoseValueNum > 0) {
+                if (glucoseValueNum < 70) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'severe',
+                        type: 'low',
+                        message: `Critical LOW blood sugar: ${glucoseValueNum} mg/dL! This is a medical emergency.`,
+                        action: 'Consume 15-20g of fast-acting carbs immediately (glucose tablets, juice, or candy). Recheck in 15 minutes.'
+                    };
+                } else if (glucoseValueNum > 250) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'severe',
+                        type: 'high',
+                        message: `Critical HIGH blood sugar: ${glucoseValueNum} mg/dL! This requires immediate attention.`,
+                        action: 'Check for ketones if possible. Drink water, avoid carbs, and contact your healthcare provider immediately.'
+                    };
+                }
             }
 
-            // Close modal if no alert
-            if (!data.alert) {
+            // Food SOS - High calorie/carb intake (hyperglycemia risk)
+            if (logType === 'food') {
+                const calorieValue = parseFloat(calories);
+                if (calorieValue > 1000) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'high_carbs',
+                        message: `⚠️ High calorie meal detected: ${calorieValue} kcal! This may cause hyperglycemia.`,
+                        action: 'Monitor your blood sugar closely over the next 2-3 hours. Consider a light walk after eating to help regulate glucose levels.'
+                    };
+                } else if (calorieValue > 800) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'moderate_carbs',
+                        message: `Moderate-high calorie meal: ${calorieValue} kcal. Watch for elevated blood sugar.`,
+                        action: 'Check your blood sugar 1-2 hours after eating. Stay hydrated and avoid additional snacks.'
+                    };
+                }
+            }
+
+            // Activity SOS - Excessive exercise (hypoglycemia risk)
+            if (logType === 'activity') {
+                const durationValue = parseFloat(duration);
+                const isIntense = intensity === 'vigorous';
+
+                if (durationValue > 90 || (durationValue > 60 && isIntense)) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'exercise_hypo',
+                        message: `⚠️ Extended ${isIntense ? 'intense ' : ''}exercise: ${durationValue} minutes! Risk of hypoglycemia.`,
+                        action: 'Check your blood sugar immediately. Have fast-acting carbs ready. Monitor for symptoms: shakiness, sweating, confusion, rapid heartbeat.'
+                    };
+                } else if (durationValue > 60) {
+                    sosAlert = {
+                        trigger: true,
+                        severity: 'warning',
+                        type: 'exercise_caution',
+                        message: `Long exercise session: ${durationValue} minutes. Monitor for low blood sugar.`,
+                        action: 'Check blood sugar before next meal. Have a small snack if feeling lightheaded. Stay hydrated.'
+                    };
+                }
+            }
+
+            // Call success callback with SOS alert data if present
+            if (onSuccess) {
+                onSuccess({
+                    ...data,
+                    alert: data.alert,
+                    sos_alert: sosAlert
+                });
+            }
+
+            // Close modal if no alert and no SOS
+            if (!data.alert && !sosAlert) {
                 handleClose();
             }
         } catch (err) {
