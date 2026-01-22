@@ -1172,7 +1172,8 @@ load_dotenv()
 
 STRAVA_CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID", "197229")
 STRAVA_CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET", "")
-STRAVA_REDIRECT_URI = "http://localhost:3000/strava/callback"
+# Use environment variable for redirect URI, defaulting to deployed Render URL
+STRAVA_REDIRECT_URI = os.environ.get("STRAVA_REDIRECT_URI", "https://chronic-disease-care-planner-main.onrender.com/strava/callback")
 STRAVA_AUTH_URL = "https://www.strava.com/oauth/authorize"
 STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token"
 STRAVA_API_URL = "https://www.strava.com/api/v3"
