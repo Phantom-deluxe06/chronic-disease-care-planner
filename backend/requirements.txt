@@ -7,3 +7,4 @@ email-validator
 google-genai
 python-dotenv
 httpx
+psycopg2-binary

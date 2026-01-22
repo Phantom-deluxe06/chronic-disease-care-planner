@@ -46,7 +46,9 @@ app.add_middleware(
         "http://127.0.0.1:3001",
         "http://127.0.0.1:3002",
         "https://chronic-disease-care-planner.vercel.app",
+        "https://chronic-disease-care-planner-main.onrender.com",  # User's Render frontend
         "https://*.vercel.app",  # Allow Vercel preview deployments
+        "https://*.onrender.com",  # Allow Render deployments
         # Mobile app origins (Capacitor)
         "capacitor://localhost",
         "ionic://localhost",
@@ -60,6 +62,7 @@ app.add_middleware(
     # Allow requests with null origin (mobile apps)
     allow_origin_regex=r"(capacitor|ionic|file|http|https)://.*",
 )
+
 
 # JWT Bearer token security
 security = HTTPBearer()
